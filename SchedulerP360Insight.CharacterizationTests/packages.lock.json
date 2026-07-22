@@ -66,8 +66,12 @@
       },
       "Dapper": {
         "type": "Transitive",
-        "resolved": "2.1.35",
-        "contentHash": "YKRwjVfrG7GYOovlGyQoMvr1/IJdn+7QzNXJxyMh0YfFF5yvDmTYaJOVYWsckreNjGsGSEtrMTpnzxTUq/tZQw=="
+        "resolved": "2.1.79",
+        "contentHash": "8YijbzgTfmqmQOnVNorYM6K++pxqnW3nJ4aC1sRHzxUA2CcuoJ9gsTem3kgBnPRMc38zZHl4Esb6hAezXIEEuw==",
+        "dependencies": {
+          "Microsoft.Bcl.AsyncInterfaces": "10.0.8",
+          "System.Threading.Tasks.Extensions": "4.6.3"
+        }
       },
       "log4net": {
         "type": "Transitive",
@@ -357,7 +361,7 @@
       "schedulerp360insight": {
         "type": "Project",
         "dependencies": {
-          "Dapper": "[2.1.35, )",
+          "Dapper": "[2.1.79, )",
           "Microsoft.Extensions.Configuration.Abstractions": "[8.0.0, )",
           "Microsoft.Extensions.Configuration.Json": "[8.0.1, )",
           "Microsoft.Extensions.Logging.Abstractions": "[8.0.0, )",
