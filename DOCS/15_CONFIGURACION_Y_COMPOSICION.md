@@ -86,7 +86,7 @@ Si el problema no está limitado al proveedor, se revierte el PR completo. Ningu
 - métodos estáticos heredados de acceso a datos;
 - constructores predeterminados usados por diseñadores de DevExpress.
 
-La ruta compuesta de Quartz no usa esos constructores predeterminados. No se añadieron nuevos consumidores de estado global; PR-08 retirará el acceso estático de datos y PR-11 completará la inyección en el pipeline de reportes.
+La ruta compuesta de Quartz no usa esos constructores predeterminados. No se añadieron nuevos consumidores de estado global. PR-08 encapsuló el acceso de datos y PR-11 movió renderizado/artefactos detrás de contratos; HTML y DevExpress admiten renderer inyectado en pruebas. Crystal permanece como fachada opaca concreta hasta aislarla en PR-13.
 
 ## Excepciones sin efectos secundarios
 

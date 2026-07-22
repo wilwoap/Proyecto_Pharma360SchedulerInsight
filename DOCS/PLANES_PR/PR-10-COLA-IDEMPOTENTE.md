@@ -40,7 +40,7 @@ parciales entre SQL, renderizado y SMTP sin romper el lector heredado.
 ## Fuera de alcance
 
 - Down migration destructiva.
-- Poller o dispatcher independiente del Cron; se evalúa en PR-11 según SLO.
+- Poller o dispatcher independiente del Cron; evaluado en PR-11 y pospuesto hasta disponer del SLO de D-010, para no introducir carga/cadencia inventada.
 - Garantía de deduplicación del servidor SMTP.
 - Retención/propietario operativo de dead-letter, pendientes en D-011.
 - Ejecución del script contra P360 real desde este entorno.

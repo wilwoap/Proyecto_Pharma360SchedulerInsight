@@ -1,6 +1,6 @@
 # Modernización de Scheduler P360 Insight
 
-Estado del expediente: valoración y Gate 0 completados. PR-01 a PR-10 validados localmente; PR-10 conserva el lector heredado por defecto y su activación durable requiere migración DBA/canary. La integración de observabilidad corporativa continúa pendiente de D-010/D-011 y los contratos con una base P360 no productiva se mantienen como gate de despliegue.
+Estado del expediente: valoración y Gate 0 completados. PR-01 a PR-11 validados localmente; PR-10 conserva el lector heredado por defecto y su activación durable requiere migración DBA/canary. PR-11 encapsula el renderizado y los archivos sin modificar `.rpt`; la paridad visual con datos anonimizados y la retención final siguen como gates de despliegue. La integración de observabilidad corporativa continúa pendiente de D-010/D-011.
 
 Este directorio es la fuente de verdad del programa de modernización. El objetivo es conservar el comportamiento funcional mientras se reduce, mediante cambios pequeños y reversibles, el riesgo de seguridad, operación y mantenimiento.
 
@@ -27,8 +27,9 @@ Este directorio es la fuente de verdad del programa de modernización. El objeti
 19. [18_ACCESO_A_DATOS_RESILIENTE.md](18_ACCESO_A_DATOS_RESILIENTE.md): timeouts, cancelación, contratos SQL y clasificación de fallos.
 20. [19_QUARTZ_ENDURECIDO.md](19_QUARTZ_ENDURECIDO.md): zona, misfire, concurrencia, reconciliación y operación Quartz.
 21. [20_COLA_DURABLE_E_IDEMPOTENTE.md](20_COLA_DURABLE_E_IDEMPOTENTE.md): claim/lease, reintento, dead-letter, migración DBA y rollback.
-22. [GUIA_DE_TRABAJO_POR_PR.md](GUIA_DE_TRABAJO_POR_PR.md): instrucciones para desarrollar y revisar cada cambio.
-23. [PLANES_PR/README.md](PLANES_PR/README.md): índice de las fichas de implementación.
+22. [21_PIPELINE_REPORTES_Y_ARCHIVOS.md](21_PIPELINE_REPORTES_Y_ARCHIVOS.md): contratos de renderer, PDF atómico, rutas, recursos y gates de despliegue.
+23. [GUIA_DE_TRABAJO_POR_PR.md](GUIA_DE_TRABAJO_POR_PR.md): instrucciones para desarrollar y revisar cada cambio.
+24. [PLANES_PR/README.md](PLANES_PR/README.md): índice de las fichas de implementación.
 
 ## Principios no negociables
 

@@ -1,6 +1,6 @@
 # Observabilidad y salud
 
-Estado: núcleo neutral validado localmente en PR-07 y ampliado hasta PR-10 el 2026-07-22. La conexión a una plataforma corporativa, retención, costes y alertas desplegadas siguen pendientes de D-010/D-011.
+Estado: núcleo neutral validado localmente en PR-07 y ampliado hasta PR-11 el 2026-07-22. La conexión a una plataforma corporativa, retención, costes y alertas desplegadas siguen pendientes de D-010/D-011.
 
 ## Resultado
 
@@ -30,6 +30,8 @@ Campos permitidos:
     active_jobs
     active_notifications
     attempt_count
+    artifact_bytes
+    artifact_kind
     audit_sink
     definitions_added
     definitions_count
@@ -43,6 +45,7 @@ Campos permitidos:
     failure_code
     failure_kind
     health_exporter
+    handle_delta
     job_type
     metric
     misfire_count
@@ -55,11 +58,16 @@ Campos permitidos:
     parent_correlation_id
     process_id
     queue_action
+    renderer_kind
     report_uid
     state
     sql_code
+    temp_files_deleted
+    temp_files_examined
+    temp_files_failed
     time_zone
     value
+    working_set_delta_bytes
 
 Cualquier clave no incluida se descarta. Los valores se limitan a 128 caracteres y se eliminan caracteres de control. No se aceptan destinatarios, nombres, cuerpos/asuntos de correo, rutas, cadenas de conexión, claves, tokens, mensajes de excepción ni stack traces.
 
@@ -90,6 +98,10 @@ Cualquier clave no incluida se descarta. Los valores se limitan a 128 caracteres
 | `notification.lease_lost` | el worker dejó de ser propietario y no debe enviar/confirmar |
 | `notification.delivery.uncertain` | SMTP aceptó pero SQL no pudo confirmar con certeza |
 | `notification.failure.persistence_failed` | no se pudo registrar el fallo; el lease queda para expiración/reclaim |
+| `report.temp.reconciled` | resumen acotado de temporales propios examinados/eliminados |
+| `report.temp.reconciliation_failed` | la reconciliación no pudo enumerar o limpiar la raíz |
+| `report.temp.delete_failed` | no pudo eliminarse el temporal de una operación fallida |
+| `report.renderer.dispose_failed` | el proveedor Crystal falló al cerrar/liberar; no expone ruta ni contenido |
 
 ## Correlación
 
@@ -120,6 +132,7 @@ Operaciones permitidas:
 | `notification` | procesamiento de una notificación |
 | `render.crystal` | exportación Crystal a PDF |
 | `render.devexpress` | renderizado DevExpress y escritura del PDF |
+| `render.html` | validación/composición de la etapa HTML, sin artefacto PDF |
 | `delivery.smtp` | llamada real al transporte SMTP |
 | `data.report-schedules` | consulta y mapeo de definiciones programadas |
 | `data.notification-queue` | lectura/claim, preflight, renew, complete y fail de la cola |
@@ -129,6 +142,8 @@ Por operación y resultado (`success`, `failure`, `skipped`, `timeout`, `cancell
 PR-09 añade gauges acotados `scheduler_definition_rows_rejected`, `scheduler_definitions_rejected`, `scheduler_definitions_active`, `scheduler_max_concurrency` y `scheduler_misfires_total`. No incluyen ID/nombre dinámico. El backlog se demuestra en pruebas de límite, pero no se publica como gauge durable: con `RAMJobStore` no existe una medida persistente de antigüedad.
 
 El snapshot también incluye `workingSetBytes`, `handleCount`, jobs activos, notificaciones activas y definiciones registradas. Ningún identificador dinámico forma parte de la clave de una métrica.
+
+PR-11 captura antes/después de cada render y adjunta deltas de working set/handles, tipo de renderer y tamaño/tipo de artefacto. Son diagnósticos por operación, no un SLO ni una prueba por sí solos de ausencia de fuga; las rutas y nombres de archivo nunca se publican.
 
 ## Liveness y readiness
 
@@ -160,7 +175,7 @@ La definición inicial, independiente del proveedor, contiene:
 2. definiciones registradas y duración/fallos de start/shutdown;
 3. jobs activos y tasa/duración por tipo;
 4. notificaciones success/failure/skipped y tamaño de lote observado;
-5. fallos y duración de render Crystal/DevExpress;
+5. fallos y duración de render Crystal/DevExpress/HTML, tamaño de PDF y deltas de recursos;
 6. fallos y duración SMTP;
 7. memoria y handles del proceso.
 
@@ -189,7 +204,7 @@ Rollback del exporter: quitar `P360_HEALTH_FILE_PATH` y reiniciar. Rollback comp
 
 ## Evidencia
 
-- 102/102 pruebas aisladas aprobadas;
+- 120/120 pruebas aisladas aprobadas;
 - redacción de secretos, destinatarios, cuerpos y detalles de excepción;
 - correlación y métricas de éxito/fallo/duración;
 - cardinalidad acotada frente a valores dinámicos;

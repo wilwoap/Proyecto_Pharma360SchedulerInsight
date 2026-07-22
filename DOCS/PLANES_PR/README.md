@@ -15,7 +15,7 @@ Cada archivo define un incremento revisable. Los números expresan dependencia l
 | PR-08-ACCESO-A-DATOS-RESILIENTE.md | Validado localmente; contrato P360 no productivo pendiente para despliegue |
 | PR-09-QUARTZ-ENDURECIDO.md | Validado localmente; inventario/canary P360 no productivo pendiente para despliegue |
 | PR-10-COLA-IDEMPOTENTE.md | Validado localmente; migración DBA/canary pendientes para despliegue |
-| PR-11-PIPELINE-DE-REPORTES.md | Propuesto |
+| PR-11-PIPELINE-DE-REPORTES.md | Validado localmente; golden visual/retención final pendientes para despliegue |
 | PR-12-CORREO-Y-PLANTILLAS.md | Propuesto |
 | PR-13-AISLAMIENTO-DE-CRYSTAL.md | Propuesto; no modifica archivos .rpt |
 | PR-14-MIGRACION-NET10.md | Bloqueado por PR-13 |

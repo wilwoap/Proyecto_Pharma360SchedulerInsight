@@ -1,6 +1,6 @@
 # Arnés de caracterización
 
-Estado: implementado en PR-02 y ampliado/validado localmente hasta PR-10 el 2026-07-22.
+Estado: implementado en PR-02 y ampliado/validado localmente hasta PR-11 el 2026-07-22.
 
 ## Decisión de framework
 
@@ -24,7 +24,7 @@ Para desarrollo con paquetes ya restaurados:
 
 SkipTests existe sólo para diagnóstico del build. No debe usarse como evidencia de un PR.
 
-El gate exige al menos 102 pruebas, un timeout global de 60 segundos y genera TRX bajo artifacts/test-results. Esa carpeta no se versiona.
+El gate exige al menos 120 pruebas, un timeout global de 60 segundos y genera TRX bajo artifacts/test-results. Esa carpeta no se versiona.
 
 ## Fronteras introducidas
 
@@ -43,9 +43,12 @@ El gate exige al menos 102 pruebas, un timeout global de 60 segundos y genera TR
 - INotificationQueueRepository separa lectura heredada de claim/renew/complete/fail durable.
 - NotificationFailureClassifier produce códigos acotados sin persistir mensajes o PII.
 - El modo durable se activa por `report_id` y verifica el esquema antes de Quartz.
+- IReportRenderer y ReportRenderResult separan el pipeline de los tipos Crystal/DevExpress.
+- AtomicReportArtifactStore valida/promueve PDF sin sobrescribir y reconcilia sólo temporales propios.
+- ReportUidCatalog valida la compatibilidad UID/renderer antes de Quartz.
 - Los constructores predeterminados conservan los adaptadores SQL y SMTP actuales.
 
-La aplicación usa la fábrica de jobs y las fronteras de correo. La política de rutas se conectará al pipeline completo en PR-11, donde podrá aplicarse a todos los renderizadores con rollback conjunto.
+La aplicación usa la fábrica de jobs, las fronteras de correo y el pipeline de renderer/artefactos. Crystal se encapsula sin cargar los `.rpt` desde el arnés aislado; HTML completará su composición segura en PR-12.
 
 ## Cobertura inicial
 
@@ -79,16 +82,22 @@ La aplicación usa la fábrica de jobs y las fronteras de correo. La política d
 | SMTP | Fallo observado como delivery/notificación fallida sin confirmar la cola ni exponer destinatario/detalle |
 | Cola durable | Configuración, proyección, comandos tipados, lease perdido, confirmación incierta y cabecera estable |
 | SQL de cola | LocalDB demuestra migración reejecutable, dos workers, reclaim, backoff, dead-letter y reproceso auditado |
+| Pipeline PDF | Fixture golden byte a byte, firma/tamaño, fallo/cancelación y promoción atómica |
+| Colisiones | Dos escritores conservan archivos distintos, sin sobrescritura y con nombre máximo de 180 caracteres |
+| Temporales | Limpieza del temporal actual y reconciliación selectiva de temporales propios obsoletos |
+| Renderer/UID | Contrato tipado, compatibilidad por proveedor y rechazo previo de combinaciones desconocidas |
+| Recursos | Dispose determinista en DevExpress/streams y cierre de fachada Crystal al finalizar el job |
 
 ## Deudas observadas, no corregidas en este PR
 
 - Una clave de plantilla inexistente retorna null aunque el comentario heredado indica cadena vacía.
 - Los valores dinámicos de HTML se insertan sin codificación.
-- Un UID desconocido se conserva y llega al job por compatibilidad histórica.
 - La prueba de PDF es sintética; todavía no existe un fixture SQL anonimizado autorizado para generar golden masters visuales reales.
 - No se prueba una conexión SQL real ni un servidor SMTP real en CI.
+- La exportación sincrónica Crystal/DevExpress no puede preemptarse de forma segura dentro del proceso; el límite duro corresponde a PR-13.
+- La retención de PDF finales continúa pendiente de D-011; PR-11 sólo elimina temporales propios.
 
-Estas observaciones son intencionales: PR-02 impide que cambien accidentalmente. HTML se endurece en PR-12; archivos y PDFs en PR-11; contratos SQL en PR-08. La aprobación visual de PDFs se requiere antes de PR-13 y nunca implica modificar archivos Crystal.
+Estas observaciones son intencionales: PR-02 impide que cambien accidentalmente; PR-08 cubre los contratos SQL y PR-11 endurece archivos/PDF sin afirmar paridad visual real. HTML se endurece en PR-12. La aprobación visual de PDFs se requiere antes de PR-13 y nunca implica modificar archivos Crystal.
 
 ## Datos y aislamiento
 

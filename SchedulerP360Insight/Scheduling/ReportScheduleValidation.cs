@@ -14,6 +14,8 @@ namespace SchedulerP360Insight.Scheduling
         public const string MissingReportUid = "missing_report_uid";
         public const string MissingReportName = "missing_report_name";
         public const string UnknownReportType = "unknown_report_type";
+        public const string UnknownReportUid = "unknown_report_uid";
+        public const string UnsupportedReportUid = "unsupported_report_uid";
         public const string InvalidCron = "invalid_cron";
         public const string BuildFailure = "build_failure";
     }
@@ -133,6 +135,18 @@ namespace SchedulerP360Insight.Scheduling
             catch (ArgumentException)
             {
                 return ReportScheduleRejectionReasons.UnknownReportType;
+            }
+
+            if (!jobFactory.IsKnownReportUid(definition.ReportUID))
+            {
+                return ReportScheduleRejectionReasons.UnknownReportUid;
+            }
+
+            if (!jobFactory.SupportsReportUid(
+                definition.ReportType,
+                definition.ReportUID))
+            {
+                return ReportScheduleRejectionReasons.UnsupportedReportUid;
             }
 
             if (string.IsNullOrWhiteSpace(definition.ReportSchedule) ||

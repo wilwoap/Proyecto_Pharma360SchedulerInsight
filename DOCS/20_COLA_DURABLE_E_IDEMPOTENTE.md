@@ -116,8 +116,10 @@ fila pasa a `dead_letter`.
 La elegibilidad se evalúa cuando vuelve a ejecutarse el job Quartz del reporte.
 `next_attempt_utc` impide un intento demasiado temprano, pero PR-10 no agrega un
 poller ni mantiene un job bloqueado hasta esa hora. Por ello el reintento puede
-ocurrir después del backoff si el Cron del reporte es menos frecuente. PR-11
-podrá separar el dispatcher si el SLO aprobado exige una cadencia independiente.
+ocurrir después del backoff si el Cron del reporte es menos frecuente. La
+evaluación de PR-11 conserva este comportamiento: sin un SLO aprobado en D-010,
+crear un dispatcher inventaría cadencia y carga SQL. Se reevalúa en PR-15 si
+operación exige una cadencia independiente.
 
 Operación inspecciona sin PII:
 

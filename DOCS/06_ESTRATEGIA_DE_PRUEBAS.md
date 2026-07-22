@@ -63,7 +63,8 @@ Crear una red de seguridad antes de refactorizar. Las primeras pruebas capturan 
 - traversal y rutas absolutas externas se rechazan;
 - caracteres inválidos y nombres repetidos son seguros;
 - un error limpia temporales;
-- retención elimina sólo archivos bajo la raíz permitida.
+- reconciliación elimina sólo temporales propios bajo la raíz permitida;
+- la retención de PDF finales se prueba cuando D-011 defina plazo y propietario.
 
 ### Renderizado
 
@@ -154,4 +155,6 @@ La cobertura numérica no es el objetivo inicial. Gates propuestos:
 
 El arnés net48 x64 ejecuta 22 casos aislados. Cubre configuración, mapeo de jobs, Cron, UID, transporte SMTP simulado, timeout de acceso simulado, HTML heredado, rutas y activos de reporte. Los cinco .rpt están protegidos por hash y no se cargan.
 
-Pendientes deliberados: contrato contra SQL Server desechable, SMTP sink de integración, generación de PDFs reales y comparación visual. Requieren infraestructura/fixtures autorizados y se incorporan en PR-08, PR-11, PR-12 y antes de aislar Crystal en PR-13.
+PR-11 eleva el gate a 120 casos e incorpora contrato neutral de renderer, compatibilidad UID/proveedor, promoción PDF byte a byte, colisiones concurrentes, límite de nombre, cancelación/fallo y reconciliación selectiva. Los `.rpt` siguen sin cargarse en el arnés.
+
+Pendientes deliberados: canary contra SQL Server desechable, SMTP sink de integración, generación de PDFs reales y comparación visual. Requieren infraestructura/fixtures autorizados y se completan en PR-12 y antes de aislar Crystal en PR-13.

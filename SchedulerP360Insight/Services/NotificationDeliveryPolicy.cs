@@ -55,6 +55,15 @@ namespace SchedulerP360Insight.Services
                     errorCode: "lease.lost");
             }
 
+            ReportRenderException renderError =
+                current as ReportRenderException;
+            if (renderError != null)
+            {
+                return new NotificationFailureDecision(
+                    renderError.Permanent,
+                    renderError.FailureCode);
+            }
+
             SmtpFailedRecipientException recipientError =
                 current as SmtpFailedRecipientException;
             if (recipientError != null)

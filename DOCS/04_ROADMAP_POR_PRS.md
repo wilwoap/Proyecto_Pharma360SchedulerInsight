@@ -27,6 +27,8 @@ Gate 0 no es un PR normal: debe ocurrir antes de publicar el primer commit. A pa
 
 Las fichas detalladas están en PLANES_PR.
 
+Estado al 2026-07-22: Gate 0 y PR-01 a PR-11 están integrados o validados localmente en secuencia. PR-12 es el siguiente incremento. Los gates de despliegue que requieren infraestructura/datos autorizados permanecen explícitos en cada ficha.
+
 ## Trenes de entrega
 
 ### Tren 0: proteger el activo

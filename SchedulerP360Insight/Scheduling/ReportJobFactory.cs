@@ -1,7 +1,7 @@
 using Quartz;
 using ReportGenerator;
+using SchedulerP360Insight.Services;
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
@@ -15,25 +15,6 @@ namespace SchedulerP360Insight.Scheduling
         public const string ScheduleTimeZoneKey = "scheduleTimeZone";
         public const string ScheduleMisfirePolicyKey = "scheduleMisfirePolicy";
         public const string ScheduleOverlapPolicyKey = "scheduleOverlapPolicy";
-
-        private static readonly HashSet<string> KnownReportUids =
-            new HashSet<string>(StringComparer.Ordinal)
-            {
-                "PVM",
-                "PVMM",
-                "PVG",
-                "PVGM",
-                "AURX",
-                "AUMD",
-                "RVIS",
-                "AVIS",
-                "RPED",
-                "DPED",
-                "XPED",
-                "VPED",
-                "STNP",
-                "VTNP"
-            };
 
         private readonly QuartzSchedulingPolicy policy;
 
@@ -77,7 +58,14 @@ namespace SchedulerP360Insight.Scheduling
 
         public bool IsKnownReportUid(string reportUid)
         {
-            return reportUid != null && KnownReportUids.Contains(reportUid);
+            return ReportUidCatalog.IsKnown(reportUid);
+        }
+
+        public bool SupportsReportUid(
+            string reportType,
+            string reportUid)
+        {
+            return ReportUidCatalog.Supports(reportType, reportUid);
         }
 
         public IJobDetail CreateJob(ReportScheduleDefinition report)

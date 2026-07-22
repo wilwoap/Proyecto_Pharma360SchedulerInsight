@@ -96,6 +96,8 @@ La opción actual Encrypt=False se debe tratar como riesgo hasta confirmar topol
 - Borrar temporales en finally y ejecutar una reconciliación periódica.
 - Definir retención y eliminación segura con el propietario de datos.
 
+PR-11 materializa esta frontera: exige raíces absolutas existentes, limita/sanea nombres, rechaza traversal y puntos de reparación bajo el origen, escribe a un temporal aleatorio, valida la firma PDF y promueve atómicamente sin sobrescribir. La reconciliación elimina sólo temporales propios con más de 24 horas. No elimina PDF finales: ese plazo continúa pendiente de D-011 y es un gate de despliegue.
+
 ## Cadena de suministro
 
 Acciones:

@@ -25,6 +25,7 @@ Convertir el ejecutable acoplado actual en un servicio de planificación y notif
         +-- Rendering
         |     +-- DevExpress renderer
         |     +-- HTML renderer
+        |     +-- almacenamiento atómico de artefactos
         |     +-- cliente del worker Crystal net48 x64
         |
         +-- Notifications
@@ -58,9 +59,10 @@ Convertir el ejecutable acoplado actual en un servicio de planificación y notif
       -> validar definición
       -> reclamar fila con lease y clave de idempotencia
       -> renderizar a almacenamiento temporal controlado
+      -> validar y promover el artefacto sin sobrescritura
       -> enviar con identificador de operación
       -> confirmar estado
-      -> limpiar temporal
+      -> aplicar retención aprobada (pendiente D-011)
 
 Ante fallo:
 

@@ -7,6 +7,7 @@ using SchedulerP360Insight.Configuration;
 using SchedulerP360Insight.Modulos;
 using SchedulerP360Insight.Observability;
 using SchedulerP360Insight.Scheduling;
+using SchedulerP360Insight.Services;
 namespace ReportGenerator
 {
     public class P360HtmlReportsReportJob : IJob
@@ -15,6 +16,7 @@ namespace ReportGenerator
         readonly string currentUsername = Environment.UserName;
         readonly ModuleCapaAccesoDatos oModuleCapaAccesoDatos;
         private readonly Utilitarios utilitarios;
+        private readonly IReportRenderer reportRenderer;
 
         public P360HtmlReportsReportJob()
             : this(
@@ -35,6 +37,15 @@ namespace ReportGenerator
             SchedulerOptions schedulerOptions,
             LaboratoryConstants labConstants,
             ModuleCapaAccesoDatos dataAccess)
+            : this(schedulerOptions, labConstants, dataAccess, null)
+        {
+        }
+
+        internal P360HtmlReportsReportJob(
+            SchedulerOptions schedulerOptions,
+            LaboratoryConstants labConstants,
+            ModuleCapaAccesoDatos dataAccess,
+            IReportRenderer reportRenderer)
         {
             if (schedulerOptions == null)
             {
@@ -54,6 +65,7 @@ namespace ReportGenerator
                 null,
                 dataAccess,
                 schedulerOptions);
+            this.reportRenderer = reportRenderer ?? new HtmlReportRenderer();
         }
 
         public Task Execute(IJobExecutionContext context)
@@ -63,10 +75,14 @@ namespace ReportGenerator
                 try
                 {
                     DateTime startTime = DateTime.Now; // Captura el inicio de la ejecución
-                    string timestamp = DateTime.Now.ToString("yyyyMMddHHmm");
+                    DateTime renderTimestamp = DateTime.Now;
                     JobDataMap dataMap = context.JobDetail.JobDataMap;
                     int reportId = dataMap.GetInt("reportId");
                     string reportUID = dataMap.GetString("reportUID");
+                    string reportName = dataMap.GetString("reportName");
+                    string reportFileName = dataMap.GetString("reportFileName");
+                    string reportPathSource = dataMap.GetString("reportPathSource");
+                    string reportPathOutput = dataMap.GetString("reportPathOutput");
                     string reportSubjectText = dataMap.GetString("reportSubjectText");
                     string reportBodyResourceKey = dataMap.GetString("reportBodyResourceKey");
                     bool reportSendMail = dataMap.GetBoolean("reportSendMail");
@@ -112,6 +128,68 @@ namespace ReportGenerator
                             {
                                 try
                                 {
+                                ReportRenderRequest renderRequest =
+                                    new ReportRenderRequest(
+                                        reportUID,
+                                        reportName,
+                                        p360Notificacion.CodColab,
+                                        p360Notificacion.ReferenceEventId,
+                                        renderTimestamp,
+                                        reportPathOutput,
+                                        reportPathSource,
+                                        reportFileName);
+                                ReportProcessSnapshot beforeRender =
+                                    ReportRenderDiagnostics.Capture();
+                                using (IOperationScope render =
+                                    TelemetryContext.BeginOperation(
+                                        TelemetryOperations.RenderHtml))
+                                {
+                                    try
+                                    {
+                                        ReportRenderResult renderResult =
+                                            await reportRenderer.RenderAsync(
+                                                renderRequest,
+                                                context.CancellationToken);
+                                        ReportProcessSnapshot afterRender =
+                                            ReportRenderDiagnostics.Capture();
+                                        render.Complete(
+                                            fields: ReportRenderDiagnostics
+                                                .CreateFields(
+                                                    reportRenderer.RendererKind,
+                                                    renderResult,
+                                                    beforeRender,
+                                                    afterRender));
+                                    }
+                                    catch (OperationCanceledException)
+                                        when (context.CancellationToken
+                                            .IsCancellationRequested)
+                                    {
+                                        ReportProcessSnapshot afterRender =
+                                            ReportRenderDiagnostics.Capture();
+                                        render.Complete(
+                                            TelemetryOutcomes.Cancelled,
+                                            ReportRenderDiagnostics
+                                                .CreateFailureFields(
+                                                    reportRenderer.RendererKind,
+                                                    beforeRender,
+                                                    afterRender));
+                                        throw;
+                                    }
+                                    catch (Exception renderError)
+                                    {
+                                        ReportProcessSnapshot afterRender =
+                                            ReportRenderDiagnostics.Capture();
+                                        render.Fail(
+                                            renderError,
+                                            ReportRenderDiagnostics
+                                                .CreateFailureFields(
+                                                    reportRenderer.RendererKind,
+                                                    beforeRender,
+                                                    afterRender));
+                                        throw;
+                                    }
+                                }
+
                                 //Configuración de parámetros dependiendo el reporte.
                                 if (reportSendMail)
                                 {
@@ -126,6 +204,14 @@ namespace ReportGenerator
                                     notification.Complete(
                                         TelemetryOutcomes.Skipped);
                                 }
+                                }
+                                catch (OperationCanceledException)
+                                    when (context.CancellationToken
+                                        .IsCancellationRequested)
+                                {
+                                    notification.Complete(
+                                        TelemetryOutcomes.Cancelled);
+                                    throw;
                                 }
                                 catch (Exception notificationError)
                                 {

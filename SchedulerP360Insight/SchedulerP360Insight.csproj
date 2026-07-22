@@ -275,7 +275,14 @@
     <Compile Include="Scheduling\ReportScheduleValidation.cs" />
     <Compile Include="Services\NotificationDeliveryAbstractions.cs" />
     <Compile Include="Services\NotificationDeliveryPolicy.cs" />
+    <Compile Include="Services\CrystalReportRenderer.cs" />
+    <Compile Include="Services\DevExpressReportRenderer.cs" />
+    <Compile Include="Services\HtmlReportRenderer.cs" />
+    <Compile Include="Services\ReportArtifactStore.cs" />
+    <Compile Include="Services\ReportFileNamePolicy.cs" />
     <Compile Include="Services\ReportPathPolicy.cs" />
+    <Compile Include="Services\ReportRenderingContracts.cs" />
+    <Compile Include="Services\ReportUidCatalog.cs" />
     <Compile Include="P360Reports\DashboardPerformanceVisita.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

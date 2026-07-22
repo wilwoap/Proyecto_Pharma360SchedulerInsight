@@ -2,19 +2,17 @@
 using Quartz;
 using System;
 using System.Threading.Tasks;
-using CrystalDecisions.CrystalReports.Engine;
-using System.IO;
 using System.Collections.Generic;
 using SchedulerP360Insight.Configuration;
 using SchedulerP360Insight.Modulos;
 using SchedulerP360Insight.Observability;
 using SchedulerP360Insight.Scheduling;
+using SchedulerP360Insight.Services;
 
 namespace ReportGenerator
 {
     public class P360CrystalReportsReportJob : IJob
     {
-        string reportFilePath = string.Empty;
         string accion = string.Empty;
         private readonly LaboratoryConstants labConstants;
         readonly string currentUsername = Environment.UserName;
@@ -65,7 +63,7 @@ namespace ReportGenerator
                 try
                 {
                     DateTime startTime = DateTime.Now; // Captura el inicio de la ejecución
-                    string timestamp = DateTime.Now.ToString("yyyyMMddHHmm");
+                    DateTime renderTimestamp = DateTime.Now;
                     JobDataMap dataMap = context.JobDetail.JobDataMap;
                     int reportId = dataMap.GetInt("reportId");
                     string reportUID = dataMap.GetString("reportUID");
@@ -95,13 +93,19 @@ namespace ReportGenerator
                     accion = $"Cargando renderer Crystal. report_uid='{reportUID}'.";
                     Console.WriteLine(accion);
                     oModuleCapaAccesoDatos.RegistraLogConeccionyAccion(currentUsername, accion);
-                    reportFilePath = Path.Combine(reportPathSource, reportFileName);
-                    ReportDocument report = new ReportDocument();
-                    report.Load(reportFilePath);
+                    using (CrystalReportRenderer reportRenderer =
+                        new CrystalReportRenderer(
+                            reportPathSource,
+                            reportFileName,
+                            utilitarios,
+                            labConstants,
+                            oModuleCapaAccesoDatos.getCodigoFicheroVigente))
+                    {
+                    reportRenderer.Load();
                     // Aquí registrar la llenada de la cola de envío para aquellos eventos asíncronos que no están en la cola.
                     // Dentro de la lógica del SP se evalúa si se efectúa o no la creación de la cola dependiendo de cada reporte reportId.
                     oModuleCapaAccesoDatos.RegistrarInformacionColaNotificacionesEventosAsincronos(reportUID, "ScheduledReports");
-                    utilitarios.SetConnectionInfo(report);
+                    reportRenderer.ConfigureConnection();
                     // Get list of p360Notificaciones from database
                     IReadOnlyList<InfoColaNotificaciones> p360Notificaciones =
                         await utilitarios.GetInfoColaNotificacionesAsync(
@@ -113,7 +117,6 @@ namespace ReportGenerator
                     if (p360Notificaciones.Count > 0)
                     {
                         // Loop through each p360Notificacion and generate report and send email
-                        (DateTime firstDayOfMonth, DateTime lastDayOfMonth) = utilitarios.GetFirstAndLastDayOfMonth();
                         foreach (InfoColaNotificaciones p360Notificacion in p360Notificaciones)
                         {
                             using (IOperationScope notification =
@@ -125,45 +128,79 @@ namespace ReportGenerator
                             {
                                 try
                                 {
-                            string outputReportName = $"{reportName}_{p360Notificacion.CodColab}({timestamp}).pdf";
-                            string outputPathandReportName = Path.Combine(reportPathOutput, outputReportName);
-                            //Configuración de parámetros dependiendo el reporte.
-                            switch (reportUID)
-                            {
-                                case "PVM":
-                                case "PVMM":
-                                case "PVG":
-                                case "PVGM":
-                                    int codFicheroVigente = oModuleCapaAccesoDatos.getCodigoFicheroVigente();
-                                    report.SetParameterValue("p_codFichero", codFicheroVigente);
-                                    report.SetParameterValue("p_codColaborador", p360Notificacion.CodColab);
-                                    report.SetParameterValue("p_urlLogoEmpresa", labConstants.Pharma360UrlLogo);
-                                    break;
-                                case "Otro":
-                                    // Configuraciones para otros tipos de reportes
-                                    break;
-                                // Añade más casos según sea necesario
-                                default:
-                                    // Manejo opcional de casos no reconocidos
-                                    break;
-                            }
+                            ReportRenderRequest renderRequest =
+                                new ReportRenderRequest(
+                                    reportUID,
+                                    reportName,
+                                    p360Notificacion.CodColab,
+                                    p360Notificacion.ReferenceEventId,
+                                    renderTimestamp,
+                                    reportPathOutput,
+                                    reportPathSource,
+                                    reportFileName);
+                            ReportRenderResult renderResult;
+                            ReportProcessSnapshot beforeRender =
+                                ReportRenderDiagnostics.Capture();
                             using (IOperationScope render =
                                 TelemetryContext.BeginOperation(
                                     TelemetryOperations.RenderCrystal))
                             {
                                 try
                                 {
-                                    utilitarios.ExportReportToPdf(
-                                        outputPathandReportName,
-                                        report);
-                                    render.Complete();
+                                    renderResult = await reportRenderer
+                                        .RenderAsync(
+                                            renderRequest,
+                                            context.CancellationToken);
+                                    if (!renderResult.HasArtifact)
+                                    {
+                                        throw new ReportRenderException(
+                                            "artifact.missing",
+                                            permanent: true,
+                                            message: "Crystal no produjo un PDF.");
+                                    }
+
+                                    ReportProcessSnapshot afterRender =
+                                        ReportRenderDiagnostics.Capture();
+                                    render.Complete(
+                                        fields: ReportRenderDiagnostics
+                                            .CreateFields(
+                                                reportRenderer.RendererKind,
+                                                renderResult,
+                                                beforeRender,
+                                                afterRender));
+                                }
+                                catch (OperationCanceledException)
+                                    when (context.CancellationToken
+                                        .IsCancellationRequested)
+                                {
+                                    ReportProcessSnapshot afterRender =
+                                        ReportRenderDiagnostics.Capture();
+                                    render.Complete(
+                                        TelemetryOutcomes.Cancelled,
+                                        ReportRenderDiagnostics
+                                            .CreateFailureFields(
+                                                reportRenderer.RendererKind,
+                                                beforeRender,
+                                                afterRender));
+                                    throw;
                                 }
                                 catch (Exception renderError)
                                 {
-                                    render.Fail(renderError);
+                                    ReportProcessSnapshot afterRender =
+                                        ReportRenderDiagnostics.Capture();
+                                    render.Fail(
+                                        renderError,
+                                        ReportRenderDiagnostics
+                                            .CreateFailureFields(
+                                                reportRenderer.RendererKind,
+                                                beforeRender,
+                                                afterRender));
                                     throw;
                                 }
                             }
+
+                            string outputPathandReportName =
+                                renderResult.ArtifactPath;
 
                             if (reportSendMail)
                             {
@@ -178,6 +215,14 @@ namespace ReportGenerator
                                 notification.Complete(
                                     TelemetryOutcomes.Skipped);
                             }
+                                }
+                                catch (OperationCanceledException)
+                                    when (context.CancellationToken
+                                        .IsCancellationRequested)
+                                {
+                                    notification.Complete(
+                                        TelemetryOutcomes.Cancelled);
+                                    throw;
                                 }
                                 catch (Exception notificationError)
                                 {
@@ -200,6 +245,7 @@ namespace ReportGenerator
                     oModuleCapaAccesoDatos.RegistraLogConeccionyAccion(currentUsername, accion);
                     Console.WriteLine(accion);
                     Console.WriteLine($"Fin de job Crystal. report_uid='{reportUID}'.");
+                    }
                 }
                 catch (OperationCanceledException)
                     when (context.CancellationToken.IsCancellationRequested)

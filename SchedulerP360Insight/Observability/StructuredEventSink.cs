@@ -50,6 +50,8 @@ namespace SchedulerP360Insight.Observability
                 "active_jobs",
                 "active_notifications",
                 "attempt_count",
+                "artifact_bytes",
+                "artifact_kind",
                 "audit_sink",
                 "definitions_added",
                 "definitions_count",
@@ -63,6 +65,7 @@ namespace SchedulerP360Insight.Observability
                 "failure_code",
                 "failure_kind",
                 "health_exporter",
+                "handle_delta",
                 "job_type",
                 "metric",
                 "misfire_count",
@@ -75,11 +78,16 @@ namespace SchedulerP360Insight.Observability
                 "parent_correlation_id",
                 "process_id",
                 "queue_action",
+                "renderer_kind",
                 "report_uid",
                 "state",
                 "sql_code",
                 "time_zone",
-                "value"
+                "temp_files_deleted",
+                "temp_files_examined",
+                "temp_files_failed",
+                "value",
+                "working_set_delta_bytes"
             };
 
         public static IReadOnlyDictionary<string, string> Filter(

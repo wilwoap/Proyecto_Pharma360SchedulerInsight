@@ -657,6 +657,7 @@ namespace SchedulerP360Insight.Observability
                 TelemetryOperations.Notification,
                 TelemetryOperations.RenderCrystal,
                 TelemetryOperations.RenderDevExpress,
+                TelemetryOperations.RenderHtml,
                 TelemetryOperations.DeliverySmtp,
                 TelemetryOperations.DataReportSchedules,
                 TelemetryOperations.DataNotificationQueue

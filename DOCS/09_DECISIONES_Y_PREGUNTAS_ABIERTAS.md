@@ -14,7 +14,7 @@
 | D-008 | Proveedor de secretos | Pendiente | Almacén administrado/identidad; DPAPI como puente |
 | D-009 | Persistencia de Quartz | Aceptada técnicamente 2026-07-22 | SQL continúa como fuente y `RAMJobStore` se reconstruye al arrancar; una instancia, sin polling ni tablas Quartz; revisar si se aprueba clustering/catch-up; PR-09 |
 | D-010 | Plataforma de telemetría | Pendiente | Logs/métricas compatibles con estándar corporativo |
-| D-011 | Retención de PDF, logs y cola muerta | Pendiente | Definir por clasificación y SLO |
+| D-011 | Retención de PDF, logs y cola muerta | Pendiente | PR-11 limpia sólo temporales propios >24 h; definir PDF finales por clasificación y SLO |
 | D-012 | Runner y licencias propietarias | Pendiente | Windows self-hosted autorizado inicialmente |
 | D-013 | Soporte del OS de producción | Pendiente | Inventario de edición/build/ESU o migración |
 | D-014 | Refresh de parámetros del scheduler | Aceptada técnicamente 2026-07-22 | Snapshot inmutable al arrancar; refresh mediante reinicio controlado; PR-05 |

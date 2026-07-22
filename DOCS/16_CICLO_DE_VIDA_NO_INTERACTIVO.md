@@ -45,7 +45,7 @@ Parada:
 
 La variable opcional `P360_SHUTDOWN_TIMEOUT_SECONDS` acepta un entero entre 1 y 900. El valor predeterminado es 30 segundos. Un valor ausente usa el predeterminado; un valor inválido impide iniciar Quartz y nunca se refleja en el mensaje de error.
 
-El presupuesto cubre `Standby` y el apagado ordenado de Quartz. Los jobs heredados todavía no propagan cancelación a cada operación interna de SQL, renderizado y SMTP. El límite evita una espera indefinida del host, pero PR-08, PR-11 y PR-12 deben completar los límites de esas fronteras.
+El presupuesto cubre `Standby` y el apagado ordenado de Quartz. PR-08 propaga cancelación a SQL y PR-11 a los límites del pipeline de reportes; una exportación sincrónica Crystal/DevExpress no puede preemptarse con seguridad dentro del proceso. PR-12 completa SMTP y PR-13 aporta el timeout duro/reciclado mediante aislamiento de Crystal.
 
 ## Códigos de salida
 

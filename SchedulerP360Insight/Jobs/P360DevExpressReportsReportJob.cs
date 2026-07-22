@@ -2,23 +2,22 @@
 using Quartz;
 using System;
 using System.Threading.Tasks;
-using System.IO;
 using System.Collections.Generic;
 using SchedulerP360Insight.Configuration;
 using SchedulerP360Insight.Modulos;
 using SchedulerP360Insight.Observability;
-using SchedulerP360Insight.P360Reports;
 using SchedulerP360Insight.Scheduling;
+using SchedulerP360Insight.Services;
 
 namespace ReportGenerator
 {
     public class P360DevExpressReportsReportJob : IJob
     {
         string accion = string.Empty;
-        private readonly LaboratoryConstants labConstants;
         readonly string currentUsername = Environment.UserName;
         readonly ModuleCapaAccesoDatos oModuleCapaAccesoDatos;
         private readonly Utilitarios utilitarios;
+        private readonly IReportRenderer reportRenderer;
 
         public P360DevExpressReportsReportJob()
             : this(
@@ -39,14 +38,25 @@ namespace ReportGenerator
             SchedulerOptions schedulerOptions,
             LaboratoryConstants labConstants,
             ModuleCapaAccesoDatos dataAccess)
+            : this(schedulerOptions, labConstants, dataAccess, null)
+        {
+        }
+
+        internal P360DevExpressReportsReportJob(
+            SchedulerOptions schedulerOptions,
+            LaboratoryConstants labConstants,
+            ModuleCapaAccesoDatos dataAccess,
+            IReportRenderer reportRenderer)
         {
             if (schedulerOptions == null)
             {
                 throw new ArgumentNullException(nameof(schedulerOptions));
             }
 
-            this.labConstants = labConstants ??
+            if (labConstants == null)
+            {
                 throw new ArgumentNullException(nameof(labConstants));
+            }
             oModuleCapaAccesoDatos = dataAccess ??
                 throw new ArgumentNullException(nameof(dataAccess));
             utilitarios = new Utilitarios(
@@ -55,6 +65,8 @@ namespace ReportGenerator
                 null,
                 dataAccess,
                 schedulerOptions);
+            this.reportRenderer = reportRenderer ??
+                new DevExpressReportRenderer(labConstants);
         }
 
         public Task Execute(IJobExecutionContext context)
@@ -64,7 +76,7 @@ namespace ReportGenerator
                 DateTime startTime = DateTime.Now; // Inicio de la ejecución
                 try
                 {
-                    string timestamp = DateTime.Now.ToString("yyyyMMddHHmm");
+                    DateTime renderTimestamp = DateTime.Now;
                     var dataMap = context.JobDetail.JobDataMap;
                     int reportId = dataMap.GetInt("reportId");
                     string reportUID = dataMap.GetString("reportUID");
@@ -123,9 +135,19 @@ namespace ReportGenerator
                             {
                             try
                             {
-                                string outputReportName = $"{reportName}_{p360Notificacion.CodColab}({timestamp})[{p360Notificacion.ReferenceEventId}].pdf";
-                                string outputPathandReportName = Path.Combine(reportPathOutput, outputReportName);
-                                string colaborador = p360Notificacion.CodColab.ToString();
+                                ReportRenderRequest renderRequest =
+                                    new ReportRenderRequest(
+                                        reportUID,
+                                        reportName,
+                                        p360Notificacion.CodColab,
+                                        p360Notificacion.ReferenceEventId,
+                                        renderTimestamp,
+                                        reportPathOutput,
+                                        reportPathSource,
+                                        reportFileName);
+                                ReportRenderResult renderResult;
+                                ReportProcessSnapshot beforeRender =
+                                    ReportRenderDiagnostics.Capture();
 
                                 using (IOperationScope render =
                                     TelemetryContext.BeginOperation(
@@ -133,76 +155,60 @@ namespace ReportGenerator
                                 {
                                     try
                                     {
-                                        // Uso de bloque using para asegurar que el MemoryStream se dispone
-                                        using (MemoryStream reporteEnMemoria = new MemoryStream())
+                                        renderResult = await reportRenderer
+                                            .RenderAsync(
+                                                renderRequest,
+                                                context.CancellationToken);
+                                        if (!renderResult.HasArtifact)
                                         {
-                                            DateTime v_fechaCorteReporte = DateTime.Now.AddDays(-30);
-                                            dynamic oReporteXtraReport = null;
+                                            throw new ReportRenderException(
+                                                "artifact.missing",
+                                                permanent: true,
+                                                message: "DevExpress no produjo un PDF.");
+                                        }
 
-                                            // Determinar el reporte según reportUID
-                                            switch (reportUID)
-                                            {
-                                                case "AURX":    // Auditoría RX
-                                                    oReporteXtraReport = new XtraReportFuerzaVentas_Auditoria_RX();
-                                                    if (oReporteXtraReport != null)
-                                                    {
-                                                        oReporteXtraReport.Parameters["p_fechaCorteReporte"].Value = v_fechaCorteReporte;
-                                                        oReporteXtraReport.Parameters["p_periodo"].Value = "MAT";
-                                                        oReporteXtraReport.Parameters["p_colaborador"].Value = colaborador;
-                                                        oReporteXtraReport.RequestParameters = false;
-                                                        oReporteXtraReport.ExportToPdf(reporteEnMemoria);
-                                                    }
-                                                    break;
-                                                case "AUMD":    // Auditoría Mercado
-                                                    oReporteXtraReport = new XtraReportFuerzaVentas_Auditoria_VTA();
-                                                    if (oReporteXtraReport != null)
-                                                    {
-                                                        oReporteXtraReport.Parameters["p_fechaCorteReporte"].Value = v_fechaCorteReporte;
-                                                        oReporteXtraReport.Parameters["p_periodo"].Value = "MAT";
-                                                        oReporteXtraReport.Parameters["p_colaborador"].Value = colaborador;
-                                                        oReporteXtraReport.RequestParameters = false;
-                                                        oReporteXtraReport.ExportToPdf(reporteEnMemoria);
-                                                    }
-                                                    break;
-                                                case "RPED":    // Registro de pedido
-                                                case "XPED":    // Anulación de pedido
-                                                case "VPED":    // Devolución de pedido
-                                                    {
-                                                        int v_cod_pedido = Convert.ToInt32(p360Notificacion.ReferenceEventId);
-                                                        oReporteXtraReport = new XtraReportPedidosP360(labConstants);
-                                                        oReporteXtraReport.Parameters["p_cod_pedido"].Value = v_cod_pedido;
-                                                        oReporteXtraReport.RequestParameters = false;
-                                                        oReporteXtraReport.ExportToPdf(reporteEnMemoria);
-                                                    }
-                                                    break;
-                                                case "DPED":
-                                                    {
-                                                        string codigoUnicoDespacho_CUD = p360Notificacion.ReferenceEventId;
-                                                        int codigoPedido = ModuleCapaAccesoDatos.GetCodPedidoPorCodUnicoDespachoCUD(codigoUnicoDespacho_CUD);
-                                                        oReporteXtraReport = new XtraReportDespachosPedidosP360(labConstants);
-                                                        oReporteXtraReport.Parameters["p_cod_pedido"].Value = codigoPedido;
-                                                        oReporteXtraReport.RequestParameters = false;
-                                                        oReporteXtraReport.ExportToPdf(reporteEnMemoria);
-                                                    }
-                                                    break;
-                                                default:
-                                                    oReporteXtraReport = null;
-                                                    break;
-                                            }
-
-                                            // Reiniciar la posición del MemoryStream para escritura de archivo
-                                            reporteEnMemoria.Seek(0, SeekOrigin.Begin);
-                                            File.WriteAllBytes(outputPathandReportName, reporteEnMemoria.ToArray());
-                                        } // Fin de using MemoryStream
-
-                                        render.Complete();
+                                        ReportProcessSnapshot afterRender =
+                                            ReportRenderDiagnostics.Capture();
+                                        render.Complete(
+                                            fields: ReportRenderDiagnostics
+                                                .CreateFields(
+                                                    reportRenderer.RendererKind,
+                                                    renderResult,
+                                                    beforeRender,
+                                                    afterRender));
+                                    }
+                                    catch (OperationCanceledException)
+                                        when (context.CancellationToken
+                                            .IsCancellationRequested)
+                                    {
+                                        ReportProcessSnapshot afterRender =
+                                            ReportRenderDiagnostics.Capture();
+                                        render.Complete(
+                                            TelemetryOutcomes.Cancelled,
+                                            ReportRenderDiagnostics
+                                                .CreateFailureFields(
+                                                    reportRenderer.RendererKind,
+                                                    beforeRender,
+                                                    afterRender));
+                                        throw;
                                     }
                                     catch (Exception renderError)
                                     {
-                                        render.Fail(renderError);
+                                        ReportProcessSnapshot afterRender =
+                                            ReportRenderDiagnostics.Capture();
+                                        render.Fail(
+                                            renderError,
+                                            ReportRenderDiagnostics
+                                                .CreateFailureFields(
+                                                    reportRenderer.RendererKind,
+                                                    beforeRender,
+                                                    afterRender));
                                         throw;
                                     }
                                 }
+
+                                string outputPathandReportName =
+                                    renderResult.ArtifactPath;
 
                                 // Envío de correo si está habilitado
                                 if (reportSendMail)
@@ -218,6 +224,14 @@ namespace ReportGenerator
                                     notification.Complete(
                                         TelemetryOutcomes.Skipped);
                                 }
+                            }
+                            catch (OperationCanceledException)
+                                when (context.CancellationToken
+                                    .IsCancellationRequested)
+                            {
+                                notification.Complete(
+                                    TelemetryOutcomes.Cancelled);
+                                throw;
                             }
                             catch (Exception exNotificacion)
                             {

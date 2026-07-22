@@ -32,6 +32,7 @@ namespace SchedulerP360Insight.Observability
         public const string Notification = "notification";
         public const string RenderCrystal = "render.crystal";
         public const string RenderDevExpress = "render.devexpress";
+        public const string RenderHtml = "render.html";
         public const string DeliverySmtp = "delivery.smtp";
         public const string DataReportSchedules = "data.report-schedules";
         public const string DataNotificationQueue = "data.notification-queue";
