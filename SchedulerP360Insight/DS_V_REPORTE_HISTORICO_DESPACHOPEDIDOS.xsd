@@ -1,0 +1,410 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="DS_V_REPORTE_HISTORICO_DESPACHOPEDIDOS" targetNamespace="http://tempuri.org/DS_V_REPORTE_HISTORICO_DESPACHOPEDIDOS.xsd" xmlns:mstns="http://tempuri.org/DS_V_REPORTE_HISTORICO_DESPACHOPEDIDOS.xsd" xmlns="http://tempuri.org/DS_V_REPORTE_HISTORICO_DESPACHOPEDIDOS.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:msprop="urn:schemas-microsoft-com:xml-msprop" attributeFormDefault="qualified" elementFormDefault="qualified">
+  <xs:annotation>
+    <xs:appinfo source="urn:schemas-microsoft-com:xml-msdatasource">
+      <DataSource DefaultConnectionIndex="0" FunctionsComponentName="QueriesTableAdapter" Modifier="AutoLayout, AnsiClass, Class, Public" SchemaSerializationMode="IncludeSchema" xmlns="urn:schemas-microsoft-com:xml-msdatasource">
+        <Connections>
+          <Connection AppSettingsObjectName="Settings" AppSettingsPropertyName="CadenaConeccionP360" IsAppSettingsProperty="true" Modifier="Assembly" Name="CadenaConeccionP360 (Settings)" ParameterPrefix="@" PropertyReference="ApplicationSettings.SchedulerP360Insight.Properties.Settings.GlobalReference.Default.CadenaConeccionP360" Provider="System.Data.SqlClient" />
+        </Connections>
+        <Tables>
+          <TableAdapter BaseClass="System.ComponentModel.Component" DataAccessorModifier="AutoLayout, AnsiClass, Class, Public" DataAccessorName="V_REPORTE_HISTORICO_DESPACHOPEDIDOSTableAdapter" GeneratorDataComponentClassName="V_REPORTE_HISTORICO_DESPACHOPEDIDOSTableAdapter" Name="V_REPORTE_HISTORICO_DESPACHOPEDIDOS" UserDataComponentName="V_REPORTE_HISTORICO_DESPACHOPEDIDOSTableAdapter">
+            <MainSource>
+              <DbSource ConnectionRef="CadenaConeccionP360 (Settings)" DbObjectName="" DbObjectType="Unknown" FillMethodModifier="Public" FillMethodName="Fill" GenerateMethods="Both" GenerateShortCommands="false" GeneratorGetMethodName="GetData" GeneratorSourceName="Fill" GetMethodModifier="Public" GetMethodName="GetData" QueryType="Rowset" ScalarCallRetval="System.Object, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" UseOptimisticConcurrency="false" UserGetMethodName="GetData" UserSourceName="Fill">
+                <SelectCommand>
+                  <DbCommand CommandType="Text" ModifiedByUser="true">
+                    <CommandText>select 
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."cod_cliente",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."cod_pedido",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."estado_pedido",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."fecha_pedido",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."fecha_entrega_pedido",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."despachador_pedido",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."cliente",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."tipo_visitado",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."grupo_cliente",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."categoria_cliente",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."cadena_cliente",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."ciudad",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."direccion",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."nombre_contacto",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."supervisor",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."colaborador",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."observaciones",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."latitud",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."longitud",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."pedido_unidades_reales",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."pedido_unidades_bonificadas",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."unidades_reales_despachadas",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."unidades_bonificadas_despachadas",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."saldo_unidades",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."saldo_bonificaciones",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."pedido_valor_venta_pvf",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."pedido_valor_venta_pvp",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."pedido_valor_descuento",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."subtotal_pedido_valor_venta_pvf",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."subtotal_pedido_valor_venta_pvp",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."subtotal_pedido_valor_descuento",
+       "mobile.V_DESPACHOSPEDIDO_PED0004"."cod_despacho" as "DESPACHOS_PEDIDO_cod_despacho",
+       "mobile.V_DESPACHOSPEDIDO_PED0004"."CUD" as "DESPACHOS_PEDIDO_CUD",
+       "mobile.V_DESPACHOSPEDIDO_PED0004"."cod_item" as "DESPACHOS_PEDIDO_cod_item",
+       "mobile.V_DESPACHOSPEDIDO_PED0004"."item" as "DESPACHOS_PEDIDO_item",
+       "mobile.V_DESPACHOSPEDIDO_PED0004"."producto" as "DESPACHOS_PEDIDO_producto",
+       "mobile.V_DESPACHOSPEDIDO_PED0004"."linea" as "DESPACHOS_PEDIDO_linea",
+       "mobile.V_DESPACHOSPEDIDO_PED0004"."marca" as "DESPACHOS_PEDIDO_marca",
+       "mobile.V_DESPACHOSPEDIDO_PED0004"."categoria" as "DESPACHOS_PEDIDO_categoria",
+       "mobile.V_DESPACHOSPEDIDO_PED0004"."numero_lote" as "DESPACHOS_PEDIDO_numero_lote",
+       "mobile.V_DESPACHOSPEDIDO_PED0004"."vida_util" as "DESPACHOS_PEDIDO_vida_util",
+	 "mobile.V_DESPACHOSPEDIDO_PED0004"."numero_factura" as "DESPACHOS_PEDIDO_numero_factura",
+	 "mobile.V_DESPACHOSPEDIDO_PED0004"."fecha_vencimiento_lote" as "DESPACHOS_PEDIDO_fecha_vencimiento_lote",
+       "mobile.V_DESPACHOSPEDIDO_PED0004"."unidades_reales_despachadas" as "DESPACHOS_PEDIDO_unidades_reales_despachadas",
+       "mobile.V_DESPACHOSPEDIDO_PED0004"."unidades_bonificadas_despachadas" as "DESPACHOS_PEDIDO_unidades_bonificadas_despachadas",
+       "mobile.V_DESPACHOSPEDIDO_PED0004"."fecha_despacho" as "DESPACHOS_PEDIDO_fecha_despacho",
+       "mobile.V_DESPACHOSPEDIDO_PED0004"."estado_despacho" as "DESPACHOS_PEDIDO_estado_despacho",
+	 "mobile.V_DESPACHOSPEDIDO_PED0004"."observaciones" as "DESPACHOS_PEDIDO_observaciones"
+  from ("mobile"."V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"
+  left join "mobile"."V_DESPACHOSPEDIDO_PED0004"
+       "mobile.V_DESPACHOSPEDIDO_PED0004"
+       on ("mobile.V_DESPACHOSPEDIDO_PED0004"."cod_pedido" = "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."cod_pedido"))
+order by 
+	"mobile.V_DESPACHOSPEDIDO_PED0004"."cod_despacho" DESC</CommandText>
+                    <Parameters />
+                  </DbCommand>
+                </SelectCommand>
+              </DbSource>
+            </MainSource>
+            <Mappings>
+              <Mapping SourceColumn="cod_pedido" DataSetColumn="cod_pedido" />
+              <Mapping SourceColumn="fecha_pedido" DataSetColumn="fecha_pedido" />
+              <Mapping SourceColumn="fecha_entrega_pedido" DataSetColumn="fecha_entrega_pedido" />
+              <Mapping SourceColumn="despachador_pedido" DataSetColumn="despachador_pedido" />
+              <Mapping SourceColumn="cliente" DataSetColumn="cliente" />
+              <Mapping SourceColumn="tipo_visitado" DataSetColumn="tipo_visitado" />
+              <Mapping SourceColumn="grupo_cliente" DataSetColumn="grupo_cliente" />
+              <Mapping SourceColumn="categoria_cliente" DataSetColumn="categoria_cliente" />
+              <Mapping SourceColumn="cadena_cliente" DataSetColumn="cadena_cliente" />
+              <Mapping SourceColumn="ciudad" DataSetColumn="ciudad" />
+              <Mapping SourceColumn="direccion" DataSetColumn="direccion" />
+              <Mapping SourceColumn="nombre_contacto" DataSetColumn="nombre_contacto" />
+              <Mapping SourceColumn="colaborador" DataSetColumn="colaborador" />
+              <Mapping SourceColumn="observaciones" DataSetColumn="observaciones" />
+              <Mapping SourceColumn="latitud" DataSetColumn="latitud" />
+              <Mapping SourceColumn="longitud" DataSetColumn="longitud" />
+              <Mapping SourceColumn="pedido_unidades_reales" DataSetColumn="pedido_unidades_reales" />
+              <Mapping SourceColumn="pedido_unidades_bonificadas" DataSetColumn="pedido_unidades_bonificadas" />
+              <Mapping SourceColumn="unidades_reales_despachadas" DataSetColumn="unidades_reales_despachadas" />
+              <Mapping SourceColumn="unidades_bonificadas_despachadas" DataSetColumn="unidades_bonificadas_despachadas" />
+              <Mapping SourceColumn="saldo_unidades" DataSetColumn="saldo_unidades" />
+              <Mapping SourceColumn="saldo_bonificaciones" DataSetColumn="saldo_bonificaciones" />
+              <Mapping SourceColumn="pedido_valor_venta_pvf" DataSetColumn="pedido_valor_venta_pvf" />
+              <Mapping SourceColumn="pedido_valor_venta_pvp" DataSetColumn="pedido_valor_venta_pvp" />
+              <Mapping SourceColumn="pedido_valor_descuento" DataSetColumn="pedido_valor_descuento" />
+              <Mapping SourceColumn="subtotal_pedido_valor_venta_pvf" DataSetColumn="subtotal_pedido_valor_venta_pvf" />
+              <Mapping SourceColumn="subtotal_pedido_valor_venta_pvp" DataSetColumn="subtotal_pedido_valor_venta_pvp" />
+              <Mapping SourceColumn="subtotal_pedido_valor_descuento" DataSetColumn="subtotal_pedido_valor_descuento" />
+              <Mapping SourceColumn="cod_cliente" DataSetColumn="cod_cliente" />
+              <Mapping SourceColumn="supervisor" DataSetColumn="supervisor" />
+              <Mapping SourceColumn="estado_pedido" DataSetColumn="estado_pedido" />
+              <Mapping SourceColumn="DESPACHOS_PEDIDO_cod_despacho" DataSetColumn="DESPACHOS_PEDIDO_cod_despacho" />
+              <Mapping SourceColumn="DESPACHOS_PEDIDO_cod_item" DataSetColumn="DESPACHOS_PEDIDO_cod_item" />
+              <Mapping SourceColumn="DESPACHOS_PEDIDO_item" DataSetColumn="DESPACHOS_PEDIDO_item" />
+              <Mapping SourceColumn="DESPACHOS_PEDIDO_producto" DataSetColumn="DESPACHOS_PEDIDO_producto" />
+              <Mapping SourceColumn="DESPACHOS_PEDIDO_linea" DataSetColumn="DESPACHOS_PEDIDO_linea" />
+              <Mapping SourceColumn="DESPACHOS_PEDIDO_marca" DataSetColumn="DESPACHOS_PEDIDO_marca" />
+              <Mapping SourceColumn="DESPACHOS_PEDIDO_categoria" DataSetColumn="DESPACHOS_PEDIDO_categoria" />
+              <Mapping SourceColumn="DESPACHOS_PEDIDO_numero_lote" DataSetColumn="DESPACHOS_PEDIDO_numero_lote" />
+              <Mapping SourceColumn="DESPACHOS_PEDIDO_vida_util" DataSetColumn="DESPACHOS_PEDIDO_vida_util" />
+              <Mapping SourceColumn="DESPACHOS_PEDIDO_numero_factura" DataSetColumn="DESPACHOS_PEDIDO_numero_factura" />
+              <Mapping SourceColumn="DESPACHOS_PEDIDO_fecha_vencimiento_lote" DataSetColumn="DESPACHOS_PEDIDO_fecha_vencimiento_lote" />
+              <Mapping SourceColumn="DESPACHOS_PEDIDO_unidades_reales_despachadas" DataSetColumn="DESPACHOS_PEDIDO_unidades_reales_despachadas" />
+              <Mapping SourceColumn="DESPACHOS_PEDIDO_unidades_bonificadas_despachadas" DataSetColumn="DESPACHOS_PEDIDO_unidades_bonificadas_despachadas" />
+              <Mapping SourceColumn="DESPACHOS_PEDIDO_fecha_despacho" DataSetColumn="DESPACHOS_PEDIDO_fecha_despacho" />
+              <Mapping SourceColumn="DESPACHOS_PEDIDO_estado_despacho" DataSetColumn="DESPACHOS_PEDIDO_estado_despacho" />
+              <Mapping SourceColumn="DESPACHOS_PEDIDO_observaciones" DataSetColumn="DESPACHOS_PEDIDO_observaciones" />
+              <Mapping SourceColumn="DESPACHOS_PEDIDO_CUD" DataSetColumn="DESPACHOS_PEDIDO_CUD" />
+            </Mappings>
+            <Sources>
+              <DbSource ConnectionRef="CadenaConeccionP360 (Settings)" DbObjectName="" DbObjectType="Unknown" FillMethodModifier="Public" FillMethodName="FillByCodPedido" GenerateMethods="Both" GenerateShortCommands="true" GeneratorGetMethodName="GetDataByCodPedido" GeneratorSourceName="FillByCodPedido" GetMethodModifier="Public" GetMethodName="GetDataByCodPedido" QueryType="Rowset" ScalarCallRetval="System.Object, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" UseOptimisticConcurrency="true" UserGetMethodName="GetDataByCodPedido" UserSourceName="FillByCodPedido">
+                <SelectCommand>
+                  <DbCommand CommandType="Text" ModifiedByUser="true">
+                    <CommandText>select 
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."cod_cliente",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."cod_pedido",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."estado_pedido",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."fecha_pedido",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."fecha_entrega_pedido",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."despachador_pedido",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."cliente",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."tipo_visitado",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."grupo_cliente",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."categoria_cliente",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."cadena_cliente",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."ciudad",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."direccion",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."nombre_contacto",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."supervisor",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."colaborador",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."observaciones",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."latitud",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."longitud",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."pedido_unidades_reales",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."pedido_unidades_bonificadas",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."unidades_reales_despachadas",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."unidades_bonificadas_despachadas",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."saldo_unidades",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."saldo_bonificaciones",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."pedido_valor_venta_pvf",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."pedido_valor_venta_pvp",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."pedido_valor_descuento",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."subtotal_pedido_valor_venta_pvf",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."subtotal_pedido_valor_venta_pvp",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."subtotal_pedido_valor_descuento",
+       "mobile.V_DESPACHOSPEDIDO_PED0004"."cod_despacho" as "DESPACHOS_PEDIDO_cod_despacho",
+       "mobile.V_DESPACHOSPEDIDO_PED0004"."CUD" as "DESPACHOS_PEDIDO_CUD",
+       "mobile.V_DESPACHOSPEDIDO_PED0004"."cod_item" as "DESPACHOS_PEDIDO_cod_item",
+       "mobile.V_DESPACHOSPEDIDO_PED0004"."item" as "DESPACHOS_PEDIDO_item",
+       "mobile.V_DESPACHOSPEDIDO_PED0004"."producto" as "DESPACHOS_PEDIDO_producto",
+       "mobile.V_DESPACHOSPEDIDO_PED0004"."linea" as "DESPACHOS_PEDIDO_linea",
+       "mobile.V_DESPACHOSPEDIDO_PED0004"."marca" as "DESPACHOS_PEDIDO_marca",
+       "mobile.V_DESPACHOSPEDIDO_PED0004"."categoria" as "DESPACHOS_PEDIDO_categoria",
+       "mobile.V_DESPACHOSPEDIDO_PED0004"."numero_lote" as "DESPACHOS_PEDIDO_numero_lote",
+       "mobile.V_DESPACHOSPEDIDO_PED0004"."vida_util" as "DESPACHOS_PEDIDO_vida_util",
+	 "mobile.V_DESPACHOSPEDIDO_PED0004"."numero_factura" as "DESPACHOS_PEDIDO_numero_factura",
+	 "mobile.V_DESPACHOSPEDIDO_PED0004"."fecha_vencimiento_lote" as "DESPACHOS_PEDIDO_fecha_vencimiento_lote",
+       "mobile.V_DESPACHOSPEDIDO_PED0004"."unidades_reales_despachadas" as "DESPACHOS_PEDIDO_unidades_reales_despachadas",
+       "mobile.V_DESPACHOSPEDIDO_PED0004"."unidades_bonificadas_despachadas" as "DESPACHOS_PEDIDO_unidades_bonificadas_despachadas",
+       "mobile.V_DESPACHOSPEDIDO_PED0004"."fecha_despacho" as "DESPACHOS_PEDIDO_fecha_despacho",
+       "mobile.V_DESPACHOSPEDIDO_PED0004"."estado_despacho" as "DESPACHOS_PEDIDO_estado_despacho",
+	 "mobile.V_DESPACHOSPEDIDO_PED0004"."observaciones" as "DESPACHOS_PEDIDO_observaciones"
+  from ("mobile"."V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"
+  left join "mobile"."V_DESPACHOSPEDIDO_PED0004"
+       "mobile.V_DESPACHOSPEDIDO_PED0004"
+       on ("mobile.V_DESPACHOSPEDIDO_PED0004"."cod_pedido" = "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."cod_pedido"))
+       WHERE "mobile.V_DESPACHOSPEDIDO_PED0004"."cod_pedido"=@p_cod_pedido
+order by 
+	"mobile.V_DESPACHOSPEDIDO_PED0004"."cod_despacho" DESC</CommandText>
+                    <Parameters>
+                      <Parameter AllowDbNull="false" AutogeneratedName="p_cod_pedido" ColumnName="cod_pedido" DataSourceName="pharma360BSG.mobile.V_DESPACHOSPEDIDO_PED0004" DataTypeServer="int" DbType="Int32" Direction="Input" ParameterName="@p_cod_pedido" Precision="0" ProviderType="Int" Scale="0" Size="4" SourceColumn="cod_pedido" SourceColumnNullMapping="false" SourceVersion="Current" />
+                    </Parameters>
+                  </DbCommand>
+                </SelectCommand>
+              </DbSource>
+            </Sources>
+          </TableAdapter>
+        </Tables>
+        <Sources />
+      </DataSource>
+    </xs:appinfo>
+  </xs:annotation>
+  <xs:element name="DS_V_REPORTE_HISTORICO_DESPACHOPEDIDOS" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msdata:EnforceConstraints="False" msprop:Generator_UserDSName="DS_V_REPORTE_HISTORICO_DESPACHOPEDIDOS" msprop:EnableTableAdapterManager="true" msprop:Generator_DataSetName="DS_V_REPORTE_HISTORICO_DESPACHOPEDIDOS">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="V_REPORTE_HISTORICO_DESPACHOPEDIDOS" msprop:Generator_RowEvHandlerName="V_REPORTE_HISTORICO_DESPACHOPEDIDOSRowChangeEventHandler" msprop:Generator_RowDeletedName="V_REPORTE_HISTORICO_DESPACHOPEDIDOSRowDeleted" msprop:Generator_RowDeletingName="V_REPORTE_HISTORICO_DESPACHOPEDIDOSRowDeleting" msprop:Generator_RowEvArgName="V_REPORTE_HISTORICO_DESPACHOPEDIDOSRowChangeEvent" msprop:Generator_TablePropName="V_REPORTE_HISTORICO_DESPACHOPEDIDOS" msprop:Generator_RowChangedName="V_REPORTE_HISTORICO_DESPACHOPEDIDOSRowChanged" msprop:Generator_UserTableName="V_REPORTE_HISTORICO_DESPACHOPEDIDOS" msprop:Generator_RowChangingName="V_REPORTE_HISTORICO_DESPACHOPEDIDOSRowChanging" msprop:Generator_RowClassName="V_REPORTE_HISTORICO_DESPACHOPEDIDOSRow" msprop:Generator_TableClassName="V_REPORTE_HISTORICO_DESPACHOPEDIDOSDataTable" msprop:Generator_TableVarName="tableV_REPORTE_HISTORICO_DESPACHOPEDIDOS">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="cod_pedido" msprop:Generator_ColumnPropNameInTable="cod_pedidoColumn" msprop:Generator_ColumnPropNameInRow="cod_pedido" msprop:Generator_UserColumnName="cod_pedido" msprop:Generator_ColumnVarNameInTable="columncod_pedido" type="xs:int" />
+              <xs:element name="fecha_pedido" msprop:Generator_ColumnPropNameInTable="fecha_pedidoColumn" msprop:Generator_ColumnPropNameInRow="fecha_pedido" msprop:Generator_UserColumnName="fecha_pedido" msprop:Generator_ColumnVarNameInTable="columnfecha_pedido" type="xs:dateTime" />
+              <xs:element name="fecha_entrega_pedido" msprop:Generator_ColumnPropNameInTable="fecha_entrega_pedidoColumn" msprop:Generator_ColumnPropNameInRow="fecha_entrega_pedido" msprop:Generator_UserColumnName="fecha_entrega_pedido" msprop:Generator_ColumnVarNameInTable="columnfecha_entrega_pedido" type="xs:dateTime" minOccurs="0" />
+              <xs:element name="despachador_pedido" msprop:Generator_ColumnPropNameInTable="despachador_pedidoColumn" msprop:Generator_ColumnPropNameInRow="despachador_pedido" msprop:Generator_UserColumnName="despachador_pedido" msprop:Generator_ColumnVarNameInTable="columndespachador_pedido" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="4000" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="cliente" msprop:Generator_ColumnPropNameInTable="clienteColumn" msprop:Generator_ColumnPropNameInRow="cliente" msprop:Generator_UserColumnName="cliente" msprop:Generator_ColumnVarNameInTable="columncliente" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="80" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="tipo_visitado" msprop:Generator_ColumnPropNameInTable="tipo_visitadoColumn" msprop:Generator_ColumnPropNameInRow="tipo_visitado" msprop:Generator_UserColumnName="tipo_visitado" msprop:Generator_ColumnVarNameInTable="columntipo_visitado">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="1" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="grupo_cliente" msprop:Generator_ColumnPropNameInTable="grupo_clienteColumn" msprop:Generator_ColumnPropNameInRow="grupo_cliente" msprop:Generator_UserColumnName="grupo_cliente" msprop:Generator_ColumnVarNameInTable="columngrupo_cliente" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="25" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="categoria_cliente" msprop:Generator_ColumnPropNameInTable="categoria_clienteColumn" msprop:Generator_ColumnPropNameInRow="categoria_cliente" msprop:Generator_UserColumnName="categoria_cliente" msprop:Generator_ColumnVarNameInTable="columncategoria_cliente" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="50" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="cadena_cliente" msprop:Generator_ColumnPropNameInTable="cadena_clienteColumn" msprop:Generator_ColumnPropNameInRow="cadena_cliente" msprop:Generator_UserColumnName="cadena_cliente" msprop:Generator_ColumnVarNameInTable="columncadena_cliente" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="40" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="ciudad" msprop:Generator_ColumnPropNameInTable="ciudadColumn" msprop:Generator_ColumnPropNameInRow="ciudad" msprop:Generator_UserColumnName="ciudad" msprop:Generator_ColumnVarNameInTable="columnciudad" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="30" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="direccion" msprop:Generator_ColumnPropNameInTable="direccionColumn" msprop:Generator_ColumnPropNameInRow="direccion" msprop:Generator_UserColumnName="direccion" msprop:Generator_ColumnVarNameInTable="columndireccion" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="300" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="nombre_contacto" msprop:Generator_ColumnPropNameInTable="nombre_contactoColumn" msprop:Generator_ColumnPropNameInRow="nombre_contacto" msprop:Generator_UserColumnName="nombre_contacto" msprop:Generator_ColumnVarNameInTable="columnnombre_contacto" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="150" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="colaborador" msprop:Generator_ColumnPropNameInTable="colaboradorColumn" msprop:Generator_ColumnPropNameInRow="colaborador" msprop:Generator_UserColumnName="colaborador" msprop:Generator_ColumnVarNameInTable="columncolaborador" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="83" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="observaciones" msprop:Generator_ColumnPropNameInTable="observacionesColumn" msprop:Generator_ColumnPropNameInRow="observaciones" msprop:Generator_UserColumnName="observaciones" msprop:Generator_ColumnVarNameInTable="columnobservaciones" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="400" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="latitud" msprop:Generator_ColumnPropNameInTable="latitudColumn" msprop:Generator_ColumnPropNameInRow="latitud" msprop:Generator_UserColumnName="latitud" msprop:Generator_ColumnVarNameInTable="columnlatitud" type="xs:double" />
+              <xs:element name="longitud" msprop:Generator_ColumnPropNameInTable="longitudColumn" msprop:Generator_ColumnPropNameInRow="longitud" msprop:Generator_UserColumnName="longitud" msprop:Generator_ColumnVarNameInTable="columnlongitud" type="xs:double" />
+              <xs:element name="pedido_unidades_reales" msprop:Generator_ColumnPropNameInTable="pedido_unidades_realesColumn" msprop:Generator_ColumnPropNameInRow="pedido_unidades_reales" msprop:Generator_UserColumnName="pedido_unidades_reales" msprop:Generator_ColumnVarNameInTable="columnpedido_unidades_reales" type="xs:int" minOccurs="0" />
+              <xs:element name="pedido_unidades_bonificadas" msprop:Generator_ColumnPropNameInTable="pedido_unidades_bonificadasColumn" msprop:Generator_ColumnPropNameInRow="pedido_unidades_bonificadas" msprop:Generator_UserColumnName="pedido_unidades_bonificadas" msprop:Generator_ColumnVarNameInTable="columnpedido_unidades_bonificadas" type="xs:int" minOccurs="0" />
+              <xs:element name="unidades_reales_despachadas" msprop:Generator_ColumnPropNameInTable="unidades_reales_despachadasColumn" msprop:Generator_ColumnPropNameInRow="unidades_reales_despachadas" msprop:Generator_UserColumnName="unidades_reales_despachadas" msprop:Generator_ColumnVarNameInTable="columnunidades_reales_despachadas" type="xs:int" minOccurs="0" />
+              <xs:element name="unidades_bonificadas_despachadas" msprop:Generator_ColumnPropNameInTable="unidades_bonificadas_despachadasColumn" msprop:Generator_ColumnPropNameInRow="unidades_bonificadas_despachadas" msprop:Generator_UserColumnName="unidades_bonificadas_despachadas" msprop:Generator_ColumnVarNameInTable="columnunidades_bonificadas_despachadas" type="xs:int" minOccurs="0" />
+              <xs:element name="saldo_unidades" msprop:Generator_ColumnPropNameInTable="saldo_unidadesColumn" msprop:Generator_ColumnPropNameInRow="saldo_unidades" msprop:Generator_UserColumnName="saldo_unidades" msprop:Generator_ColumnVarNameInTable="columnsaldo_unidades" type="xs:int" minOccurs="0" />
+              <xs:element name="saldo_bonificaciones" msprop:Generator_ColumnPropNameInTable="saldo_bonificacionesColumn" msprop:Generator_ColumnPropNameInRow="saldo_bonificaciones" msprop:Generator_UserColumnName="saldo_bonificaciones" msprop:Generator_ColumnVarNameInTable="columnsaldo_bonificaciones" type="xs:int" minOccurs="0" />
+              <xs:element name="pedido_valor_venta_pvf" msdata:ReadOnly="true" msprop:Generator_ColumnPropNameInTable="pedido_valor_venta_pvfColumn" msprop:Generator_ColumnPropNameInRow="pedido_valor_venta_pvf" msprop:Generator_UserColumnName="pedido_valor_venta_pvf" msprop:Generator_ColumnVarNameInTable="columnpedido_valor_venta_pvf" type="xs:decimal" minOccurs="0" />
+              <xs:element name="pedido_valor_venta_pvp" msdata:ReadOnly="true" msprop:Generator_ColumnPropNameInTable="pedido_valor_venta_pvpColumn" msprop:Generator_ColumnPropNameInRow="pedido_valor_venta_pvp" msprop:Generator_UserColumnName="pedido_valor_venta_pvp" msprop:Generator_ColumnVarNameInTable="columnpedido_valor_venta_pvp" type="xs:decimal" minOccurs="0" />
+              <xs:element name="pedido_valor_descuento" msdata:ReadOnly="true" msprop:Generator_ColumnPropNameInTable="pedido_valor_descuentoColumn" msprop:Generator_ColumnPropNameInRow="pedido_valor_descuento" msprop:Generator_UserColumnName="pedido_valor_descuento" msprop:Generator_ColumnVarNameInTable="columnpedido_valor_descuento" type="xs:decimal" minOccurs="0" />
+              <xs:element name="subtotal_pedido_valor_venta_pvf" msdata:ReadOnly="true" msprop:Generator_ColumnPropNameInTable="subtotal_pedido_valor_venta_pvfColumn" msprop:Generator_ColumnPropNameInRow="subtotal_pedido_valor_venta_pvf" msprop:Generator_UserColumnName="subtotal_pedido_valor_venta_pvf" msprop:Generator_ColumnVarNameInTable="columnsubtotal_pedido_valor_venta_pvf" type="xs:decimal" minOccurs="0" />
+              <xs:element name="subtotal_pedido_valor_venta_pvp" msdata:ReadOnly="true" msprop:Generator_ColumnPropNameInTable="subtotal_pedido_valor_venta_pvpColumn" msprop:Generator_ColumnPropNameInRow="subtotal_pedido_valor_venta_pvp" msprop:Generator_UserColumnName="subtotal_pedido_valor_venta_pvp" msprop:Generator_ColumnVarNameInTable="columnsubtotal_pedido_valor_venta_pvp" type="xs:decimal" minOccurs="0" />
+              <xs:element name="subtotal_pedido_valor_descuento" msdata:ReadOnly="true" msprop:Generator_ColumnPropNameInTable="subtotal_pedido_valor_descuentoColumn" msprop:Generator_ColumnPropNameInRow="subtotal_pedido_valor_descuento" msprop:Generator_UserColumnName="subtotal_pedido_valor_descuento" msprop:Generator_ColumnVarNameInTable="columnsubtotal_pedido_valor_descuento" type="xs:decimal" minOccurs="0" />
+              <xs:element name="cod_cliente" msprop:Generator_ColumnPropNameInTable="cod_clienteColumn" msprop:Generator_ColumnPropNameInRow="cod_cliente" msprop:Generator_UserColumnName="cod_cliente" msprop:Generator_ColumnVarNameInTable="columncod_cliente">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="50" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="supervisor" msprop:Generator_ColumnPropNameInTable="supervisorColumn" msprop:Generator_ColumnPropNameInRow="supervisor" msprop:Generator_UserColumnName="supervisor" msprop:Generator_ColumnVarNameInTable="columnsupervisor" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="50" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="estado_pedido" msprop:Generator_ColumnPropNameInTable="estado_pedidoColumn" msprop:Generator_ColumnPropNameInRow="estado_pedido" msprop:Generator_UserColumnName="estado_pedido" msprop:Generator_ColumnVarNameInTable="columnestado_pedido">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="10" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="DESPACHOS_PEDIDO_cod_despacho" msprop:Generator_ColumnPropNameInTable="DESPACHOS_PEDIDO_cod_despachoColumn" msprop:Generator_ColumnPropNameInRow="DESPACHOS_PEDIDO_cod_despacho" msprop:Generator_UserColumnName="DESPACHOS_PEDIDO_cod_despacho" msprop:Generator_ColumnVarNameInTable="columnDESPACHOS_PEDIDO_cod_despacho" type="xs:int" minOccurs="0" />
+              <xs:element name="DESPACHOS_PEDIDO_cod_item" msprop:Generator_ColumnPropNameInTable="DESPACHOS_PEDIDO_cod_itemColumn" msprop:Generator_ColumnPropNameInRow="DESPACHOS_PEDIDO_cod_item" msprop:Generator_UserColumnName="DESPACHOS_PEDIDO_cod_item" msprop:Generator_ColumnVarNameInTable="columnDESPACHOS_PEDIDO_cod_item" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="20" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="DESPACHOS_PEDIDO_item" msdata:ReadOnly="true" msprop:Generator_ColumnPropNameInTable="DESPACHOS_PEDIDO_itemColumn" msprop:Generator_ColumnPropNameInRow="DESPACHOS_PEDIDO_item" msprop:Generator_UserColumnName="DESPACHOS_PEDIDO_item" msprop:Generator_ColumnVarNameInTable="columnDESPACHOS_PEDIDO_item" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="158" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="DESPACHOS_PEDIDO_producto" msdata:ReadOnly="true" msprop:Generator_ColumnPropNameInTable="DESPACHOS_PEDIDO_productoColumn" msprop:Generator_ColumnPropNameInRow="DESPACHOS_PEDIDO_producto" msprop:Generator_UserColumnName="DESPACHOS_PEDIDO_producto" msprop:Generator_ColumnVarNameInTable="columnDESPACHOS_PEDIDO_producto" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="50" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="DESPACHOS_PEDIDO_linea" msdata:ReadOnly="true" msprop:Generator_ColumnPropNameInTable="DESPACHOS_PEDIDO_lineaColumn" msprop:Generator_ColumnPropNameInRow="DESPACHOS_PEDIDO_linea" msprop:Generator_UserColumnName="DESPACHOS_PEDIDO_linea" msprop:Generator_ColumnVarNameInTable="columnDESPACHOS_PEDIDO_linea" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="30" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="DESPACHOS_PEDIDO_marca" msprop:Generator_ColumnPropNameInTable="DESPACHOS_PEDIDO_marcaColumn" msprop:Generator_ColumnPropNameInRow="DESPACHOS_PEDIDO_marca" msprop:Generator_UserColumnName="DESPACHOS_PEDIDO_marca" msprop:Generator_ColumnVarNameInTable="columnDESPACHOS_PEDIDO_marca" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="80" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="DESPACHOS_PEDIDO_categoria" msprop:Generator_ColumnPropNameInTable="DESPACHOS_PEDIDO_categoriaColumn" msprop:Generator_ColumnPropNameInRow="DESPACHOS_PEDIDO_categoria" msprop:Generator_UserColumnName="DESPACHOS_PEDIDO_categoria" msprop:Generator_ColumnVarNameInTable="columnDESPACHOS_PEDIDO_categoria" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="80" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="DESPACHOS_PEDIDO_numero_lote" msprop:Generator_ColumnPropNameInTable="DESPACHOS_PEDIDO_numero_loteColumn" msprop:Generator_ColumnPropNameInRow="DESPACHOS_PEDIDO_numero_lote" msprop:Generator_UserColumnName="DESPACHOS_PEDIDO_numero_lote" msprop:Generator_ColumnVarNameInTable="columnDESPACHOS_PEDIDO_numero_lote" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="50" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="DESPACHOS_PEDIDO_vida_util" msprop:Generator_ColumnPropNameInTable="DESPACHOS_PEDIDO_vida_utilColumn" msprop:Generator_ColumnPropNameInRow="DESPACHOS_PEDIDO_vida_util" msprop:Generator_UserColumnName="DESPACHOS_PEDIDO_vida_util" msprop:Generator_ColumnVarNameInTable="columnDESPACHOS_PEDIDO_vida_util" type="xs:int" minOccurs="0" />
+              <xs:element name="DESPACHOS_PEDIDO_numero_factura" msprop:Generator_ColumnPropNameInTable="DESPACHOS_PEDIDO_numero_facturaColumn" msprop:Generator_ColumnPropNameInRow="DESPACHOS_PEDIDO_numero_factura" msprop:Generator_UserColumnName="DESPACHOS_PEDIDO_numero_factura" msprop:Generator_ColumnVarNameInTable="columnDESPACHOS_PEDIDO_numero_factura" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="50" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="DESPACHOS_PEDIDO_fecha_vencimiento_lote" msprop:Generator_ColumnPropNameInTable="DESPACHOS_PEDIDO_fecha_vencimiento_loteColumn" msprop:Generator_ColumnPropNameInRow="DESPACHOS_PEDIDO_fecha_vencimiento_lote" msprop:Generator_UserColumnName="DESPACHOS_PEDIDO_fecha_vencimiento_lote" msprop:Generator_ColumnVarNameInTable="columnDESPACHOS_PEDIDO_fecha_vencimiento_lote" type="xs:dateTime" minOccurs="0" />
+              <xs:element name="DESPACHOS_PEDIDO_unidades_reales_despachadas" msprop:Generator_ColumnPropNameInTable="DESPACHOS_PEDIDO_unidades_reales_despachadasColumn" msprop:Generator_ColumnPropNameInRow="DESPACHOS_PEDIDO_unidades_reales_despachadas" msprop:Generator_UserColumnName="DESPACHOS_PEDIDO_unidades_reales_despachadas" msprop:Generator_ColumnVarNameInTable="columnDESPACHOS_PEDIDO_unidades_reales_despachadas" type="xs:int" minOccurs="0" />
+              <xs:element name="DESPACHOS_PEDIDO_unidades_bonificadas_despachadas" msprop:Generator_ColumnPropNameInTable="DESPACHOS_PEDIDO_unidades_bonificadas_despachadasColumn" msprop:Generator_ColumnPropNameInRow="DESPACHOS_PEDIDO_unidades_bonificadas_despachadas" msprop:Generator_UserColumnName="DESPACHOS_PEDIDO_unidades_bonificadas_despachadas" msprop:Generator_ColumnVarNameInTable="columnDESPACHOS_PEDIDO_unidades_bonificadas_despachadas" type="xs:int" minOccurs="0" />
+              <xs:element name="DESPACHOS_PEDIDO_fecha_despacho" msprop:Generator_ColumnPropNameInTable="DESPACHOS_PEDIDO_fecha_despachoColumn" msprop:Generator_ColumnPropNameInRow="DESPACHOS_PEDIDO_fecha_despacho" msprop:Generator_UserColumnName="DESPACHOS_PEDIDO_fecha_despacho" msprop:Generator_ColumnVarNameInTable="columnDESPACHOS_PEDIDO_fecha_despacho" type="xs:dateTime" minOccurs="0" />
+              <xs:element name="DESPACHOS_PEDIDO_estado_despacho" msprop:Generator_ColumnPropNameInTable="DESPACHOS_PEDIDO_estado_despachoColumn" msprop:Generator_ColumnPropNameInRow="DESPACHOS_PEDIDO_estado_despacho" msprop:Generator_UserColumnName="DESPACHOS_PEDIDO_estado_despacho" msprop:Generator_ColumnVarNameInTable="columnDESPACHOS_PEDIDO_estado_despacho" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="20" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="DESPACHOS_PEDIDO_observaciones" msprop:Generator_ColumnPropNameInTable="DESPACHOS_PEDIDO_observacionesColumn" msprop:Generator_ColumnPropNameInRow="DESPACHOS_PEDIDO_observaciones" msprop:Generator_UserColumnName="DESPACHOS_PEDIDO_observaciones" msprop:Generator_ColumnVarNameInTable="columnDESPACHOS_PEDIDO_observaciones" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="400" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="DESPACHOS_PEDIDO_CUD" msprop:Generator_ColumnPropNameInTable="DESPACHOS_PEDIDO_CUDColumn" msprop:Generator_ColumnPropNameInRow="DESPACHOS_PEDIDO_CUD" msprop:Generator_UserColumnName="DESPACHOS_PEDIDO_CUD" msprop:Generator_ColumnVarNameInTable="columnDESPACHOS_PEDIDO_CUD" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="12" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

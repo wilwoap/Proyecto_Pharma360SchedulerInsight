@@ -1,0 +1,183 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="customSqlQuery1.Sql" xml:space="preserve">
+    <value>select 
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."cod_cliente",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."cod_pedido",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."estado_pedido",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."fecha_pedido",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."fecha_entrega_pedido",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."despachador_pedido",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."cliente",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."tipo_visitado",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."grupo_cliente",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."categoria_cliente",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."cadena_cliente",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."ciudad",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."direccion",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."nombre_contacto",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."supervisor",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."colaborador",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."observaciones",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."latitud",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."longitud",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."pedido_unidades_reales",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."pedido_unidades_bonificadas",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."unidades_reales_despachadas",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."unidades_bonificadas_despachadas",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."saldo_unidades",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."saldo_bonificaciones",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."pedido_valor_venta_pvf",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."pedido_valor_venta_pvp",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."pedido_valor_descuento",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."subtotal_pedido_valor_venta_pvf",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."subtotal_pedido_valor_venta_pvp",
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."subtotal_pedido_valor_descuento",
+       "mobile.V_DESPACHOSPEDIDO_PED0004"."cod_despacho" as "DESPACHOS_PEDIDO_cod_despacho",
+	 "mobile.V_DESPACHOSPEDIDO_PED0004"."CUD" as "DESPACHOS_PEDIDO_CUD",
+       "mobile.V_DESPACHOSPEDIDO_PED0004"."cod_item" as "DESPACHOS_PEDIDO_cod_item",
+       "mobile.V_DESPACHOSPEDIDO_PED0004"."item" as "DESPACHOS_PEDIDO_item",
+       "mobile.V_DESPACHOSPEDIDO_PED0004"."producto" as "DESPACHOS_PEDIDO_producto",
+       "mobile.V_DESPACHOSPEDIDO_PED0004"."linea" as "DESPACHOS_PEDIDO_linea",
+       "mobile.V_DESPACHOSPEDIDO_PED0004"."marca" as "DESPACHOS_PEDIDO_marca",
+       "mobile.V_DESPACHOSPEDIDO_PED0004"."categoria" as "DESPACHOS_PEDIDO_categoria",
+       "mobile.V_DESPACHOSPEDIDO_PED0004"."numero_lote" as "DESPACHOS_PEDIDO_numero_lote",
+       "mobile.V_DESPACHOSPEDIDO_PED0004"."vida_util" as "DESPACHOS_PEDIDO_vida_util",
+	 "mobile.V_DESPACHOSPEDIDO_PED0004"."numero_factura" as "DESPACHOS_PEDIDO_numero_factura",
+	 "mobile.V_DESPACHOSPEDIDO_PED0004"."fecha_vencimiento_lote" as "DESPACHOS_PEDIDO_fecha_vencimiento_lote",
+       "mobile.V_DESPACHOSPEDIDO_PED0004"."unidades_reales_despachadas" as "DESPACHOS_PEDIDO_unidades_reales_despachadas",
+       "mobile.V_DESPACHOSPEDIDO_PED0004"."unidades_bonificadas_despachadas" as "DESPACHOS_PEDIDO_unidades_bonificadas_despachadas",
+       "mobile.V_DESPACHOSPEDIDO_PED0004"."fecha_despacho" as "DESPACHOS_PEDIDO_fecha_despacho",
+       "mobile.V_DESPACHOSPEDIDO_PED0004"."estado_despacho" as "DESPACHOS_PEDIDO_estado_despacho",
+	 "mobile.V_DESPACHOSPEDIDO_PED0004"."observaciones" as "DESPACHOS_PEDIDO_observaciones"
+  from ("mobile"."V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"
+       "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"
+  left join "mobile"."V_DESPACHOSPEDIDO_PED0004"
+       "mobile.V_DESPACHOSPEDIDO_PED0004"
+       on ("mobile.V_DESPACHOSPEDIDO_PED0004"."cod_pedido" = "mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."cod_pedido"))
+ where
+       ("mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO"."cod_pedido" = 1)
+order by 
+	"mobile.V_DESPACHOSPEDIDO_PED0004"."cod_despacho" DESC</value>
+  </data>
+  <data name="sqlDataSourceModoDisenio.ResultSchemaSerializable" xml:space="preserve">
+    <value>PERhdGFTZXQgTmFtZT0ic3FsRGF0YVNvdXJjZU1vZG9EaXNlbmlvIj48VmlldyBOYW1lPSJtb2JpbGVfVl9SRVBPUlRFX0hJU1RPUklDT19QRURJRE9TIj48RmllbGQgTmFtZT0iY29kX2NsaWVudGUiIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0iY29kX3BlZGlkbyIgVHlwZT0iSW50MzIiIC8+PEZpZWxkIE5hbWU9ImVzdGFkb19wZWRpZG8iIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0iZmVjaGFfcGVkaWRvIiBUeXBlPSJEYXRlVGltZSIgLz48RmllbGQgTmFtZT0iZmVjaGFfZW50cmVnYV9wZWRpZG8iIFR5cGU9IkRhdGVUaW1lIiAvPjxGaWVsZCBOYW1lPSJkZXNwYWNoYWRvcl9wZWRpZG8iIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0iY2xpZW50ZSIgVHlwZT0iU3RyaW5nIiAvPjxGaWVsZCBOYW1lPSJ0aXBvX3Zpc2l0YWRvIiBUeXBlPSJTdHJpbmciIC8+PEZpZWxkIE5hbWU9ImdydXBvX2NsaWVudGUiIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0iY2F0ZWdvcmlhX2NsaWVudGUiIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0iY2FkZW5hX2NsaWVudGUiIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0iY2l1ZGFkIiBUeXBlPSJTdHJpbmciIC8+PEZpZWxkIE5hbWU9ImRpcmVjY2lvbiIgVHlwZT0iU3RyaW5nIiAvPjxGaWVsZCBOYW1lPSJub21icmVfY29udGFjdG8iIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0ic3VwZXJ2aXNvciIgVHlwZT0iU3RyaW5nIiAvPjxGaWVsZCBOYW1lPSJjb2xhYm9yYWRvciIgVHlwZT0iU3RyaW5nIiAvPjxGaWVsZCBOYW1lPSJvYnNlcnZhY2lvbmVzIiBUeXBlPSJTdHJpbmciIC8+PEZpZWxkIE5hbWU9ImxhdGl0dWQiIFR5cGU9IkRvdWJsZSIgLz48RmllbGQgTmFtZT0ibG9uZ2l0dWQiIFR5cGU9IkRvdWJsZSIgLz48RmllbGQgTmFtZT0icGVkaWRvX3VuaWRhZGVzX3JlYWxlcyIgVHlwZT0iSW50MzIiIC8+PEZpZWxkIE5hbWU9InBlZGlkb191bmlkYWRlc19ib25pZmljYWRhcyIgVHlwZT0iSW50MzIiIC8+PEZpZWxkIE5hbWU9InVuaWRhZGVzX3JlYWxlc19kZXNwYWNoYWRhcyIgVHlwZT0iSW50MzIiIC8+PEZpZWxkIE5hbWU9InVuaWRhZGVzX2JvbmlmaWNhZGFzX2Rlc3BhY2hhZGFzIiBUeXBlPSJJbnQzMiIgLz48RmllbGQgTmFtZT0ic2FsZG9fdW5pZGFkZXMiIFR5cGU9IkludDMyIiAvPjxGaWVsZCBOYW1lPSJzYWxkb19ib25pZmljYWNpb25lcyIgVHlwZT0iSW50MzIiIC8+PEZpZWxkIE5hbWU9InBlZGlkb192YWxvcl92ZW50YV9wdmYiIFR5cGU9IkRlY2ltYWwiIC8+PEZpZWxkIE5hbWU9InBlZGlkb192YWxvcl92ZW50YV9wdnAiIFR5cGU9IkRlY2ltYWwiIC8+PEZpZWxkIE5hbWU9InBlZGlkb192YWxvcl9kZXNjdWVudG8iIFR5cGU9IkRlY2ltYWwiIC8+PEZpZWxkIE5hbWU9InN1YnRvdGFsX3BlZGlkb192YWxvcl92ZW50YV9wdmYiIFR5cGU9IkRlY2ltYWwiIC8+PEZpZWxkIE5hbWU9InN1YnRvdGFsX3BlZGlkb192YWxvcl92ZW50YV9wdnAiIFR5cGU9IkRlY2ltYWwiIC8+PEZpZWxkIE5hbWU9InN1YnRvdGFsX3BlZGlkb192YWxvcl9kZXNjdWVudG8iIFR5cGU9IkRlY2ltYWwiIC8+PEZpZWxkIE5hbWU9IkRFU1BBQ0hPU19QRURJRE9fY29kX2Rlc3BhY2hvIiBUeXBlPSJJbnQzMiIgLz48RmllbGQgTmFtZT0iREVTUEFDSE9TX1BFRElET19DVUQiIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0iREVTUEFDSE9TX1BFRElET19jb2RfaXRlbSIgVHlwZT0iU3RyaW5nIiAvPjxGaWVsZCBOYW1lPSJERVNQQUNIT1NfUEVESURPX2l0ZW0iIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0iREVTUEFDSE9TX1BFRElET19wcm9kdWN0byIgVHlwZT0iU3RyaW5nIiAvPjxGaWVsZCBOYW1lPSJERVNQQUNIT1NfUEVESURPX2xpbmVhIiBUeXBlPSJTdHJpbmciIC8+PEZpZWxkIE5hbWU9IkRFU1BBQ0hPU19QRURJRE9fbWFyY2EiIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0iREVTUEFDSE9TX1BFRElET19jYXRlZ29yaWEiIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0iREVTUEFDSE9TX1BFRElET19udW1lcm9fbG90ZSIgVHlwZT0iU3RyaW5nIiAvPjxGaWVsZCBOYW1lPSJERVNQQUNIT1NfUEVESURPX3ZpZGFfdXRpbCIgVHlwZT0iSW50MzIiIC8+PEZpZWxkIE5hbWU9IkRFU1BBQ0hPU19QRURJRE9fbnVtZXJvX2ZhY3R1cmEiIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0iREVTUEFDSE9TX1BFRElET19mZWNoYV92ZW5jaW1pZW50b19sb3RlIiBUeXBlPSJEYXRlVGltZSIgLz48RmllbGQgTmFtZT0iREVTUEFDSE9TX1BFRElET191bmlkYWRlc19yZWFsZXNfZGVzcGFjaGFkYXMiIFR5cGU9IkludDMyIiAvPjxGaWVsZCBOYW1lPSJERVNQQUNIT1NfUEVESURPX3VuaWRhZGVzX2JvbmlmaWNhZGFzX2Rlc3BhY2hhZGFzIiBUeXBlPSJJbnQzMiIgLz48RmllbGQgTmFtZT0iREVTUEFDSE9TX1BFRElET19mZWNoYV9kZXNwYWNobyIgVHlwZT0iRGF0ZVRpbWUiIC8+PEZpZWxkIE5hbWU9IkRFU1BBQ0hPU19QRURJRE9fZXN0YWRvX2Rlc3BhY2hvIiBUeXBlPSJTdHJpbmciIC8+PEZpZWxkIE5hbWU9IkRFU1BBQ0hPU19QRURJRE9fb2JzZXJ2YWNpb25lcyIgVHlwZT0iU3RyaW5nIiAvPjwvVmlldz48L0RhdGFTZXQ+</value>
+  </data>
+</root>

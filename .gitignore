@@ -1,0 +1,89 @@
+## Build results
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]uild/
+[Bb]uilds/
+[Dd]ist/
+
+## NuGet
+packages/
+*.nupkg
+**/[Pp]ackages/*
+!**/[Pp]ackages/build/
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+## Visual Studio / VS Code / Rider
+.vs/
+.vscode/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.rsuser
+*.userprefs
+*.DotSettings.user
+
+## ClickOnce / publish output
+publish/
+*.application
+*.manifest
+*.deploy
+*.publishproj
+
+## Test / coverage
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+*.coverage
+*.coveragexml
+coverage*/
+
+## Secrets, certificates, keys (never commit)
+*.pfx
+*.p12
+*.key
+*.pem
+secrets.json
+appsettings.*.local.json
+*.local.config
+
+## Local environment overrides (keep templates tracked)
+.env
+.env.*
+!.env.example
+
+## OS / tooling
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.tmp
+*.temp
+*.swp
+*~
+.DS_Store
+
+## Backup / scratch (optional local copies)
+*.bak
+*.orig
+*_TemporaryKey.pfx
+
+## DevExpress / designer noise (if generated locally)
+*.vshost.exe
+*.vshost.exe.config
+*.vshost.exe.manifest
+
+## SQL / local dumps
+*.mdf
+*.ldf
+*.bak.sql

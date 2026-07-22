@@ -1,0 +1,3 @@
+﻿namespace SchedulerP360Insight
+{
+}

@@ -1,0 +1,2550 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="HTMLBody_Plantilla_VM_01" xml:space="preserve">
+    <value>&lt;!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"&gt;
+    &lt;meta name="GENERATOR" content="Pharma360°"&gt;
+        &lt;style&gt;
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 5px;
+            background-color: #ffffff;
+            border-radius: 5px;
+        }
+
+        .header {
+            text-align: center;
+            padding: 10px 10px 0 10px;
+            border-bottom: 2px solid #ff5722;
+            margin-top: 0;
+        }
+      h2 {
+              margin-top: 0;
+          }
+        .footer {
+            text-align: center;
+            padding: 10px;
+            font-size: 0.8em;
+            color: #666;
+            border-top: 2px solid #ff5722;
+        }
+        .footer2 {
+            text-align: center;
+            padding: 10px;
+            background-color: #ff5722;
+            color: white;
+            border-radius: 0 0 4px 4px;
+            font-family: Arial, sans-serif;
+            font-size: 0.9em;
+            line-height: 0.8;
+            letter-spacing: 0.5px;
+        }
+        .textoMinimalista {
+            text-align: center;
+            padding: 10px;
+            font-size: 0.7em;
+            color: #666;
+        }      
+
+        a {
+            color: #ff5722;
+            text-decoration: none;
+        }
+
+        img {
+            max-width: 100%;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .title {
+            font-size: 0.6rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .highlight {
+            color: #ff5722;
+        }
+
+        img.auto-resize {
+            max-width: 30%;
+            height: 30%;
+        }
+
+        .info-seccion {
+            margin-bottom: 30px;
+        }
+
+        .info-titulo {
+            color: #333;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .info {
+            margin-left: 20px;
+        }
+.contenidoDinamicoP360 {
+    padding: 10px;
+    background-color: #f0f4f8; /* Soft blue for a calming,
+        professional appearance */
+    margin-bottom: 0px;
+  border-bottom: 1x solid #ff5722;
+  border-top: 1px solid #ff5722;
+}
+.imgLogoEmpresa {
+    max-width: 100%; /* Asegura que la imagen sea responsive y no exceda el ancho de su contenedor */
+    height: auto; /* Mantiene la proporción de aspecto de la imagen basándose en el ancho */
+    width: auto; /* Permite que el navegador calcule el ancho para mantener la proporción de aspecto */
+    max-height: 87px; /* Establece una altura máxima para la imagen */
+}
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div class="container"&gt;
+        &lt;div class="header"&gt;
+            &lt;h2&gt;[NombreReporte]&lt;/h2&gt;
+          &lt;h3 class="title"&gt;&lt;span class="highlight"&gt;[NombreInsight]&lt;/span&gt;&lt;/h3&gt;
+        &lt;/div&gt;
+        &lt;div class="contenidoDinamicoP360"&gt;
+            &lt;br&gt;
+            Estimado/a: [Destinatario] &lt;br&gt;
+            &lt;p&gt;Me complace presentarte el informe del estado de la visita correspondiente al periodo del [Periodo]. En este informe encontrarás información detallada y relevante sobre tus actividades de visita, desde las perspectivas: de tu histórico diario de visitas, tu plan de visitas y del fichero de visitas que te ha sido asignado. Te recuerdo que este informe es una herramienta fundamental para optimizar tu desempeño, ya que contiene datos importantes, indicadores y KPIs de tu proceso de visitas.
+&lt;/div&gt;
+&lt;br&gt;Agradecemos tu compromiso, para lograr el cumplimiento de tus objetivos y de la compañía.
+&lt;br&gt;
+&lt;br&gt;¡Trabajamos juntos para lograr los mejores resultados!&lt;/p&gt;
+            &lt;p&gt;
+                Esta información es reservada para [LaboratorioImplementacion]. Su contenido no debe ser reenviado o divulgado sin autorización. &lt;br&gt; &lt;br&gt;
+                Si tiene alguna consulta relacionada con la información enviada, por favor &lt;a href="mailto:[MailAdministradorLaboratorio]?subject=Soporte Sistema Pharma360°/P360°&amp;body=Contacto automático desde plataforma Pharma360°/P360°."&gt; contacte a soporte a Fuerza de Ventas &lt;/a&gt;
+            &lt;/p&gt;
+            Muchas gracias.
+            &lt;br&gt;              
+            &lt;/p&gt;
+            &lt;p&gt;Generado el: [FechaActualP360]&lt;/p&gt;
+            &lt;p&gt;
+                &lt;img src="[UrlImagenLogo]" alt="Sitio Web Laboratorio" border="0" class="imgLogoEmpresa"&gt;
+            &lt;/p&gt;
+            &lt;p&gt;
+                [TrademarkBisigma]
+                &lt;a href="mailto:wilson.almeida@bisigma.com?subject=Contacto Sistema Pharma360°/P360°&amp;body=Contacto automático desde plataforma Pharma360°/P360°."&gt; www.bisigma.com&lt;/a&gt;
+        &lt;div class="footer"&gt;
+            Cláusula de confidencialidad: Este mensaje y su contenido es confidencial, pudiendo asimismo contener información amparada por el secreto profesional. En caso de haber recibido este correo por error, sírvase comunicárnoslo de inmediato vía e-mail y eliminarlo de su sistema. No deberá divulgar, distribuir o copiar su contenido. &lt;br&gt;
+        &lt;/div&gt;
+        &lt;div class="footer2"&gt;
+            Pharma360°
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</value>
+  </data>
+  <data name="HTMLBody_Plantilla_VM_02" xml:space="preserve">
+    <value>&lt;!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"&gt;
+    &lt;meta name="GENERATOR" content="Pharma360°"&gt;
+    &lt;style&gt;
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 5px;
+            background-color: #ffffff;
+            border-radius: 5px;
+        }
+
+        .header {
+            text-align: center;
+            padding: 10px 10px 0 10px;
+            border-bottom: 2px solid #ff5722;
+            margin-top: 0;
+        }
+      h2 {
+              margin-top: 0;
+          }
+
+        .footer {
+            text-align: center;
+            padding: 10px;
+            font-size: 0.8em;
+            color: #666;
+            border-top: 2px solid #ff5722;
+        }
+
+        .footer2 {
+            text-align: center;
+            padding: 10px;
+            background-color: #ff5722;
+            color: white;
+            border-radius: 0 0 4px 4px;
+            font-family: Arial, sans-serif;
+            font-size: 0.9em;
+            line-height: 0.8;
+            letter-spacing: 0.5px;
+        }
+
+        a {
+            color: #ff5722;
+            text-decoration: none;
+        }
+
+        img {
+            max-width: 100%;
+        }
+
+        h1 {
+            color: #333;
+        }
+      .title {
+  font-size: 0.6rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.highlight {
+  color: #ff5722;
+}
+ img.auto-resize {
+    max-width: 30%;
+    height: 30%;
+  }
+.contenidoDinamicoP360 {
+    padding: 10px;
+    background-color: #f0f4f8; /* Soft blue for a calming,
+        professional appearance */
+    margin-bottom: 0px;
+  border-bottom: 1x solid #ff5722;
+  border-top: 1px solid #ff5722;
+}
+.imgLogoEmpresa {
+    max-width: 100%; /* Asegura que la imagen sea responsive y no exceda el ancho de su contenedor */
+    height: auto; /* Mantiene la proporción de aspecto de la imagen basándose en el ancho */
+    width: auto; /* Permite que el navegador calcule el ancho para mantener la proporción de aspecto */
+    max-height: 87px; /* Establece una altura máxima para la imagen */
+}
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div class="container"&gt;
+        &lt;div class="header"&gt;
+            &lt;h2&gt;[NombreReporte]&lt;/h2&gt;
+          &lt;h3 class="title"&gt;&lt;span class="highlight"&gt;[NombreInsight]&lt;/span&gt;&lt;/h3&gt;
+        &lt;/div&gt;
+        &lt;div class="contenidoDinamicoP360"&gt;
+            &lt;br&gt;
+            Estimado/a: [Destinatario] &lt;br&gt;
+            &lt;p&gt;Me complace presentarte el informe del estado de la visita correspondiente al periodo del [Periodo] de todo tu equipo. En este informe encontrarás los principales indicadores KPIs, desde las perspectivas: de su histórico diario de visitas, asi como de su plan de visitas y su fichero de visitas que les ha sido asignado. Te recuerdo que este informe es una herramienta fundamental para optimizar su desempeño, ya que contiene datos importantes, indicadores y KPIs de su proceso de visitas.
+&lt;/div&gt;              
+&lt;br&gt;Agradecemos tu compromiso, para lograr el cumplimiento de los objetivos de las personas de tu equipo, tus objetivos y de la compañía.
+&lt;br&gt;
+&lt;br&gt;¡Trabajamos juntos para lograr los mejores resultados!&lt;/p&gt;
+            &lt;p&gt;
+                Esta información es reservada para [LaboratorioImplementacion]. Su contenido no debe ser reenviado o divulgado sin autorización. &lt;br&gt; &lt;br&gt;
+                Si tiene alguna consulta relacionada con la información enviada, por favor &lt;a href="mailto:[MailAdministradorLaboratorio]?subject=Soporte Sistema Pharma360°/P360°&amp;body=Contacto automático desde plataforma Pharma360°/P360°."&gt; contacte a soporte a Fuerza de Ventas &lt;/a&gt;
+            &lt;/p&gt;
+            Muchas gracias.
+            &lt;br&gt;              
+              
+            &lt;/p&gt;
+            &lt;p&gt;Generado el: [FechaActualP360]&lt;/p&gt;
+            &lt;p&gt;
+                &lt;img src="[UrlImagenLogo]" alt="Sitio Web Laboratorio" border="0" class="imgLogoEmpresa"&gt;
+            &lt;/p&gt;
+            &lt;p&gt;
+                [TrademarkBisigma]
+                &lt;a href="mailto:wilson.almeida@bisigma.com?subject=Contacto Sistema Pharma360°/P360°&amp;body=Contacto automático desde plataforma Pharma360°/P360°."&gt; www.bisigma.com&lt;/a&gt;
+
+        &lt;div class="footer"&gt;
+            Cláusula de confidencialidad: Este mensaje y su contenido es confidencial, pudiendo asimismo contener información amparada por el secreto profesional. En caso de haber recibido este correo por error, sírvase comunicárnoslo de inmediato vía e-mail y eliminarlo de su sistema. No deberá divulgar, distribuir o copiar su contenido. &lt;br&gt;
+        &lt;/div&gt;
+        &lt;div class="footer2"&gt;
+            Pharma360°
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</value>
+  </data>
+  <data name="HTMLBody_Plantilla_VM_03" xml:space="preserve">
+    <value>&lt;!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"&gt;
+    &lt;meta name="GENERATOR" content="Pharma360°"&gt;
+        &lt;style&gt;
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 5px;
+            background-color: #ffffff;
+            border-radius: 5px;
+        }
+
+        .header {
+            text-align: center;
+            padding: 10px 10px 0 10px;
+            border-bottom: 2px solid #ff5722;
+            margin-top: 0;
+        }
+      h2 {
+              margin-top: 0;
+          }
+        .footer {
+            text-align: center;
+            padding: 10px;
+            font-size: 0.8em;
+            color: #666;
+            border-top: 2px solid #ff5722;
+        }
+        .footer2 {
+            text-align: center;
+            padding: 10px;
+            background-color: #ff5722;
+            color: white;
+            border-radius: 0 0 4px 4px;
+            font-family: Arial, sans-serif;
+            font-size: 0.9em;
+            line-height: 0.8;
+            letter-spacing: 0.5px;
+        }
+        .textoMinimalista {
+            text-align: center;
+            padding: 10px;
+            font-size: 0.7em;
+            color: #666;
+        }      
+
+        a {
+            color: #ff5722;
+            text-decoration: none;
+        }
+
+        img {
+            max-width: 100%;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .title {
+            font-size: 0.6rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .highlight {
+            color: #ff5722;
+        }
+
+        img.auto-resize {
+            max-width: 30%;
+            height: 30%;
+        }
+
+        .info-seccion {
+            margin-bottom: 30px;
+        }
+
+        .info-titulo {
+            color: #333;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .info {
+            margin-left: 20px;
+        }
+.contenidoDinamicoP360 {
+    padding: 10px;
+    background-color: #f0f4f8; /* Soft blue for a calming,
+        professional appearance */
+    margin-bottom: 0px;
+  border-bottom: 1x solid #ff5722;
+  border-top: 1px solid #ff5722;
+}
+.imgLogoEmpresa {
+    max-width: 100%; /* Asegura que la imagen sea responsive y no exceda el ancho de su contenedor */
+    height: auto; /* Mantiene la proporción de aspecto de la imagen basándose en el ancho */
+    width: auto; /* Permite que el navegador calcule el ancho para mantener la proporción de aspecto */
+    max-height: 87px; /* Establece una altura máxima para la imagen */
+}
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div class="container"&gt;
+        &lt;div class="header"&gt;
+            &lt;h2&gt;[NombreReporte]&lt;/h2&gt;
+          &lt;h3 class="title"&gt;&lt;span class="highlight"&gt;[NombreInsight]&lt;/span&gt;&lt;/h3&gt;
+        &lt;/div&gt;
+        &lt;div class="contenidoDinamicoP360"&gt;
+            &lt;br&gt;
+            Estimado/a: [Destinatario] &lt;br&gt;
+            &lt;p&gt;Me complace presentarte el informe del performance auditoría prescriptiva RX, el corte de la auditoría corresponde al periodo [Periodo]. En este informe encontrarás información detallada y relevante sobre los resultados e indicadores KPIs de las prescripciones de aquellos segmentos competitivos (mercados competencia) que te fueron asignados, considera además que todas las prescripciones del laboratorio y del mercado que se presentan son aquellas que fueron generadas por los médicos asignados en tu fichero. &lt;/div&gt; 
+&lt;br&gt;Agradecemos tu compromiso, para lograr el cumplimiento de tus objetivos y de la compañía.
+&lt;br&gt;
+&lt;br&gt;¡Trabajamos juntos para lograr los mejores resultados!&lt;/p&gt;
+            &lt;p&gt;
+                Esta información es reservada para [LaboratorioImplementacion]. Su contenido no debe ser reenviado o divulgado sin autorización. &lt;br&gt; &lt;br&gt;
+                Si tiene alguna consulta relacionada con la información enviada, por favor &lt;a href="mailto:[MailAdministradorLaboratorio]?subject=Soporte Sistema Pharma360°/P360°&amp;body=Contacto automático desde plataforma Pharma360°/P360°."&gt; contacte a soporte a Fuerza de Ventas &lt;/a&gt;
+            &lt;/p&gt;
+            Muchas gracias.
+            &lt;br&gt;              
+              
+            &lt;/p&gt;
+            &lt;p&gt;Generado el: [FechaActualP360]&lt;/p&gt;
+            &lt;p&gt;
+                &lt;img src="[UrlImagenLogo]" alt="Sitio Web Laboratorio" border="0" class="imgLogoEmpresa"&gt;
+            &lt;/p&gt;
+            &lt;p&gt;
+                [TrademarkBisigma]
+                &lt;a href="mailto:wilson.almeida@bisigma.com?subject=Contacto Sistema Pharma360°/P360°&amp;body=Contacto automático desde plataforma Pharma360°/P360°."&gt; www.bisigma.com&lt;/a&gt;
+        &lt;div class="footer"&gt;
+            Cláusula de confidencialidad: Este mensaje y su contenido es confidencial, pudiendo asimismo contener información amparada por el secreto profesional. En caso de haber recibido este correo por error, sírvase comunicárnoslo de inmediato vía e-mail y eliminarlo de su sistema. No deberá divulgar, distribuir o copiar su contenido. &lt;br&gt;
+        &lt;/div&gt;
+        &lt;div class="footer2"&gt;
+            Pharma360°
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</value>
+  </data>
+  <data name="HTMLBody_Plantilla_VM_04" xml:space="preserve">
+    <value>&lt;!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"&gt;
+    &lt;meta name="GENERATOR" content="Pharma360°"&gt;
+            &lt;style&gt;
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 5px;
+            background-color: #ffffff;
+            border-radius: 5px;
+        }
+
+        .header {
+            text-align: center;
+            padding: 10px 10px 0 10px;
+            border-bottom: 2px solid #ff5722;
+            margin-top: 0;
+        }
+      h2 {
+              margin-top: 0;
+          }
+        .footer {
+            text-align: center;
+            padding: 10px;
+            font-size: 0.8em;
+            color: #666;
+            border-top: 2px solid #ff5722;
+        }
+        .footer2 {
+            text-align: center;
+            padding: 10px;
+            background-color: #ff5722;
+            color: white;
+            border-radius: 0 0 4px 4px;
+            font-family: Arial, sans-serif;
+            font-size: 0.9em;
+            line-height: 0.8;
+            letter-spacing: 0.5px;
+        }
+        .textoMinimalista {
+            text-align: center;
+            padding: 10px;
+            font-size: 0.7em;
+            color: #666;
+        }      
+
+        a {
+            color: #ff5722;
+            text-decoration: none;
+        }
+
+        img {
+            max-width: 100%;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .title {
+            font-size: 0.6rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .highlight {
+            color: #ff5722;
+        }
+
+        img.auto-resize {
+            max-width: 30%;
+            height: 30%;
+        }
+
+        .info-seccion {
+            margin-bottom: 30px;
+        }
+
+        .info-titulo {
+            color: #333;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .info {
+            margin-left: 20px;
+        }
+.contenidoDinamicoP360 {
+    padding: 10px;
+    background-color: #f0f4f8; /* Soft blue for a calming,
+        professional appearance */
+    margin-bottom: 0px;
+  border-bottom: 1x solid #ff5722;
+  border-top: 1px solid #ff5722;
+}
+.imgLogoEmpresa {
+    max-width: 100%; /* Asegura que la imagen sea responsive y no exceda el ancho de su contenedor */
+    height: auto; /* Mantiene la proporción de aspecto de la imagen basándose en el ancho */
+    width: auto; /* Permite que el navegador calcule el ancho para mantener la proporción de aspecto */
+    max-height: 87px; /* Establece una altura máxima para la imagen */
+}
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div class="container"&gt;
+        &lt;div class="header"&gt;
+            &lt;h2&gt;Resultados performance auditoría mercado(U)&lt;/h2&gt;
+          &lt;h3 class="title"&gt;&lt;span class="highlight"&gt;Pharma360° - Insight 004:&lt;/span&gt;Resultados performance auditoría mercado(U)&lt;/h3&gt;
+
+        &lt;/div&gt;
+        &lt;div class="contenidoDinamicoP360"&gt;
+            &lt;br&gt;
+            Estimado/a: [Destinatario] &lt;br&gt;
+            &lt;p&gt;Me complace presentarte el informe del performance auditoría mercado(U), el corte de la auditoría corresponde al periodo [Periodo]. En este informe encontrarás información detallada y relevante sobre los resultados e indicadores KPIs de las ventas de aquellos segmentos competitivos (mercados competencia) que te fueron asignados, considera además que todas las prescripciones del laboratorio y del mercado que se presentan son aquellas que fueron generadas por las zonas asignadas a ti.
+&lt;/div&gt;              
+&lt;br&gt;Agradecemos tu compromiso, para lograr el cumplimiento de tus objetivos y de la compañía.
+&lt;br&gt;
+&lt;br&gt;¡Trabajamos juntos para lograr los mejores resultados!&lt;/p&gt;
+            &lt;p&gt;
+                Esta información es reservada para [LaboratorioImplementacion]. Su contenido no debe ser reenviado o divulgado sin autorización. &lt;br&gt; &lt;br&gt;
+                Si tiene alguna consulta relacionada con la información enviada, por favor &lt;a href="mailto:[MailAdministradorLaboratorio]?subject=Soporte Sistema Pharma360°/P360°&amp;body=Contacto automático desde plataforma Pharma360°/P360°."&gt; contacte a soporte a Fuerza de Ventas &lt;/a&gt;
+            &lt;/p&gt;
+            Muchas gracias.
+            &lt;br&gt;              
+              
+            &lt;/p&gt;
+            &lt;p&gt;Generado el: [FechaActualP360]&lt;/p&gt;
+            &lt;p&gt;
+                &lt;img src="[UrlImagenLogo]" alt="Sitio Web Laboratorio" border="0" class="imgLogoEmpresa"&gt;
+            &lt;/p&gt;
+            &lt;p&gt;
+                [TrademarkBisigma]
+                &lt;a href="mailto:wilson.almeida@bisigma.com?subject=Contacto Sistema Pharma360°/P360°&amp;body=Contacto automático desde plataforma Pharma360°/P360°."&gt; www.bisigma.com&lt;/a&gt;
+        &lt;div class="footer"&gt;
+            Cláusula de confidencialidad: Este mensaje y su contenido es confidencial, pudiendo asimismo contener información amparada por el secreto profesional. En caso de haber recibido este correo por error, sírvase comunicárnoslo de inmediato vía e-mail y eliminarlo de su sistema. No deberá divulgar, distribuir o copiar su contenido. &lt;br&gt;
+        &lt;/div&gt;
+        &lt;div class="footer2"&gt;
+            Pharma360°
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</value>
+  </data>
+  <data name="HTMLBody_Plantilla_VM_05" xml:space="preserve">
+    <value>&lt;!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"&gt;
+    &lt;meta name="GENERATOR" content="Pharma360°"&gt;
+            &lt;style&gt;
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 5px;
+            background-color: #ffffff;
+            border-radius: 5px;
+        }
+
+        .header {
+            text-align: center;
+            padding: 10px 10px 0 10px;
+            border-bottom: 2px solid #ff5722;
+            margin-top: 0;
+        }
+      h2 {
+              margin-top: 0;
+          }
+        .footer {
+            text-align: center;
+            padding: 10px;
+            font-size: 0.8em;
+            color: #666;
+            border-top: 2px solid #ff5722;
+        }
+        .footer2 {
+            text-align: center;
+            padding: 10px;
+            background-color: #ff5722;
+            color: white;
+            border-radius: 0 0 4px 4px;
+            font-family: Arial, sans-serif;
+            font-size: 0.9em;
+            line-height: 0.8;
+            letter-spacing: 0.5px;
+        }
+        .textoMinimalista {
+            text-align: center;
+            padding: 10px;
+            font-size: 0.7em;
+            color: #666;
+        }      
+
+        a {
+            color: #ff5722;
+            text-decoration: none;
+        }
+
+        img {
+            max-width: 100%;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .title {
+            font-size: 0.6rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .highlight {
+            color: #ff5722;
+        }
+
+        img.auto-resize {
+            max-width: 30%;
+            height: 30%;
+        }
+
+        .info-seccion {
+            margin-bottom: 30px;
+        }
+
+        .info-titulo {
+            color: #333;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .info {
+            margin-left: 20px;
+        }
+.contenidoDinamicoP360 {
+    padding: 10px;
+    background-color: #f0f4f8; /* Soft blue for a calming,
+        professional appearance */
+    margin-bottom: 0px;
+  border-bottom: 1x solid #ff5722;
+  border-top: 1px solid #ff5722;
+}
+              .info-seccion table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #ffffff; /* Para mantener la coherencia con el diseño */
+    margin-top: 10px; /* Espacio antes de la tabla */
+}
+
+.info-seccion th, .info-seccion td {
+    border: 1px solid #ddd;
+    text-align: left;
+    padding: 4px;
+}
+
+.info-seccion tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+.totals-table {
+  width: 100%;
+  max-width: 600px; /* Limitar el ancho máximo de la tabla */
+  margin: auto; /* Centrar la tabla horizontalmente */
+  border-collapse: collapse;
+  font-family: Arial, sans-serif;
+  font-size: 0.9em; /* Aumentar el tamaño de la fuente para mejorar la legibilidad */
+}
+
+.totals-table th, .totals-table td {
+  text-align: center;
+  padding: 12px; /* Aumentar el padding para más espacio alrededor del texto */
+  border: 1px solid #ddd; /* Ajustar el color del borde para armonizar con el estilo general */
+}
+
+.totals-table thead {
+  background-color: #f4f4f4; /* Cambiar el color de fondo para que coincida con el esquema de colores del correo */
+}
+
+.totals-table thead th {
+  color: #333; /* Ajustar el color del texto para armonizar con el estilo general */
+}
+
+.totals-table tbody tr:nth-child(even) {
+  background-color: #ffffff; /* Ajustar para alternar colores de fondo */
+}
+
+.totals-table tfoot tr:first-child td {
+  background-color: #f4f4f4; /* Asegurar que se ajusta al diseño general */
+  font-weight: bold;
+}
+
+.totals-table tfoot tr:last-child td {
+  color: #ff5722; /* Utilizar el color destacado para enlaces y elementos importantes */
+}
+.blue-text {
+    color: #0000FF;
+  }
+.imgLogoEmpresa {
+    max-width: 100%; /* Asegura que la imagen sea responsive y no exceda el ancho de su contenedor */
+    height: auto; /* Mantiene la proporción de aspecto de la imagen basándose en el ancho */
+    width: auto; /* Permite que el navegador calcule el ancho para mantener la proporción de aspecto */
+    max-height: 87px; /* Establece una altura máxima para la imagen */
+}
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div class="container"&gt;
+        &lt;div class="header"&gt;
+            &lt;h2&gt;[NombreReporte]&lt;/h2&gt;
+          &lt;h3 class="title"&gt;&lt;span class="highlight"&gt;[NombreInsight]&lt;/span&gt;&lt;/h3&gt;
+        &lt;/div&gt;
+        &lt;div class="contenidoDinamicoP360"&gt;
+            Estimado/a: [Destinatario]&lt;br&gt;&lt;br&gt;
+            &lt;div class="info-seccion"&gt;
+                Te informamos que ha sido registrada la visita número &lt;span class="highlight"&gt;[CodVisita]&lt;/span&gt;, efectuada a &lt;span class="highlight"&gt;[Cliente]&lt;/span&gt;([CategoriaEspecialidad])
+                &lt;br&gt;&lt;strong&gt;Dirección: &lt;/strong&gt;[Direccion]. Ciudad [Ciudad]
+                &lt;br&gt;&lt;strong&gt;Fecha : &lt;/strong&gt;[Fecha_visita]
+                &lt;br&gt;&lt;strong&gt;Contacto: &lt;/strong&gt;[Contacto]
+                &lt;br&gt;&lt;strong&gt;Observaciones: &lt;/strong&gt;[Observaciones]
+                &lt;br&gt;&lt;strong&gt;Objetivo visita: &lt;/strong&gt; [ObjetivoVisita]
+              &lt;br&gt;&lt;strong&gt;Acciones comerciales ejecutadas: &lt;/strong&gt; [AccionesComercialesVisita]
+            &lt;/div&gt;
+&lt;div id="mapa"&gt;
+    [MARCADOR_MAPA] &lt;!-- Este marcador será reemplazado por el HTML del mapa --&gt;
+  &lt;div class="textoMinimalista"&gt;El mapa representa la dirección georreferenciada en la que se efectuó el proceso la visita.&lt;/div&gt;
+&lt;/div&gt;
+&lt;!-- Asi es como debe quedar el  [MARCADOR_MAPA] para que funcione
+            &lt;a href="https://www.google.com/maps?q=-0.1988118,-78.4363136" target="_blank"&gt;
+                &lt;img src="https://maps.googleapis.com/maps/api/staticmap?center=-0.1988118,-78.4363136&amp;zoom=17&amp;size=600x300&amp;markers=icon:https://upload.wikimedia.org/wikipedia/commons/f/f9/Map-icon.svg|-0.1988118,-78.4363136&amp;key=[REMOVED_GOOGLE_MAPS_KEY]" alt="Ubicación en Mapa con Marcador Personalizado"&gt;
+            &lt;/a&gt;
+--&gt;
+&lt;/div&gt;
+            &lt;br&gt;Agradecemos tu compromiso, para lograr el cumplimiento de tus objetivos y de la compañía.
+            &lt;br&gt;
+            &lt;br&gt;¡Trabajamos juntos para lograr los mejores resultados!&lt;/p&gt;
+            &lt;p&gt;Esta información es reservada para [LaboratorioImplementacion]. Su contenido no debe ser reenviado o divulgado sin autorización. &lt;br&gt; &lt;br&gt;
+            Si tiene alguna consulta relacionada con la información enviada, por favor &lt;a href="mailto:[MailAdministradorLaboratorio]?subject=Soporte Sistema Pharma360°/P360°&amp;body=Contacto automático desde plataforma Pharma360°/P360°."&gt;contacte a soporte a Fuerza de Ventas&lt;/a&gt;
+            &lt;/p&gt;
+            Muchas gracias.
+            &lt;br&gt;
+            &lt;p&gt;Generado el: [FechaActualP360]&lt;/p&gt;
+            &lt;p&gt;
+                &lt;img src="[UrlImagenLogo]" alt="Sitio Web Laboratorio" border="0" class="imgLogoEmpresa"&gt;
+            &lt;/p&gt;
+            &lt;p&gt;
+                [TrademarkBisigma]
+                &lt;a href="mailto:wilson.almeida@bisigma.com?subject=Contacto Sistema Pharma360°/P360°&amp;body=Contacto automático desde plataforma Pharma360°/P360°."&gt;www.bisigma.com&lt;/a&gt;
+        &lt;div class="footer"&gt;
+            Cláusula de confidencialidad: Este mensaje y su contenido es confidencial, pudiendo asimismo contener información amparada por el secreto profesional. En caso de haber recibido este correo por error, sírvase comunicárnoslo de inmediato vía e-mail y eliminarlo de su sistema. No deberá divulgar, distribuir o copiar su contenido. &lt;br&gt;
+        &lt;/div&gt;
+        &lt;div class="footer2"&gt;
+            Pharma360°
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</value>
+  </data>
+  <data name="HTMLBody_Plantilla_VM_06" xml:space="preserve">
+    <value>&lt;!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"&gt;
+    &lt;meta name="GENERATOR" content="Pharma360°"&gt;
+            &lt;style&gt;
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 5px;
+            background-color: #ffffff;
+            border-radius: 5px;
+        }
+
+        .header {
+            text-align: center;
+            padding: 10px 10px 0 10px;
+            border-bottom: 2px solid #ff5722;
+            margin-top: 0;
+        }
+      h2 {
+              margin-top: 0;
+          }
+        .footer {
+            text-align: center;
+            padding: 10px;
+            font-size: 0.8em;
+            color: #666;
+            border-top: 2px solid #ff5722;
+        }
+        .footer2 {
+            text-align: center;
+            padding: 10px;
+            background-color: #ff5722;
+            color: white;
+            border-radius: 0 0 4px 4px;
+            font-family: Arial, sans-serif;
+            font-size: 0.9em;
+            line-height: 0.8;
+            letter-spacing: 0.5px;
+        }
+        .textoMinimalista {
+            text-align: center;
+            padding: 10px;
+            font-size: 0.7em;
+            color: #666;
+        }      
+
+        a {
+            color: #ff5722;
+            text-decoration: none;
+        }
+
+        img {
+            max-width: 100%;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .title {
+            font-size: 0.6rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .highlight {
+            color: #ff5722;
+        }
+
+        img.auto-resize {
+            max-width: 30%;
+            height: 30%;
+        }
+
+        .info-seccion {
+            margin-bottom: 30px;
+        }
+
+        .info-titulo {
+            color: #333;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .info {
+            margin-left: 20px;
+        }
+.contenidoDinamicoP360 {
+    padding: 10px;
+    background-color: #f0f4f8; /* Soft blue for a calming,
+        professional appearance */
+    margin-bottom: 0px;
+  border-bottom: 1x solid #ff5722;
+  border-top: 1px solid #ff5722;
+}
+.imgLogoEmpresa {
+    max-width: 100%; /* Asegura que la imagen sea responsive y no exceda el ancho de su contenedor */
+    height: auto; /* Mantiene la proporción de aspecto de la imagen basándose en el ancho */
+    width: auto; /* Permite que el navegador calcule el ancho para mantener la proporción de aspecto */
+    max-height: 87px; /* Establece una altura máxima para la imagen */
+}
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div class="container"&gt;
+        &lt;div class="header"&gt;
+            &lt;h2&gt;[NombreReporte]&lt;/h2&gt;
+          &lt;h3 class="title"&gt;&lt;span class="highlight"&gt;[NombreInsight]&lt;/span&gt;&lt;/h3&gt;
+        &lt;/div&gt;
+        &lt;div class="contenidoDinamicoP360"&gt;
+            Estimado/a: [Destinatario]&lt;br&gt;&lt;br&gt;
+            &lt;div class="info-seccion"&gt;
+                Te informamos que ha sido registrada la visita número &lt;span class="highlight"&gt;[CodVisita]&lt;/span&gt;, efectuada a &lt;span class="highlight"&gt;[Cliente]&lt;/span&gt;([CategoriaEspecialidad])
+                &lt;br&gt;&lt;strong&gt;Dirección:&lt;/strong&gt; [Direccion]. Ciudad [Ciudad]
+                &lt;br&gt;&lt;strong&gt;Fecha:&lt;/strong&gt; [Fecha_visita]
+                &lt;br&gt;&lt;strong&gt;Contacto:&lt;/strong&gt; [Contacto]
+                &lt;br&gt;&lt;strong&gt;Observaciones:&lt;/strong&gt; [Observaciones]
+                &lt;br&gt;&lt;strong&gt;Objetivo visita:&lt;/strong&gt; [ObjetivoVisita]
+            &lt;/div&gt;
+&lt;div id="mapa"&gt;
+    [MARCADOR_MAPA] &lt;!-- Este marcador será reemplazado por el HTML del mapa --&gt;
+  &lt;div class="textoMinimalista"&gt;El mapa representa la dirección georreferenciada en la que se efectuó el proceso la visita.&lt;/div&gt;
+&lt;/div&gt;
+&lt;!-- Asi es como debe quedar el  [MARCADOR_MAPA] para que funcione
+            &lt;a href="https://www.google.com/maps?q=-0.1988118,-78.4363136" target="_blank"&gt;
+                &lt;img src="https://maps.googleapis.com/maps/api/staticmap?center=-0.1988118,-78.4363136&amp;zoom=17&amp;size=600x300&amp;markers=icon:https://upload.wikimedia.org/wikipedia/commons/f/f9/Map-icon.svg|-0.1988118,-78.4363136&amp;key=[REMOVED_GOOGLE_MAPS_KEY]" alt="Ubicación en Mapa con Marcador Personalizado"&gt;
+            &lt;/a&gt;
+--&gt;
+&lt;/div&gt;
+            &lt;br&gt;Agradecemos tu compromiso, para lograr el cumplimiento de tus objetivos y de la compañía.
+            &lt;br&gt;
+            &lt;br&gt;¡Trabajamos juntos para lograr los mejores resultados!&lt;/p&gt;
+            &lt;p&gt;Esta información es reservada para [LaboratorioImplementacion]. Su contenido no debe ser reenviado o divulgado sin autorización. &lt;br&gt; &lt;br&gt;
+            Si tiene alguna consulta relacionada con la información enviada, por favor &lt;a href="mailto:[MailAdministradorLaboratorio]?subject=Soporte Sistema Pharma360°/P360°&amp;body=Contacto automático desde plataforma Pharma360°/P360°."&gt;contacte a soporte a Fuerza de Ventas&lt;/a&gt;
+            &lt;/p&gt;
+            Muchas gracias.
+            &lt;br&gt;
+            &lt;p&gt;Generado el: [FechaActualP360]&lt;/p&gt;
+            &lt;p&gt;
+                &lt;img src="[UrlImagenLogo]" alt="Sitio Web Laboratorio" border="0" class="imgLogoEmpresa"&gt;
+            &lt;/p&gt;
+            &lt;p&gt;
+                [TrademarkBisigma]
+                &lt;a href="mailto:wilson.almeida@bisigma.com?subject=Contacto Sistema Pharma360°/P360°&amp;body=Contacto automático desde plataforma Pharma360°/P360°."&gt;www.bisigma.com&lt;/a&gt;
+        &lt;div class="footer"&gt;
+            Cláusula de confidencialidad: Este mensaje y su contenido es confidencial, pudiendo asimismo contener información amparada por el secreto profesional. En caso de haber recibido este correo por error, sírvase comunicárnoslo de inmediato vía e-mail y eliminarlo de su sistema. No deberá divulgar, distribuir o copiar su contenido. &lt;br&gt;
+        &lt;/div&gt;
+        &lt;div class="footer2"&gt;
+            Pharma360°
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</value>
+  </data>
+  <data name="HTMLBody_Plantilla_VM_07" xml:space="preserve">
+    <value>&lt;!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"&gt;
+    &lt;meta name="GENERATOR" content="Pharma360°"&gt;
+            &lt;style&gt;
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 5px;
+            background-color: #ffffff;
+            border-radius: 5px;
+        }
+
+        .header {
+            text-align: center;
+            padding: 10px;
+            border-bottom: 2px solid #ff5722;
+            margin-top: 0;
+        }
+      h2 {
+              margin-top: 0;
+          }
+        .footer {
+            text-align: center;
+            padding: 10px 10px 0 10px;
+            font-size: 0.8em;
+            color: #666;
+            border-top: 2px solid #ff5722;
+        }
+        .footer2 {
+            text-align: center;
+            padding: 10px;
+            background-color: #ff5722;
+            color: white;
+            border-radius: 0 0 4px 4px;
+            font-family: Arial, sans-serif;
+            font-size: 0.9em;
+            line-height: 0.8;
+            letter-spacing: 0.5px;
+        }
+        .textoMinimalista {
+            text-align: center;
+            padding: 10px;
+            font-size: 0.7em;
+            color: #666;
+        }      
+
+        a {
+            color: #ff5722;
+            text-decoration: none;
+        }
+
+        img {
+            max-width: 100%;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .title {
+            font-size: 0.6rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .highlight {
+            color: #ff5722;
+        }
+
+        img.auto-resize {
+            max-width: 30%;
+            height: 30%;
+        }
+
+        .info-seccion {
+            margin-bottom: 30px;
+        }
+
+        .info-titulo {
+            color: #333;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .info {
+            margin-left: 20px;
+        }
+.contenidoDinamicoP360 {
+    padding: 10px;
+    background-color: #f0f4f8; /* Soft blue for a calming,
+        professional appearance */
+    margin-bottom: 0px;
+  border-bottom: 1x solid #ff5722;
+  border-top: 1px solid #ff5722;
+}
+              .info-seccion table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #ffffff; /* Para mantener la coherencia con el diseño */
+    margin-top: 10px; /* Espacio antes de la tabla */
+}
+
+.info-seccion th, .info-seccion td {
+    border: 1px solid #ddd;
+    text-align: left;
+    padding: 4px;
+}
+
+.info-seccion tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+.totals-table {
+  width: 100%;
+  max-width: 600px; /* Limitar el ancho máximo de la tabla */
+  margin: auto; /* Centrar la tabla horizontalmente */
+  border-collapse: collapse;
+  font-family: Arial, sans-serif;
+  font-size: 0.9em; /* Aumentar el tamaño de la fuente para mejorar la legibilidad */
+}
+
+.totals-table th, .totals-table td {
+  text-align: center;
+  padding: 12px; /* Aumentar el padding para más espacio alrededor del texto */
+  border: 1px solid #ddd; /* Ajustar el color del borde para armonizar con el estilo general */
+}
+
+.totals-table thead {
+  background-color: #f4f4f4; /* Cambiar el color de fondo para que coincida con el esquema de colores del correo */
+}
+
+.totals-table thead th {
+  color: #333; /* Ajustar el color del texto para armonizar con el estilo general */
+}
+
+.totals-table tbody tr:nth-child(even) {
+  background-color: #ffffff; /* Ajustar para alternar colores de fondo */
+}
+
+.totals-table tfoot tr:first-child td {
+  background-color: #f4f4f4; /* Asegurar que se ajusta al diseño general */
+  font-weight: bold;
+}
+
+.totals-table tfoot tr:last-child td {
+  color: #ff5722; /* Utilizar el color destacado para enlaces y elementos importantes */
+}
+.blue-text {
+    color: #0000FF;
+  }
+.imgLogoEmpresa {
+    max-width: 100%; /* Asegura que la imagen sea responsive y no exceda el ancho de su contenedor */
+    height: auto; /* Mantiene la proporción de aspecto de la imagen basándose en el ancho */
+    width: auto; /* Permite que el navegador calcule el ancho para mantener la proporción de aspecto */
+    max-height: 87px; /* Establece una altura máxima para la imagen */
+}
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div class="container"&gt;
+        &lt;div class="header"&gt;
+            &lt;h2&gt;[NombreReporte]&lt;/h2&gt;
+          &lt;h3 class="title"&gt;&lt;span class="highlight"&gt;[NombreInsight]&lt;/span&gt;&lt;/h3&gt;
+        &lt;/div&gt;
+        &lt;div class="contenidoDinamicoP360"&gt;
+            Estimado/a: [Destinatario]&lt;br&gt;&lt;br&gt;
+            &lt;div class="info-seccion"&gt;
+                Te informamos que ha sido registrado el pedido número &lt;span class="highlight"&gt;[CodPedido]&lt;/span&gt;, efectuado a &lt;span class="highlight"&gt;[Cliente]&lt;/span&gt;([CategoriaEspecialidad])
+                &lt;br&gt;&lt;strong&gt;Dirección: &lt;/strong&gt;[Direccion]. Ciudad [Ciudad]
+                &lt;br&gt;&lt;strong&gt;Fecha: &lt;/strong&gt;[Fecha_pedido]
+                &lt;br&gt;&lt;strong&gt;Fecha acordada: &lt;/strong&gt;[Fecha_acordada]
+                &lt;br&gt;&lt;strong&gt;Contacto: &lt;/strong&gt;[Contacto]
+                &lt;br&gt;&lt;strong&gt;Observaciones: &lt;/strong&gt;[Observaciones]
+                &lt;br&gt;NOTA: El pedido debe ser despachado mediante: &lt;span class="highlight"&gt;[Despachador_pedido]&lt;/span&gt;
+            &lt;/div&gt;
+&lt;div class="info-seccion"&gt;
+    &lt;table class="totals-table"&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;&lt;/th&gt; &lt;!-- Cabecera vacía para la columna de descripción --&gt;
+      &lt;th&gt;Items(U)&lt;/th&gt;
+      &lt;th&gt;Bonif(U)&lt;/th&gt;
+      &lt;th&gt;Total&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Solicitados:&lt;/td&gt;
+      &lt;td&gt;[Unidades]&lt;/td&gt;
+      &lt;td&gt;[Bonificaciones]&lt;/td&gt;
+      &lt;td&gt;[Total_solicitados]&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Despachados:&lt;/td&gt;
+      &lt;td&gt;[Unidades_despachadas]&lt;/td&gt;
+      &lt;td&gt;[Bonificaciones_despachadas]&lt;/td&gt;
+      &lt;td&gt;[Total_despachados]&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Pendientes despacho:&lt;/td&gt;
+      &lt;td&gt;[Saldo_unidades]&lt;/td&gt;
+      &lt;td&gt;[Saldo_bonificaciones]&lt;/td&gt;
+      &lt;td&gt;[Total_saldo]&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+  &lt;tfoot&gt;
+    &lt;tr&gt;
+      &lt;td colspan="4"&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tfoot&gt;
+&lt;/table&gt;
+  &lt;span class="textoMinimalista"&gt;El detalle del pedido se encuentra en el archivo adjunto.&lt;/span&gt;
+&lt;/div&gt;
+&lt;div id="mapa"&gt;
+    [MARCADOR_MAPA] &lt;!-- Este marcador será reemplazado por el HTML del mapa --&gt;
+  &lt;div class="textoMinimalista"&gt;El mapa representa la dirección georreferenciada en la que se efectuó el pedido.&lt;/div&gt;
+&lt;/div&gt;
+&lt;!-- Asi es como debe quedar el  [MARCADOR_MAPA] para que funcione
+            &lt;a href="https://www.google.com/maps?q=-0.1988118,-78.4363136" target="_blank"&gt;
+                &lt;img src="https://maps.googleapis.com/maps/api/staticmap?center=-0.1988118,-78.4363136&amp;zoom=17&amp;size=600x300&amp;markers=icon:https://upload.wikimedia.org/wikipedia/commons/f/f9/Map-icon.svg|-0.1988118,-78.4363136&amp;key=[REMOVED_GOOGLE_MAPS_KEY]" alt="Ubicación en Mapa con Marcador Personalizado"&gt;
+            &lt;/a&gt;
+--&gt;
+&lt;/div&gt;
+            &lt;br&gt;Agradecemos tu compromiso, para lograr el cumplimiento de tus objetivos y de la compañía.
+            &lt;br&gt;
+            &lt;br&gt;¡Trabajamos juntos para lograr los mejores resultados!&lt;/p&gt;
+            &lt;p&gt;Esta información es reservada para [LaboratorioImplementacion]. Su contenido no debe ser reenviado o divulgado sin autorización. &lt;br&gt; &lt;br&gt;
+            Si tiene alguna consulta relacionada con la información enviada, por favor &lt;a href="mailto:[MailAdministradorLaboratorio]?subject=Soporte Sistema Pharma360°/P360°&amp;body=Contacto automático desde plataforma Pharma360°/P360°."&gt;contacte a soporte a Fuerza de Ventas&lt;/a&gt;
+            &lt;/p&gt;
+            Muchas gracias.
+            &lt;br&gt;
+            &lt;p&gt;Generado el: [FechaActualP360]&lt;/p&gt;
+            &lt;p&gt;
+                &lt;img src="[UrlImagenLogo]" alt="Sitio Web Laboratorio" border="0" class="imgLogoEmpresa"&gt;
+            &lt;/p&gt;
+            &lt;p&gt;
+                [TrademarkBisigma]
+                &lt;a href="mailto:wilson.almeida@bisigma.com?subject=Contacto Sistema Pharma360°/P360°&amp;body=Contacto automático desde plataforma Pharma360°/P360°."&gt;www.bisigma.com&lt;/a&gt;
+        &lt;div class="footer"&gt;
+            Cláusula de confidencialidad: Este mensaje y su contenido es confidencial, pudiendo asimismo contener información amparada por el secreto profesional. En caso de haber recibido este correo por error, sírvase comunicárnoslo de inmediato vía e-mail y eliminarlo de su sistema. No deberá divulgar, distribuir o copiar su contenido. &lt;br&gt;
+        &lt;/div&gt;
+        &lt;div class="footer2"&gt;
+            Pharma360°
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</value>
+  </data>
+  <data name="HTMLBody_Plantilla_VM_08" xml:space="preserve">
+    <value>&lt;!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"&gt;
+    &lt;meta name="GENERATOR" content="Pharma360°"&gt;
+            &lt;style&gt;
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 5px;
+            background-color: #ffffff;
+            border-radius: 5px;
+        }
+
+        .header {
+            text-align: center;
+            padding: 10px;
+            border-bottom: 2px solid #ff5722;
+            margin-top: 0;
+        }
+      h2 {
+              margin-top: 0;
+          }
+        .footer {
+            text-align: center;
+            padding: 10px 10px 0 10px;
+            font-size: 0.8em;
+            color: #666;
+            border-top: 2px solid #ff5722;
+        }
+        .footer2 {
+            text-align: center;
+            padding: 10px;
+            background-color: #ff5722;
+            color: white;
+            border-radius: 0 0 4px 4px;
+            font-family: Arial, sans-serif;
+            font-size: 0.9em;
+            line-height: 0.8;
+            letter-spacing: 0.5px;
+        }
+        .textoMinimalista {
+            text-align: center;
+            padding: 10px;
+            font-size: 0.7em;
+            color: #666;
+        }      
+
+        a {
+            color: #ff5722;
+            text-decoration: none;
+        }
+
+        img {
+            max-width: 100%;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .title {
+            font-size: 0.6rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .highlight {
+            color: #ff5722;
+        }
+
+        img.auto-resize {
+            max-width: 30%;
+            height: 30%;
+        }
+
+        .info-seccion {
+            margin-bottom: 30px;
+        }
+
+        .info-titulo {
+            color: #333;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .info {
+            margin-left: 20px;
+        }
+.contenidoDinamicoP360 {
+    padding: 10px;
+    background-color: #f0f4f8; /* Soft blue for a calming,
+        professional appearance */
+    margin-bottom: 0px;
+  border-bottom: 1x solid #ff5722;
+  border-top: 1px solid #ff5722;
+}
+              .info-seccion table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #ffffff; /* Para mantener la coherencia con el diseño */
+    margin-top: 10px; /* Espacio antes de la tabla */
+}
+
+.info-seccion th, .info-seccion td {
+    border: 1px solid #ddd;
+    text-align: left;
+    padding: 4px;
+}
+
+.info-seccion tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+.totals-table {
+  width: 100%;
+  max-width: 600px; /* Limitar el ancho máximo de la tabla */
+  margin: auto; /* Centrar la tabla horizontalmente */
+  border-collapse: collapse;
+  font-family: Arial, sans-serif;
+  font-size: 0.9em; /* Aumentar el tamaño de la fuente para mejorar la legibilidad */
+}
+
+.totals-table th, .totals-table td {
+  text-align: center;
+  padding: 12px; /* Aumentar el padding para más espacio alrededor del texto */
+  border: 1px solid #ddd; /* Ajustar el color del borde para armonizar con el estilo general */
+}
+
+.totals-table thead {
+  background-color: #f4f4f4; /* Cambiar el color de fondo para que coincida con el esquema de colores del correo */
+}
+
+.totals-table thead th {
+  color: #333; /* Ajustar el color del texto para armonizar con el estilo general */
+}
+
+.totals-table tbody tr:nth-child(even) {
+  background-color: #ffffff; /* Ajustar para alternar colores de fondo */
+}
+
+.totals-table tfoot tr:first-child td {
+  background-color: #f4f4f4; /* Asegurar que se ajusta al diseño general */
+  font-weight: bold;
+}
+
+.totals-table tfoot tr:last-child td {
+  color: #ff5722; /* Utilizar el color destacado para enlaces y elementos importantes */
+}
+.blue-text {
+    color: #0000FF;
+  }
+.imgLogoEmpresa {
+    max-width: 100%; /* Asegura que la imagen sea responsive y no exceda el ancho de su contenedor */
+    height: auto; /* Mantiene la proporción de aspecto de la imagen basándose en el ancho */
+    width: auto; /* Permite que el navegador calcule el ancho para mantener la proporción de aspecto */
+    max-height: 87px; /* Establece una altura máxima para la imagen */
+}
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div class="container"&gt;
+        &lt;div class="header"&gt;
+            &lt;h2&gt;[NombreReporte]&lt;/h2&gt;
+          &lt;h3 class="title"&gt;&lt;span class="highlight"&gt;[NombreInsight]&lt;/span&gt;&lt;/h3&gt;
+        &lt;/div&gt;
+        &lt;div class="contenidoDinamicoP360"&gt;
+            Estimado/a: [Destinatario]&lt;br&gt;&lt;br&gt;
+            &lt;div class="info-seccion"&gt;
+                Te informamos que ha sido registrado el despacho con número CUD &lt;span class="highlight"&gt;[CodDespacho]&lt;/span&gt;, correspondiente al pedido &lt;span class="highlight"&gt;[CodPedido]&lt;/span&gt;, efectuado a &lt;span class="highlight"&gt;[Cliente]&lt;/span&gt;([CategoriaEspecialidad])
+                &lt;br&gt;&lt;strong&gt;Dirección: &lt;/strong&gt;[Direccion]. Ciudad [Ciudad]
+                &lt;br&gt;&lt;strong&gt;Fecha : &lt;/strong&gt;[Fecha_pedido]
+                &lt;br&gt;&lt;strong&gt;Fecha acordada: &lt;/strong&gt;[Fecha_acordada]
+                &lt;br&gt;&lt;strong&gt;Contacto: &lt;/strong&gt;[Contacto]
+                &lt;br&gt;&lt;strong&gt;Observaciones: &lt;/strong&gt;[Observaciones]
+                &lt;br&gt;NOTA: El pedido debe ser despachado mediante: &lt;span class="highlight"&gt;[Despachador_pedido]&lt;/span&gt;
+            &lt;/div&gt;
+&lt;div class="info-seccion"&gt;
+    &lt;table class="totals-table"&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;&lt;/th&gt; &lt;!-- Cabecera vacía para la columna de descripción --&gt;
+      &lt;th&gt;Items(U)&lt;/th&gt;
+      &lt;th&gt;Bonif(U)&lt;/th&gt;
+      &lt;th&gt;Total&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Solicitados:&lt;/td&gt;
+      &lt;td&gt;[Unidades]&lt;/td&gt;
+      &lt;td&gt;[Bonificaciones]&lt;/td&gt;
+      &lt;td&gt;[Total_solicitados]&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Despachados:&lt;/td&gt;
+      &lt;td&gt;[Unidades_despachadas]&lt;/td&gt;
+      &lt;td&gt;[Bonificaciones_despachadas]&lt;/td&gt;
+      &lt;td&gt;[Total_despachados]&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Pendientes despacho:&lt;/td&gt;
+      &lt;td&gt;[Saldo_unidades]&lt;/td&gt;
+      &lt;td&gt;[Saldo_bonificaciones]&lt;/td&gt;
+      &lt;td&gt;[Total_saldo]&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+  &lt;tfoot&gt;
+    &lt;tr&gt;
+      &lt;td colspan="4"&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tfoot&gt;
+&lt;/table&gt;
+  &lt;span class="textoMinimalista"&gt;Estos son los valores resumidos del estado actual del pedido [CodPedido]. El detalle del pedido y sus despachos se encuentra en el archivo adjunto.&lt;/span&gt;
+&lt;/div&gt;
+Agradecemos tu compromiso, para lograr el cumplimiento de tus objetivos y de la compañía.
+            &lt;br&gt;
+            &lt;br&gt;¡Trabajamos juntos para lograr los mejores resultados!&lt;/p&gt;
+            &lt;p&gt;Esta información es reservada para [LaboratorioImplementacion]. Su contenido no debe ser reenviado o divulgado sin autorización. &lt;br&gt; &lt;br&gt;
+            Si tiene alguna consulta relacionada con la información enviada, por favor &lt;a href="mailto:[MailAdministradorLaboratorio]?subject=Soporte Sistema Pharma360°/P360°&amp;body=Contacto automático desde plataforma Pharma360°/P360°."&gt;contacte a soporte a Fuerza de Ventas&lt;/a&gt;
+            &lt;/p&gt;
+            Muchas gracias.
+            &lt;br&gt;
+            &lt;p&gt;Generado el: [FechaActualP360]&lt;/p&gt;
+            &lt;p&gt;
+                &lt;img src="[UrlImagenLogo]" alt="Sitio Web Laboratorio" border="0" class="imgLogoEmpresa"&gt;
+            &lt;/p&gt;
+            &lt;p&gt;
+                [TrademarkBisigma]
+                &lt;a href="mailto:wilson.almeida@bisigma.com?subject=Contacto Sistema Pharma360°/P360°&amp;body=Contacto automático desde plataforma Pharma360°/P360°."&gt;www.bisigma.com&lt;/a&gt;
+        &lt;div class="footer"&gt;
+            Cláusula de confidencialidad: Este mensaje y su contenido es confidencial, pudiendo asimismo contener información amparada por el secreto profesional. En caso de haber recibido este correo por error, sírvase comunicárnoslo de inmediato vía e-mail y eliminarlo de su sistema. No deberá divulgar, distribuir o copiar su contenido. &lt;br&gt;
+        &lt;/div&gt;
+        &lt;div class="footer2"&gt;
+            Pharma360°
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</value>
+  </data>
+  <data name="HTMLBody_Plantilla_VM_09" xml:space="preserve">
+    <value>&lt;!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"&gt;
+    &lt;meta name="GENERATOR" content="Pharma360°"&gt;
+            &lt;style&gt;
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 5px;
+            background-color: #ffffff;
+            border-radius: 5px;
+        }
+
+        .header {
+            text-align: center;
+            padding: 10px;
+            border-bottom: 2px solid #ff5722;
+            margin-top: 0;
+        }
+      h2 {
+              margin-top: 0;
+          }
+        .footer {
+            text-align: center;
+            padding: 10px 10px 0 10px;
+            font-size: 0.8em;
+            color: #666;
+            border-top: 2px solid #ff5722;
+        }
+        .footer2 {
+            text-align: center;
+            padding: 10px;
+            background-color: #ff5722;
+            color: white;
+            border-radius: 0 0 4px 4px;
+            font-family: Arial, sans-serif;
+            font-size: 0.9em;
+            line-height: 0.8;
+            letter-spacing: 0.5px;
+        }
+        .textoMinimalista {
+            text-align: center;
+            padding: 10px;
+            font-size: 0.7em;
+            color: #666;
+        }      
+
+        a {
+            color: #ff5722;
+            text-decoration: none;
+        }
+
+        img {
+            max-width: 100%;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .title {
+            font-size: 0.6rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .highlight {
+            color: #ff5722;
+        }
+
+        img.auto-resize {
+            max-width: 30%;
+            height: 30%;
+        }
+
+        .info-seccion {
+            margin-bottom: 30px;
+        }
+
+        .info-titulo {
+            color: #333;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .info {
+            margin-left: 20px;
+        }
+.contenidoDinamicoP360 {
+    padding: 10px;
+    background-color: #f0f4f8; /* Soft blue for a calming,
+        professional appearance */
+    margin-bottom: 0px;
+  border-bottom: 1x solid #ff5722;
+  border-top: 1px solid #ff5722;
+}
+              .info-seccion table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #ffffff; /* Para mantener la coherencia con el diseño */
+    margin-top: 10px; /* Espacio antes de la tabla */
+}
+
+.info-seccion th, .info-seccion td {
+    border: 1px solid #ddd;
+    text-align: left;
+    padding: 4px;
+}
+
+.info-seccion tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+.totals-table {
+  width: 100%;
+  max-width: 600px; /* Limitar el ancho máximo de la tabla */
+  margin: auto; /* Centrar la tabla horizontalmente */
+  border-collapse: collapse;
+  font-family: Arial, sans-serif;
+  font-size: 0.9em; /* Aumentar el tamaño de la fuente para mejorar la legibilidad */
+}
+
+.totals-table th, .totals-table td {
+  text-align: center;
+  padding: 12px; /* Aumentar el padding para más espacio alrededor del texto */
+  border: 1px solid #ddd; /* Ajustar el color del borde para armonizar con el estilo general */
+}
+
+.totals-table thead {
+  background-color: #f4f4f4; /* Cambiar el color de fondo para que coincida con el esquema de colores del correo */
+}
+
+.totals-table thead th {
+  color: #333; /* Ajustar el color del texto para armonizar con el estilo general */
+}
+
+.totals-table tbody tr:nth-child(even) {
+  background-color: #ffffff; /* Ajustar para alternar colores de fondo */
+}
+
+.totals-table tfoot tr:first-child td {
+  background-color: #f4f4f4; /* Asegurar que se ajusta al diseño general */
+  font-weight: bold;
+}
+
+.totals-table tfoot tr:last-child td {
+  color: #ff5722; /* Utilizar el color destacado para enlaces y elementos importantes */
+}
+.blue-text {
+    color: #0000FF;
+  }
+.imgLogoEmpresa {
+    max-width: 100%; /* Asegura que la imagen sea responsive y no exceda el ancho de su contenedor */
+    height: auto; /* Mantiene la proporción de aspecto de la imagen basándose en el ancho */
+    width: auto; /* Permite que el navegador calcule el ancho para mantener la proporción de aspecto */
+    max-height: 87px; /* Establece una altura máxima para la imagen */
+}
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div class="container"&gt;
+        &lt;div class="header"&gt;
+            &lt;h2&gt;[NombreReporte]&lt;/h2&gt;
+          &lt;h3 class="title"&gt;&lt;span class="highlight"&gt;[NombreInsight]&lt;/span&gt;&lt;/h3&gt;
+        &lt;/div&gt;
+        &lt;div class="contenidoDinamicoP360"&gt;
+            Estimado/a: [Destinatario]&lt;br&gt;&lt;br&gt;
+            &lt;div class="info-seccion"&gt;
+                Te informamos que ha sido &lt;strong&gt;ANULADO&lt;/strong&gt; el pedido número &lt;span class="highlight"&gt;[CodPedido]&lt;/span&gt;, efectuado a &lt;span class="highlight"&gt;[Cliente]&lt;/span&gt;([CategoriaEspecialidad])
+                &lt;br&gt;&lt;strong&gt;Nota: &lt;/strong&gt;El motivo de la anulación de debe a: &lt;span class="highlight"&gt;[Motivo_devolucion_cancelacion]&lt;/span&gt;
+              &lt;br&gt;
+                &lt;br&gt;&lt;strong&gt;Dirección: &lt;/strong&gt;[Direccion]. Ciudad [Ciudad]
+                &lt;br&gt;&lt;strong&gt;Fecha: &lt;/strong&gt;[Fecha_pedido]
+                &lt;br&gt;&lt;strong&gt;Fecha acordada: &lt;/strong&gt;[Fecha_acordada]
+                &lt;br&gt;&lt;strong&gt;Contacto: &lt;/strong&gt;[Contacto]
+                &lt;br&gt;&lt;strong&gt;Observaciones: &lt;/strong&gt;[Observaciones]
+
+            &lt;/div&gt;
+&lt;div class="info-seccion"&gt;
+    &lt;table class="totals-table"&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;&lt;/th&gt; &lt;!-- Cabecera vacía para la columna de descripción --&gt;
+      &lt;th&gt;Items(U)&lt;/th&gt;
+      &lt;th&gt;Bonif(U)&lt;/th&gt;
+      &lt;th&gt;Total&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Solicitados:&lt;/td&gt;
+      &lt;td&gt;[Unidades]&lt;/td&gt;
+      &lt;td&gt;[Bonificaciones]&lt;/td&gt;
+      &lt;td&gt;[Total_solicitados]&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Despachados:&lt;/td&gt;
+      &lt;td&gt;[Unidades_despachadas]&lt;/td&gt;
+      &lt;td&gt;[Bonificaciones_despachadas]&lt;/td&gt;
+      &lt;td&gt;[Total_despachados]&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Pendientes despacho:&lt;/td&gt;
+      &lt;td&gt;[Saldo_unidades]&lt;/td&gt;
+      &lt;td&gt;[Saldo_bonificaciones]&lt;/td&gt;
+      &lt;td&gt;[Total_saldo]&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+  &lt;tfoot&gt;
+    &lt;tr&gt;
+      &lt;td colspan="4"&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tfoot&gt;
+&lt;/table&gt;
+  &lt;span class="textoMinimalista"&gt;El detalle del pedido se encuentra en el archivo adjunto.&lt;/span&gt;
+&lt;/div&gt;
+            &lt;br&gt;Agradecemos tu compromiso, para lograr el cumplimiento de tus objetivos y de la compañía.
+            &lt;br&gt;
+            &lt;br&gt;¡Trabajamos juntos para lograr los mejores resultados!&lt;/p&gt;
+            &lt;p&gt;Esta información es reservada para [LaboratorioImplementacion]. Su contenido no debe ser reenviado o divulgado sin autorización. &lt;br&gt; &lt;br&gt;
+            Si tiene alguna consulta relacionada con la información enviada, por favor &lt;a href="mailto:[MailAdministradorLaboratorio]?subject=Soporte Sistema Pharma360°/P360°&amp;body=Contacto automático desde plataforma Pharma360°/P360°."&gt;contacte a soporte a Fuerza de Ventas&lt;/a&gt;
+            &lt;/p&gt;
+            Muchas gracias.
+            &lt;br&gt;
+            &lt;p&gt;Generado el: [FechaActualP360]&lt;/p&gt;
+            &lt;p&gt;
+                &lt;img src="[UrlImagenLogo]" alt="Sitio Web Laboratorio" border="0" class="imgLogoEmpresa"&gt;
+            &lt;/p&gt;
+            &lt;p&gt;
+                [TrademarkBisigma]
+                &lt;a href="mailto:wilson.almeida@bisigma.com?subject=Contacto Sistema Pharma360°/P360°&amp;body=Contacto automático desde plataforma Pharma360°/P360°."&gt;www.bisigma.com&lt;/a&gt;
+        &lt;div class="footer"&gt;
+            Cláusula de confidencialidad: Este mensaje y su contenido es confidencial, pudiendo asimismo contener información amparada por el secreto profesional. En caso de haber recibido este correo por error, sírvase comunicárnoslo de inmediato vía e-mail y eliminarlo de su sistema. No deberá divulgar, distribuir o copiar su contenido. &lt;br&gt;
+        &lt;/div&gt;
+        &lt;div class="footer2"&gt;
+            Pharma360°
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</value>
+  </data>
+  <data name="HTMLBody_Plantilla_VM_10" xml:space="preserve">
+    <value>&lt;!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"&gt;
+    &lt;meta name="GENERATOR" content="Pharma360°"&gt;
+            &lt;style&gt;
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 5px;
+            background-color: #ffffff;
+            border-radius: 5px;
+        }
+
+        .header {
+            text-align: center;
+            padding: 10px;
+            border-bottom: 2px solid #ff5722;
+            margin-top: 0;
+        }
+      h2 {
+              margin-top: 0;
+          }
+        .footer {
+            text-align: center;
+            padding: 10px 10px 0 10px;
+            font-size: 0.8em;
+            color: #666;
+            border-top: 2px solid #ff5722;
+        }
+        .footer2 {
+            text-align: center;
+            padding: 10px;
+            background-color: #ff5722;
+            color: white;
+            border-radius: 0 0 4px 4px;
+            font-family: Arial, sans-serif;
+            font-size: 0.9em;
+            line-height: 0.8;
+            letter-spacing: 0.5px;
+        }
+        .textoMinimalista {
+            text-align: center;
+            padding: 10px;
+            font-size: 0.7em;
+            color: #666;
+        }      
+
+        a {
+            color: #ff5722;
+            text-decoration: none;
+        }
+
+        img {
+            max-width: 100%;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .title {
+            font-size: 0.6rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .highlight {
+            color: #ff5722;
+        }
+
+        img.auto-resize {
+            max-width: 30%;
+            height: 30%;
+        }
+
+        .info-seccion {
+            margin-bottom: 30px;
+        }
+
+        .info-titulo {
+            color: #333;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .info {
+            margin-left: 20px;
+        }
+.contenidoDinamicoP360 {
+    padding: 10px;
+    background-color: #f0f4f8; /* Soft blue for a calming,
+        professional appearance */
+    margin-bottom: 0px;
+  border-bottom: 1x solid #ff5722;
+  border-top: 1px solid #ff5722;
+}
+              .info-seccion table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #ffffff; /* Para mantener la coherencia con el diseño */
+    margin-top: 10px; /* Espacio antes de la tabla */
+}
+
+.info-seccion th, .info-seccion td {
+    border: 1px solid #ddd;
+    text-align: left;
+    padding: 4px;
+}
+
+.info-seccion tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+.totals-table {
+  width: 100%;
+  max-width: 600px; /* Limitar el ancho máximo de la tabla */
+  margin: auto; /* Centrar la tabla horizontalmente */
+  border-collapse: collapse;
+  font-family: Arial, sans-serif;
+  font-size: 0.9em; /* Aumentar el tamaño de la fuente para mejorar la legibilidad */
+}
+
+.totals-table th, .totals-table td {
+  text-align: center;
+  padding: 12px; /* Aumentar el padding para más espacio alrededor del texto */
+  border: 1px solid #ddd; /* Ajustar el color del borde para armonizar con el estilo general */
+}
+
+.totals-table thead {
+  background-color: #f4f4f4; /* Cambiar el color de fondo para que coincida con el esquema de colores del correo */
+}
+
+.totals-table thead th {
+  color: #333; /* Ajustar el color del texto para armonizar con el estilo general */
+}
+
+.totals-table tbody tr:nth-child(even) {
+  background-color: #ffffff; /* Ajustar para alternar colores de fondo */
+}
+
+.totals-table tfoot tr:first-child td {
+  background-color: #f4f4f4; /* Asegurar que se ajusta al diseño general */
+  font-weight: bold;
+}
+
+.totals-table tfoot tr:last-child td {
+  color: #ff5722; /* Utilizar el color destacado para enlaces y elementos importantes */
+}
+.blue-text {
+    color: #0000FF;
+  }
+.imgLogoEmpresa {
+    max-width: 100%; /* Asegura que la imagen sea responsive y no exceda el ancho de su contenedor */
+    height: auto; /* Mantiene la proporción de aspecto de la imagen basándose en el ancho */
+    width: auto; /* Permite que el navegador calcule el ancho para mantener la proporción de aspecto */
+    max-height: 87px; /* Establece una altura máxima para la imagen */
+}
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div class="container"&gt;
+        &lt;div class="header"&gt;
+            &lt;h2&gt;[NombreReporte]&lt;/h2&gt;
+          &lt;h3 class="title"&gt;&lt;span class="highlight"&gt;[NombreInsight]&lt;/span&gt;&lt;/h3&gt;
+        &lt;/div&gt;
+        &lt;div class="contenidoDinamicoP360"&gt;
+            Estimado/a: [Destinatario]&lt;br&gt;&lt;br&gt;
+            &lt;div class="info-seccion"&gt;
+                Te informamos que ha sido &lt;strong&gt;DEVOLUCION&lt;/strong&gt; el pedido número &lt;span class="highlight"&gt;[CodPedido]&lt;/span&gt;, efectuado a &lt;span class="highlight"&gt;[Cliente]&lt;/span&gt;([CategoriaEspecialidad])
+                &lt;br&gt;&lt;strong&gt;Nota: &lt;/strong&gt;El motivo de la devolución de debe a: &lt;span class="highlight"&gt;[Motivo_devolucion_cancelacion]&lt;/span&gt;
+              &lt;br&gt;
+                &lt;br&gt;&lt;strong&gt;Dirección: &lt;/strong&gt;[Direccion]. Ciudad [Ciudad]
+                &lt;br&gt;&lt;strong&gt;Fecha: &lt;/strong&gt;[Fecha_pedido]
+                &lt;br&gt;&lt;strong&gt;Fecha acordada: &lt;/strong&gt;[Fecha_acordada]
+                &lt;br&gt;&lt;strong&gt;Contacto: &lt;/strong&gt;[Contacto]
+                &lt;br&gt;&lt;strong&gt;Observaciones: &lt;/strong&gt;[Observaciones]
+
+            &lt;/div&gt;
+&lt;div class="info-seccion"&gt;
+    &lt;table class="totals-table"&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;&lt;/th&gt; &lt;!-- Cabecera vacía para la columna de descripción --&gt;
+      &lt;th&gt;Items(U)&lt;/th&gt;
+      &lt;th&gt;Bonif(U)&lt;/th&gt;
+      &lt;th&gt;Total&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Solicitados:&lt;/td&gt;
+      &lt;td&gt;[Unidades]&lt;/td&gt;
+      &lt;td&gt;[Bonificaciones]&lt;/td&gt;
+      &lt;td&gt;[Total_solicitados]&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Despachados:&lt;/td&gt;
+      &lt;td&gt;[Unidades_despachadas]&lt;/td&gt;
+      &lt;td&gt;[Bonificaciones_despachadas]&lt;/td&gt;
+      &lt;td&gt;[Total_despachados]&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Pendientes despacho:&lt;/td&gt;
+      &lt;td&gt;[Saldo_unidades]&lt;/td&gt;
+      &lt;td&gt;[Saldo_bonificaciones]&lt;/td&gt;
+      &lt;td&gt;[Total_saldo]&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+  &lt;tfoot&gt;
+    &lt;tr&gt;
+      &lt;td colspan="4"&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tfoot&gt;
+&lt;/table&gt;
+  &lt;span class="textoMinimalista"&gt;El detalle del pedido se encuentra en el archivo adjunto.&lt;/span&gt;
+&lt;/div&gt;
+            &lt;br&gt;Agradecemos tu compromiso, para lograr el cumplimiento de tus objetivos y de la compañía.
+            &lt;br&gt;
+            &lt;br&gt;¡Trabajamos juntos para lograr los mejores resultados!&lt;/p&gt;
+            &lt;p&gt;Esta información es reservada para [LaboratorioImplementacion]. Su contenido no debe ser reenviado o divulgado sin autorización. &lt;br&gt; &lt;br&gt;
+            Si tiene alguna consulta relacionada con la información enviada, por favor &lt;a href="mailto:[MailAdministradorLaboratorio]?subject=Soporte Sistema Pharma360°/P360°&amp;body=Contacto automático desde plataforma Pharma360°/P360°."&gt;contacte a soporte a Fuerza de Ventas&lt;/a&gt;
+            &lt;/p&gt;
+            Muchas gracias.
+            &lt;br&gt;
+            &lt;p&gt;Generado el: [FechaActualP360]&lt;/p&gt;
+            &lt;p&gt;
+                &lt;img src="[UrlImagenLogo]" alt="Sitio Web Laboratorio" border="0" class="imgLogoEmpresa"&gt;
+            &lt;/p&gt;
+            &lt;p&gt;
+                [TrademarkBisigma]
+                &lt;a href="mailto:wilson.almeida@bisigma.com?subject=Contacto Sistema Pharma360°/P360°&amp;body=Contacto automático desde plataforma Pharma360°/P360°."&gt;www.bisigma.com&lt;/a&gt;
+        &lt;div class="footer"&gt;
+            Cláusula de confidencialidad: Este mensaje y su contenido es confidencial, pudiendo asimismo contener información amparada por el secreto profesional. En caso de haber recibido este correo por error, sírvase comunicárnoslo de inmediato vía e-mail y eliminarlo de su sistema. No deberá divulgar, distribuir o copiar su contenido. &lt;br&gt;
+        &lt;/div&gt;
+        &lt;div class="footer2"&gt;
+            Pharma360°
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</value>
+  </data>
+  <data name="HTMLBody_Plantilla_VM_11" xml:space="preserve">
+    <value>&lt;!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"&gt;
+    &lt;meta name="GENERATOR" content="Pharma360°"&gt;
+            &lt;style&gt;
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 5px;
+            background-color: #ffffff;
+            border-radius: 5px;
+        }
+
+        .header {
+            text-align: center;
+            padding: 10px 10px 0 10px;
+            border-bottom: 2px solid #ff5722;
+            margin-top: 0;
+        }
+      h2 {
+              margin-top: 0;
+          }
+        .footer {
+            text-align: center;
+            padding: 10px;
+            font-size: 0.8em;
+            color: #666;
+            border-top: 2px solid #ff5722;
+        }
+        .footer2 {
+            text-align: center;
+            padding: 10px;
+            background-color: #ff5722;
+            color: white;
+            border-radius: 0 0 4px 4px;
+            font-family: Arial, sans-serif;
+            font-size: 0.9em;
+            line-height: 0.8;
+            letter-spacing: 0.5px;
+        }
+        .textoMinimalista {
+            text-align: center;
+            padding: 10px;
+            font-size: 0.7em;
+            color: #666;
+        }      
+
+        a {
+            color: #ff5722;
+            text-decoration: none;
+        }
+
+        img {
+            max-width: 100%;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .title {
+            font-size: 0.6rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .highlight {
+            color: #ff5722;
+        }
+
+        img.auto-resize {
+            max-width: 30%;
+            height: 30%;
+        }
+
+        .info-seccion {
+            margin-bottom: 30px;
+        }
+
+        .info-titulo {
+            color: #333;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .info {
+            margin-left: 20px;
+        }
+.contenidoDinamicoP360 {
+    padding: 10px;
+    background-color: #f0f4f8; /* Soft blue for a calming,
+        professional appearance */
+    margin-bottom: 0px;
+  border-bottom: 1x solid #ff5722;
+  border-top: 1px solid #ff5722;
+}
+              .info-seccion table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #ffffff; /* Para mantener la coherencia con el diseño */
+    margin-top: 10px; /* Espacio antes de la tabla */
+}
+
+.info-seccion th, .info-seccion td {
+    border: 1px solid #ddd;
+    text-align: left;
+    padding: 4px;
+}
+
+.info-seccion tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+.totals-table {
+  width: 100%;
+  max-width: 600px; /* Limitar el ancho máximo de la tabla */
+  margin: auto; /* Centrar la tabla horizontalmente */
+  border-collapse: collapse;
+  font-family: Arial, sans-serif;
+  font-size: 0.9em; /* Aumentar el tamaño de la fuente para mejorar la legibilidad */
+}
+
+.totals-table th, .totals-table td {
+  text-align: center;
+  padding: 12px; /* Aumentar el padding para más espacio alrededor del texto */
+  border: 1px solid #ddd; /* Ajustar el color del borde para armonizar con el estilo general */
+}
+
+.totals-table thead {
+  background-color: #f4f4f4; /* Cambiar el color de fondo para que coincida con el esquema de colores del correo */
+}
+
+.totals-table thead th {
+  color: #333; /* Ajustar el color del texto para armonizar con el estilo general */
+}
+
+.totals-table tbody tr:nth-child(even) {
+  background-color: #ffffff; /* Ajustar para alternar colores de fondo */
+}
+
+.totals-table tfoot tr:first-child td {
+  background-color: #f4f4f4; /* Asegurar que se ajusta al diseño general */
+  font-weight: bold;
+}
+
+.totals-table tfoot tr:last-child td {
+  color: #ff5722; /* Utilizar el color destacado para enlaces y elementos importantes */
+}
+.blue-text {
+    color: #0000FF;
+  }
+.imgLogoEmpresa {
+    max-width: 100%; /* Asegura que la imagen sea responsive y no exceda el ancho de su contenedor */
+    height: auto; /* Mantiene la proporción de aspecto de la imagen basándose en el ancho */
+    width: auto; /* Permite que el navegador calcule el ancho para mantener la proporción de aspecto */
+    max-height: 87px; /* Establece una altura máxima para la imagen */
+}
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div class="container"&gt;
+        &lt;div class="header"&gt;
+            &lt;h2&gt;[NombreReporte]&lt;/h2&gt;
+          &lt;h3 class="title"&gt;&lt;span class="highlight"&gt;[NombreInsight]&lt;/span&gt;&lt;/h3&gt;
+        &lt;/div&gt;
+        &lt;div class="contenidoDinamicoP360"&gt;
+            Estimado/a: [Supervisor]&lt;br&gt;
+            cc: [Destinatario]&lt;br&gt;&lt;br&gt;
+            &lt;div class="info-seccion"&gt;
+                Te informamos que ha sido efectuada la &lt;strong&gt;Solicitud de tiempo no promocional &lt;/strong&gt; con Id &lt;span class="highlight"&gt;[ID_solicitud]&lt;/span&gt;, realizada por [Destinatario], registrada en la visita número &lt;span class="highlight"&gt;[CodVisita]&lt;/span&gt;, 
+                &lt;br&gt;&lt;strong&gt;Dirección: &lt;/strong&gt;[Direccion]. Ciudad [Ciudad]
+                &lt;br&gt;&lt;strong&gt;Desde: &lt;/strong&gt;[Fecha_visita]
+                &lt;br&gt;&lt;strong&gt;Hasta: &lt;/strong&gt;[Fecha_visita_fin]              
+                &lt;br&gt;&lt;strong&gt;Duración : &lt;/strong&gt;[MinutosDuracionVisita] (min)
+                &lt;br&gt;&lt;strong&gt;Observaciones: &lt;/strong&gt;[Observaciones]
+            &lt;/div&gt;
+            &lt;div class="info-seccion" style="margin-top: 30px; text-align: center; padding: 10px; background-color: #e9ecef; border-radius: 4px;"&gt;
+                Para gestionar esta solicitud (aprobar o negar), por favor ingresa al módulo correspondiente en el sistema Pharma360°.
+            &lt;/div&gt;          
+&lt;div id="mapa"&gt;
+    [MARCADOR_MAPA] &lt;!-- Este marcador será reemplazado por el HTML del mapa --&gt;
+  &lt;div class="textoMinimalista"&gt;El mapa representa la dirección georreferenciada en la que se efectuó el proceso la visita.&lt;/div&gt;
+&lt;/div&gt;
+&lt;!-- Asi es como debe quedar el  [MARCADOR_MAPA] para que funcione
+            &lt;a href="https://www.google.com/maps?q=-0.1988118,-78.4363136" target="_blank"&gt;
+                &lt;img src="https://maps.googleapis.com/maps/api/staticmap?center=-0.1988118,-78.4363136&amp;zoom=17&amp;size=600x300&amp;markers=icon:https://upload.wikimedia.org/wikipedia/commons/f/f9/Map-icon.svg|-0.1988118,-78.4363136&amp;key=[REMOVED_GOOGLE_MAPS_KEY]" alt="Ubicación en Mapa con Marcador Personalizado"&gt;
+            &lt;/a&gt;
+--&gt;
+&lt;/div&gt;
+            &lt;br&gt;Agradecemos tu compromiso, para lograr el cumplimiento de tus objetivos y de la compañía.
+            &lt;br&gt;
+            &lt;br&gt;¡Trabajamos juntos para lograr los mejores resultados!&lt;/p&gt;
+            &lt;p&gt;Esta información es reservada para [LaboratorioImplementacion]. Su contenido no debe ser reenviado o divulgado sin autorización. &lt;br&gt; &lt;br&gt;
+            Si tiene alguna consulta relacionada con la información enviada, por favor &lt;a href="mailto:[MailAdministradorLaboratorio]?subject=Soporte Sistema Pharma360°/P360°&amp;body=Contacto automático desde plataforma Pharma360°/P360°."&gt;contacte a soporte a Fuerza de Ventas&lt;/a&gt;
+            &lt;/p&gt;
+            Muchas gracias.
+            &lt;br&gt;
+            &lt;p&gt;Generado el: [FechaActualP360]&lt;/p&gt;
+            &lt;p&gt;
+                &lt;img src="[UrlImagenLogo]" alt="Sitio Web Laboratorio" border="0" class="imgLogoEmpresa"&gt;
+            &lt;/p&gt;
+            &lt;p&gt;
+                [TrademarkBisigma]
+                &lt;a href="mailto:wilson.almeida@bisigma.com?subject=Contacto Sistema Pharma360°/P360°&amp;body=Contacto automático desde plataforma Pharma360°/P360°."&gt;www.bisigma.com&lt;/a&gt;
+        &lt;div class="footer"&gt;
+            Cláusula de confidencialidad: Este mensaje y su contenido es confidencial, pudiendo asimismo contener información amparada por el secreto profesional. En caso de haber recibido este correo por error, sírvase comunicárnoslo de inmediato vía e-mail y eliminarlo de su sistema. No deberá divulgar, distribuir o copiar su contenido. &lt;br&gt;
+        &lt;/div&gt;
+        &lt;div class="footer2"&gt;
+            Pharma360°
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</value>
+  </data>
+  <data name="HTMLBody_Plantilla_VM_12" xml:space="preserve">
+    <value>&lt;!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"&gt;
+    &lt;meta name="GENERATOR" content="Pharma360°"&gt;
+            &lt;style&gt;
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 5px;
+            background-color: #ffffff;
+            border-radius: 5px;
+        }
+
+        .header {
+            text-align: center;
+            padding: 10px 10px 0 10px;
+            border-bottom: 2px solid #ff5722;
+            margin-top: 0;
+        }
+      h2 {
+              margin-top: 0;
+          }
+        .footer {
+            text-align: center;
+            padding: 10px;
+            font-size: 0.8em;
+            color: #666;
+            border-top: 2px solid #ff5722;
+        }
+        .footer2 {
+            text-align: center;
+            padding: 10px;
+            background-color: #ff5722;
+            color: white;
+            border-radius: 0 0 4px 4px;
+            font-family: Arial, sans-serif;
+            font-size: 0.9em;
+            line-height: 0.8;
+            letter-spacing: 0.5px;
+        }
+        .textoMinimalista {
+            text-align: center;
+            padding: 10px;
+            font-size: 0.7em;
+            color: #666;
+        }      
+
+        a {
+            color: #ff5722;
+            text-decoration: none;
+        }
+
+        img {
+            max-width: 100%;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .title {
+            font-size: 0.6rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .highlight {
+            color: #ff5722;
+        }
+
+        img.auto-resize {
+            max-width: 30%;
+            height: 30%;
+        }
+
+        .info-seccion {
+            margin-bottom: 30px;
+        }
+
+        .info-titulo {
+            color: #333;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .info {
+            margin-left: 20px;
+        }
+.contenidoDinamicoP360 {
+    padding: 10px;
+    background-color: #f0f4f8; /* Soft blue for a calming,
+        professional appearance */
+    margin-bottom: 0px;
+  border-bottom: 1x solid #ff5722;
+  border-top: 1px solid #ff5722;
+}
+              .info-seccion table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #ffffff; /* Para mantener la coherencia con el diseño */
+    margin-top: 10px; /* Espacio antes de la tabla */
+}
+
+.info-seccion th, .info-seccion td {
+    border: 1px solid #ddd;
+    text-align: left;
+    padding: 4px;
+}
+
+.info-seccion tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+.totals-table {
+  width: 100%;
+  max-width: 600px; /* Limitar el ancho máximo de la tabla */
+  margin: auto; /* Centrar la tabla horizontalmente */
+  border-collapse: collapse;
+  font-family: Arial, sans-serif;
+  font-size: 0.9em; /* Aumentar el tamaño de la fuente para mejorar la legibilidad */
+}
+
+.totals-table th, .totals-table td {
+  text-align: center;
+  padding: 12px; /* Aumentar el padding para más espacio alrededor del texto */
+  border: 1px solid #ddd; /* Ajustar el color del borde para armonizar con el estilo general */
+}
+
+.totals-table thead {
+  background-color: #f4f4f4; /* Cambiar el color de fondo para que coincida con el esquema de colores del correo */
+}
+
+.totals-table thead th {
+  color: #333; /* Ajustar el color del texto para armonizar con el estilo general */
+}
+
+.totals-table tbody tr:nth-child(even) {
+  background-color: #ffffff; /* Ajustar para alternar colores de fondo */
+}
+
+.totals-table tfoot tr:first-child td {
+  background-color: #f4f4f4; /* Asegurar que se ajusta al diseño general */
+  font-weight: bold;
+}
+
+.totals-table tfoot tr:last-child td {
+  color: #ff5722; /* Utilizar el color destacado para enlaces y elementos importantes */
+}
+.blue-text {
+    color: #0000FF;
+  }
+.imgLogoEmpresa {
+    max-width: 100%; /* Asegura que la imagen sea responsive y no exceda el ancho de su contenedor */
+    height: auto; /* Mantiene la proporción de aspecto de la imagen basándose en el ancho */
+    width: auto; /* Permite que el navegador calcule el ancho para mantener la proporción de aspecto */
+    max-height: 87px; /* Establece una altura máxima para la imagen */
+}
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div class="container"&gt;
+        &lt;div class="header"&gt;
+            &lt;h2&gt;[NombreReporte]&lt;/h2&gt;
+          &lt;h3 class="title"&gt;&lt;span class="highlight"&gt;[NombreInsight]&lt;/span&gt;&lt;/h3&gt;
+        &lt;/div&gt;
+        &lt;div class="contenidoDinamicoP360"&gt;
+            Estimado/a: [Supervisor]&lt;br&gt;
+            cc: [Destinatario]&lt;br&gt;&lt;br&gt;
+            &lt;div class="info-seccion"&gt;
+                Te informamos que ha sido efectuada la &lt;strong&gt;Validación de la solicitud de tiempo no promocional &lt;/strong&gt;&lt;span class="highlight"&gt;[ID_solicitud]&lt;/span&gt; realizada por [Destinatario], registrada en la visita número &lt;span class="highlight"&gt;[CodVisita]&lt;/span&gt;.
+              &lt;br&gt;
+La solicitud ha sido &lt;span class="highlight"&gt;[Estado_solicitud]&lt;/span&gt;, con la siguiente observación por parte de [Supervisor]: &lt;span class="highlight"&gt;[Observacion_estado_solicitud].&lt;/span&gt;&lt;br&gt;
+              &lt;br&gt;
+    Datos originales de la solicitud
+              &lt;br&gt;&lt;strong&gt;Dirección: &lt;/strong&gt;[Direccion] Ciudad [Ciudad]
+                &lt;br&gt;&lt;strong&gt;Desde: &lt;/strong&gt;[Fecha_visita]
+                &lt;br&gt;&lt;strong&gt;Hasta: &lt;/strong&gt;[Fecha_visita_fin]              
+                &lt;br&gt;&lt;strong&gt;Duración : &lt;/strong&gt;[MinutosDuracionVisita] (min)
+                &lt;br&gt;&lt;strong&gt;Observaciones: &lt;/strong&gt;[Observaciones]
+            &lt;/div&gt;                    
+&lt;div id="mapa"&gt;
+    [MARCADOR_MAPA] &lt;!-- Este marcador será reemplazado por el HTML del mapa --&gt;
+  &lt;div class="textoMinimalista"&gt;El mapa representa la dirección georreferenciada en la que se efectuó el proceso la visita.&lt;/div&gt;
+&lt;/div&gt;
+&lt;!-- Asi es como debe quedar el  [MARCADOR_MAPA] para que funcione
+            &lt;a href="https://www.google.com/maps?q=-0.1988118,-78.4363136" target="_blank"&gt;
+                &lt;img src="https://maps.googleapis.com/maps/api/staticmap?center=-0.1988118,-78.4363136&amp;zoom=17&amp;size=600x300&amp;markers=icon:https://upload.wikimedia.org/wikipedia/commons/f/f9/Map-icon.svg|-0.1988118,-78.4363136&amp;key=[REMOVED_GOOGLE_MAPS_KEY]" alt="Ubicación en Mapa con Marcador Personalizado"&gt;
+            &lt;/a&gt;
+--&gt;
+&lt;/div&gt;
+            &lt;br&gt;Agradecemos tu compromiso, para lograr el cumplimiento de tus objetivos y de la compañía.
+            &lt;br&gt;
+            &lt;br&gt;¡Trabajamos juntos para lograr los mejores resultados!&lt;/p&gt;
+            &lt;p&gt;Esta información es reservada para [LaboratorioImplementacion]. Su contenido no debe ser reenviado o divulgado sin autorización. &lt;br&gt; &lt;br&gt;
+            Si tiene alguna consulta relacionada con la información enviada, por favor &lt;a href="mailto:[MailAdministradorLaboratorio]?subject=Soporte Sistema Pharma360°/P360°&amp;body=Contacto automático desde plataforma Pharma360°/P360°."&gt;contacte a soporte a Fuerza de Ventas&lt;/a&gt;
+            &lt;/p&gt;
+            Muchas gracias.
+            &lt;br&gt;
+            &lt;p&gt;Generado el: [FechaActualP360]&lt;/p&gt;
+            &lt;p&gt;
+                &lt;img src="[UrlImagenLogo]" alt="Sitio Web Laboratorio" border="0" class="imgLogoEmpresa"&gt;
+            &lt;/p&gt;
+            &lt;p&gt;
+                [TrademarkBisigma]
+                &lt;a href="mailto:wilson.almeida@bisigma.com?subject=Contacto Sistema Pharma360°/P360°&amp;body=Contacto automático desde plataforma Pharma360°/P360°."&gt;www.bisigma.com&lt;/a&gt;
+        &lt;div class="footer"&gt;
+            Cláusula de confidencialidad: Este mensaje y su contenido es confidencial, pudiendo asimismo contener información amparada por el secreto profesional. En caso de haber recibido este correo por error, sírvase comunicárnoslo de inmediato vía e-mail y eliminarlo de su sistema. No deberá divulgar, distribuir o copiar su contenido. &lt;br&gt;
+        &lt;/div&gt;
+        &lt;div class="footer2"&gt;
+            Pharma360°
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</value>
+  </data>
+</root>
