@@ -22,8 +22,45 @@ namespace SchedulerP360Insight.Modulos
 {
     public class ModuleCapaAccesoDatos
     {
-
         private readonly int commandTimeoutP360 = 0;
+        private readonly Func<string> connectionStringProvider;
+
+        public ModuleCapaAccesoDatos()
+            : this(() => AppConfig.ConnectionString)
+        {
+        }
+
+        public ModuleCapaAccesoDatos(string connectionString)
+            : this(() => connectionString)
+        {
+            if (string.IsNullOrWhiteSpace(connectionString))
+            {
+                throw new ArgumentException(
+                    "La cadena de conexión es obligatoria.",
+                    nameof(connectionString));
+            }
+        }
+
+        private ModuleCapaAccesoDatos(Func<string> connectionStringProvider)
+        {
+            this.connectionStringProvider = connectionStringProvider ??
+                throw new ArgumentNullException(nameof(connectionStringProvider));
+        }
+
+        private string ConnectionString
+        {
+            get
+            {
+                string value = connectionStringProvider();
+                if (string.IsNullOrWhiteSpace(value))
+                {
+                    throw new InvalidOperationException(
+                        "La cadena de conexión no está configurada.");
+                }
+
+                return value;
+            }
+        }
 
         /// <summary>
         /// Registra la información necesaria en la cola de envío de notificaciones para eventos asíncronos
@@ -58,7 +95,7 @@ namespace SchedulerP360Insight.Modulos
         {
             try
             {
-                using (SqlConnection cnSQL = new SqlConnection(AppConfig.ConnectionString))
+                using (SqlConnection cnSQL = new SqlConnection(ConnectionString))
                 using (SqlCommand cmSQL = new SqlCommand("P360Insight.SP_RegistrarInformacionColaNotificacionesEventosAsincronos", cnSQL))
                 {
                     cnSQL.Open();
@@ -91,7 +128,7 @@ namespace SchedulerP360Insight.Modulos
             try
             {
                 string query = "SELECT cod_fichero FROM prescr.T_FICHERO WHERE vigente = 1";
-                using (SqlConnection cnSQL = new SqlConnection(AppConfig.ConnectionString))
+                using (SqlConnection cnSQL = new SqlConnection(ConnectionString))
                 using (SqlCommand cmSQL = new SqlCommand(query, cnSQL))
                 {
                     cnSQL.Open();
@@ -128,7 +165,7 @@ namespace SchedulerP360Insight.Modulos
             try
             {
                 string query = "SELECT VALOR as VALOR FROM T_PARAMETROS where parametro=@nombreParametro";
-                using (SqlConnection cnSQL = new SqlConnection(AppConfig.ConnectionString))
+                using (SqlConnection cnSQL = new SqlConnection(ConnectionString))
                 using (SqlCommand cmSQL = new SqlCommand(query, cnSQL))
                 {
                     cnSQL.Open();
@@ -200,7 +237,7 @@ namespace SchedulerP360Insight.Modulos
             WHERE cola_notificacion_id = @ColaNotificacionId";
             try
             {
-                using (SqlConnection cnSQL = new SqlConnection(AppConfig.ConnectionString))
+                using (SqlConnection cnSQL = new SqlConnection(ConnectionString))
                 {
                     using (SqlCommand cmSQL = new SqlCommand(query, cnSQL))
                     {
@@ -231,7 +268,7 @@ namespace SchedulerP360Insight.Modulos
             {
                  try
                 {
-                    using (SqlConnection cnSQL = new SqlConnection(AppConfig.ConnectionString))
+                    using (SqlConnection cnSQL = new SqlConnection(ConnectionString))
                     {
                         cnSQL.Open();
                         using (SqlCommand cmSQL = new SqlCommand("INSERT INTO DBO.T_LOG_CONECCIONYACCIONES (USUARIO, IP, ACCION, FUENTE, ORIGEN) VALUES (@col_usuario, @col_ip, @col_accion, @col_fuente, @col_origen)", cnSQL))
@@ -435,12 +472,12 @@ namespace SchedulerP360Insight.Modulos
             }
             return DatosPedido;
         }
-        public static List<DatosContactosNotificaciones> GetDataContactosNotificacionesxReporteyEvento(int reportId, string referenciaEventoId)
+        public List<DatosContactosNotificaciones> GetDataContactosNotificacionesxReporteyEvento(int reportId, string referenciaEventoId)
         {
             List<DatosContactosNotificaciones> contactosNotificaciones = new List<DatosContactosNotificaciones>();
             try
             {
-                using (var cnSQL = new SqlConnection(AppConfig.ConnectionString))
+                using (var cnSQL = new SqlConnection(ConnectionString))
                 {
                     cnSQL.Open();
                     var parametros = new { p_report_id = reportId, p_referencia_evento_id = referenciaEventoId };

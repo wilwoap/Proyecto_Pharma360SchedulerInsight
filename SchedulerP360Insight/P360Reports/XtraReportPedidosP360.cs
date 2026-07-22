@@ -11,12 +11,18 @@ namespace SchedulerP360Insight.P360Reports
 {
     public partial class XtraReportPedidosP360 : XtraReport
     {
-        private readonly LaboratoryConstants labConstants = new LaboratoryConstants();
+        private readonly LaboratoryConstants labConstants;
         private DS_V_REPORTE_HISTORICO_PEDIDOS oDS_V_REPORTE_HISTORICO_PEDIDOS = new DS_V_REPORTE_HISTORICO_PEDIDOS();
         private int v_cod_pedido;
 
         public XtraReportPedidosP360()
+            : this(null)
         {
+        }
+
+        public XtraReportPedidosP360(LaboratoryConstants labConstants)
+        {
+            this.labConstants = labConstants;
             InitializeComponent();
         }
 
@@ -99,14 +105,16 @@ namespace SchedulerP360Insight.P360Reports
         {
             try
             {
-                vendorName.Text = labConstants.LaboratoryName;
-                vendorAddress.Text = labConstants.Pharma360EmpresaDireccion;
-                vendorCity.Text = labConstants.Pharma360EmpresaCiudad;
-                vendorCountry.Text = labConstants.Pharma360EmpresaPais;
-                vendorWebsite.Text = labConstants.Pharma360EmpresaSitioWeb;
-                vendorEmail.Text = labConstants.Pharma360EmpresaEmailContacto;
-                vendorPhone.Text = labConstants.Pharma360EmpresaTelefonoContacto;
-                vendorLogo.ImageUrl = labConstants.Pharma360UrlLogo;
+                LaboratoryConstants settings =
+                    labConstants ?? AppConfig.LaboratoryConstants;
+                vendorName.Text = settings.LaboratoryName;
+                vendorAddress.Text = settings.Pharma360EmpresaDireccion;
+                vendorCity.Text = settings.Pharma360EmpresaCiudad;
+                vendorCountry.Text = settings.Pharma360EmpresaPais;
+                vendorWebsite.Text = settings.Pharma360EmpresaSitioWeb;
+                vendorEmail.Text = settings.Pharma360EmpresaEmailContacto;
+                vendorPhone.Text = settings.Pharma360EmpresaTelefonoContacto;
+                vendorLogo.ImageUrl = settings.Pharma360UrlLogo;
             }
             catch (Exception ex)
             {

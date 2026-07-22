@@ -1,6 +1,7 @@
 ﻿using CrystalDecisions.CrystalReports.Engine;
 using CrystalDecisions.Shared;
 using SchedulerP360Insight.Modulos;
+using SchedulerP360Insight.Configuration;
 using SchedulerP360Insight.Properties;
 using System;
 using System.Collections.Generic;
@@ -26,16 +27,22 @@ namespace SchedulerP360Insight
 {
     public class Utilitarios
     {
-        readonly ModuleCapaAccesoDatos oModuleCapaAccesoDatos = new ModuleCapaAccesoDatos();
+        readonly ModuleCapaAccesoDatos oModuleCapaAccesoDatos;
         readonly string currentUsername = Environment.UserName;
         private readonly LaboratoryConstants labConstants;
+        private readonly SchedulerOptions schedulerOptions;
         private readonly IEmailTransport emailTransport;
         private readonly INotificationDeliveryStore notificationDeliveryStore;
         string accion = string.Empty;
         public static bool NotificaAdministrador { get; set; } = false;
 
         public Utilitarios()
-            : this(new LaboratoryConstants(), null, null)
+            : this(
+                AppConfig.LaboratoryConstants,
+                null,
+                null,
+                new ModuleCapaAccesoDatos(),
+                AppConfig.CurrentOptions)
         {
         }
 
@@ -43,8 +50,40 @@ namespace SchedulerP360Insight
             LaboratoryConstants labConstants,
             IEmailTransport emailTransport,
             INotificationDeliveryStore notificationDeliveryStore)
+            : this(
+                labConstants,
+                emailTransport,
+                notificationDeliveryStore,
+                new ModuleCapaAccesoDatos(),
+                null)
+        {
+        }
+
+        public Utilitarios(
+            LaboratoryConstants labConstants,
+            IEmailTransport emailTransport,
+            INotificationDeliveryStore notificationDeliveryStore,
+            ModuleCapaAccesoDatos dataAccess)
+            : this(
+                labConstants,
+                emailTransport,
+                notificationDeliveryStore,
+                dataAccess,
+                null)
+        {
+        }
+
+        public Utilitarios(
+            LaboratoryConstants labConstants,
+            IEmailTransport emailTransport,
+            INotificationDeliveryStore notificationDeliveryStore,
+            ModuleCapaAccesoDatos dataAccess,
+            SchedulerOptions schedulerOptions)
         {
             this.labConstants = labConstants ?? throw new ArgumentNullException(nameof(labConstants));
+            this.schedulerOptions = schedulerOptions;
+            oModuleCapaAccesoDatos = dataAccess ??
+                throw new ArgumentNullException(nameof(dataAccess));
             this.emailTransport = emailTransport ?? new SmtpEmailTransport(labConstants);
             this.notificationDeliveryStore = notificationDeliveryStore ??
                 new SqlNotificationDeliveryStore(oModuleCapaAccesoDatos, currentUsername);
@@ -60,7 +99,6 @@ namespace SchedulerP360Insight
             System.Diagnostics.StackFrame stackframe = new System.Diagnostics.StackFrame(1);
             string nameFuenteCaller = stackframe.GetMethod().Name;
             // Instancia para registro de acciones.
-            ModuleCapaAccesoDatos oModuleCapaAccesoDatos = new ModuleCapaAccesoDatos();
             string currentUsername = Environment.UserName; // Usuario actual para registrar quién realiza la acción.
             string accion = $"Ingresa a SetDBLogonForReport para establecer conexión del reporte: {myReportDocument.Name}";
             oModuleCapaAccesoDatos.RegistraLogConeccionyAccion(currentUsername, accion);
@@ -106,7 +144,7 @@ namespace SchedulerP360Insight
             {
                 // Obtiene la cadena de conexión desde el archivo de configuración.
                 //string connectionString = ConfigurationManager.ConnectionStrings["CadenaConeccionP360"].ConnectionString;
-                string connectionString = AppConfig.ConnectionString;
+                string connectionString = GetSchedulerOptions().ConnectionString;
                 // Construye un objeto SqlConnectionStringBuilder con la cadena de conexión.
                 SqlConnectionStringBuilder connStringBuilder = new SqlConnectionStringBuilder(connectionString);
                 // Crea un objeto ConnectionInfo con los detalles de la conexión.
@@ -120,9 +158,8 @@ namespace SchedulerP360Insight
                 };
 
                 // Crea una instancia de Utilitarios para usar el método SetDBLogonForReport.
-                Utilitarios utilitarios = new Utilitarios();
                 // Establece la conexión para el reporte principal.
-                utilitarios.SetDBLogonForReport(connectionInfo, report);
+                SetDBLogonForReport(connectionInfo, report);
 
                 // Itera a través de las secciones del reporte para establecer la conexión en los subreportes.
                 foreach (Section section in report.ReportDefinition.Sections)
@@ -134,7 +171,7 @@ namespace SchedulerP360Insight
                             SubreportObject subReportObject = (SubreportObject)reportObject;
                             ReportDocument subReportDocument = subReportObject.OpenSubreport(subReportObject.SubreportName);
 
-                            utilitarios.SetDBLogonForReport(connectionInfo, subReportDocument);
+                            SetDBLogonForReport(connectionInfo, subReportDocument);
                         }
                     }
                 }
@@ -155,7 +192,8 @@ namespace SchedulerP360Insight
         {
             // Obtiene la cadena de conexión desde el archivo de configuración.
             //string connectionString = ConfigurationManager.ConnectionStrings["CadenaConeccionP360"].ConnectionString;
-            string connectionString = AppConfig.ConnectionString;
+            SchedulerOptions options = GetSchedulerOptions();
+            string connectionString = options.ConnectionString;
             List<InfoColaNotificaciones> notifications = new List<InfoColaNotificaciones>();
 
             try
@@ -164,8 +202,7 @@ namespace SchedulerP360Insight
                 {
                     connection.Open(); // Abre la conexión a la base de datos.
 
-                    // Obtiene la consulta SQL desde el archivo de configuración.
-                    string query = ConfigurationManager.AppSettings["P360.InfoColaNotificaciones.Query"];
+                    string query = options.NotificationQueueQuery;
 
                     using (SqlCommand command = new SqlCommand(query, connection))
                     {
@@ -215,6 +252,11 @@ namespace SchedulerP360Insight
             return notifications; // Devuelve la lista de notificaciones.
         }
 
+        private SchedulerOptions GetSchedulerOptions()
+        {
+            return schedulerOptions ?? AppConfig.CurrentOptions;
+        }
+
         /// <summary>
         /// Constructs the HTML body for an email using a specified template and dynamic data.
         /// This function fetches an HTML template based on a key, replaces common and specific placeholders
@@ -253,28 +295,28 @@ namespace SchedulerP360Insight
                         htmlBodyEmail = ReemplazarMarcadoresEspecificosPlantillaHTMLTipoA(htmlBodyEmail, p360notificacion);
                         break;
                     case "RVIS": //Registro visita(Actualmente funcional)
-                        htmlBodyEmail = ReemplazarMarcadoresEspecificosPlantillaHTML_RegistroVisita(htmlBodyEmail, p360notificacion);
+                        htmlBodyEmail = ReemplazarMarcadoresEspecificosPlantillaHTML_RegistroVisita(htmlBodyEmail, p360notificacion, labConstants);
                         break;
                     case "AVIS": //Anulación visita
-                        htmlBodyEmail = ReemplazarMarcadoresEspecificosPlantillaHTML_AnulacionVisita(htmlBodyEmail, p360notificacion);
+                        htmlBodyEmail = ReemplazarMarcadoresEspecificosPlantillaHTML_AnulacionVisita(htmlBodyEmail, p360notificacion, labConstants);
                         break;
                     case "RPED": //Registro pedido
-                        htmlBodyEmail = ReemplazarMarcadoresEspecificosPlantillaHTML_RegistroPedido(htmlBodyEmail, p360notificacion);
+                        htmlBodyEmail = ReemplazarMarcadoresEspecificosPlantillaHTML_RegistroPedido(htmlBodyEmail, p360notificacion, labConstants);
                         break;
                     case "DPED": //Despacho pedido
-                        htmlBodyEmail = ReemplazarMarcadoresEspecificosPlantillaHTML_DespachoPedido(htmlBodyEmail, p360notificacion);
+                        htmlBodyEmail = ReemplazarMarcadoresEspecificosPlantillaHTML_DespachoPedido(htmlBodyEmail, p360notificacion, labConstants);
                         break;
                     case "XPED": //Anulación pedido
-                        htmlBodyEmail = ReemplazarMarcadoresEspecificosPlantillaHTML_AnulacionDevolucionPedido(htmlBodyEmail, p360notificacion);
+                        htmlBodyEmail = ReemplazarMarcadoresEspecificosPlantillaHTML_AnulacionDevolucionPedido(htmlBodyEmail, p360notificacion, labConstants);
                         break;
                     case "VPED": //Devolución pedido
-                        htmlBodyEmail = ReemplazarMarcadoresEspecificosPlantillaHTML_AnulacionDevolucionPedido(htmlBodyEmail, p360notificacion);
+                        htmlBodyEmail = ReemplazarMarcadoresEspecificosPlantillaHTML_AnulacionDevolucionPedido(htmlBodyEmail, p360notificacion, labConstants);
                         break;
                     case "STNP": //Devolución pedido
-                        htmlBodyEmail = ReemplazarMarcadoresEspecificosPlantillaHTML_SolicitudTiempoNoPromocional(htmlBodyEmail, p360notificacion);
+                        htmlBodyEmail = ReemplazarMarcadoresEspecificosPlantillaHTML_SolicitudTiempoNoPromocional(htmlBodyEmail, p360notificacion, labConstants);
                         break;
                     case "VTNP": //Devolución pedido
-                        htmlBodyEmail = ReemplazarMarcadoresEspecificosPlantillaHTML_AprobacionDenegacionSolicitudTiempoNoPromocional(htmlBodyEmail, p360notificacion);
+                        htmlBodyEmail = ReemplazarMarcadoresEspecificosPlantillaHTML_AprobacionDenegacionSolicitudTiempoNoPromocional(htmlBodyEmail, p360notificacion, labConstants);
                         break;
                     default:
                         // Manejo opcional de casos no reconocidos
@@ -358,7 +400,7 @@ namespace SchedulerP360Insight
         /// This method is tailored to handle specific data replacement for a certain type of email template, indicated by "Tipo A" in the method name. It should be adapted to include actual data replacement logic based on the notification's requirements.
         /// </remarks>
         /// <exception cref="Exception">Catches and suppresses any exception, returning the original HTML content if an error occurs during the replacement process.</exception>
-        private static string ReemplazarMarcadoresEspecificosPlantillaHTML_AprobacionDenegacionSolicitudTiempoNoPromocional(string htmlBodyEmail, InfoColaNotificaciones p360notificacion)
+        private static string ReemplazarMarcadoresEspecificosPlantillaHTML_AprobacionDenegacionSolicitudTiempoNoPromocional(string htmlBodyEmail, InfoColaNotificaciones p360notificacion, LaboratoryConstants labConstants)
         {
             try
             {
@@ -380,7 +422,7 @@ namespace SchedulerP360Insight
                     // Reemplazar marcador del mapa, si las coordenadas están disponibles
                     if (!string.IsNullOrEmpty(datosVisita.Latitud) && !string.IsNullOrEmpty(datosVisita.Longitud))
                     {
-                        string googleMapsApiKey = AppConfig.GoogleMapsApiKey;
+                        string googleMapsApiKey = labConstants.GoogleMapsApiKey;
                         string htmlMapa = GenerarTAGImagenEstaticaMapaHTML(datosVisita.Latitud, datosVisita.Longitud, googleMapsApiKey);
                         sb.Replace("[MARCADOR_MAPA]", htmlMapa);
                     }
@@ -432,7 +474,7 @@ namespace SchedulerP360Insight
         /// This method is tailored to handle specific data replacement for a certain type of email template, indicated by "Tipo A" in the method name. It should be adapted to include actual data replacement logic based on the notification's requirements.
         /// </remarks>
         /// <exception cref="Exception">Catches and suppresses any exception, returning the original HTML content if an error occurs during the replacement process.</exception>
-        private static string ReemplazarMarcadoresEspecificosPlantillaHTML_SolicitudTiempoNoPromocional(string htmlBodyEmail, InfoColaNotificaciones p360notificacion)
+        private static string ReemplazarMarcadoresEspecificosPlantillaHTML_SolicitudTiempoNoPromocional(string htmlBodyEmail, InfoColaNotificaciones p360notificacion, LaboratoryConstants labConstants)
         {
             try
             {
@@ -454,7 +496,7 @@ namespace SchedulerP360Insight
                     // Reemplazar marcador del mapa, si las coordenadas están disponibles
                     if (!string.IsNullOrEmpty(datosVisita.Latitud) && !string.IsNullOrEmpty(datosVisita.Longitud))
                     {
-                        string googleMapsApiKey = AppConfig.GoogleMapsApiKey;
+                        string googleMapsApiKey = labConstants.GoogleMapsApiKey;
                         string htmlMapa = GenerarTAGImagenEstaticaMapaHTML(datosVisita.Latitud, datosVisita.Longitud, googleMapsApiKey);
                         sb.Replace("[MARCADOR_MAPA]", htmlMapa);
                     }
@@ -504,7 +546,7 @@ namespace SchedulerP360Insight
         /// This method is tailored to handle specific data replacement for a certain type of email template, indicated by "Tipo A" in the method name. It should be adapted to include actual data replacement logic based on the notification's requirements.
         /// </remarks>
         /// <exception cref="Exception">Catches and suppresses any exception, returning the original HTML content if an error occurs during the replacement process.</exception>
-        private static string ReemplazarMarcadoresEspecificosPlantillaHTML_RegistroVisita(string htmlBodyEmail, InfoColaNotificaciones p360notificacion)
+        private static string ReemplazarMarcadoresEspecificosPlantillaHTML_RegistroVisita(string htmlBodyEmail, InfoColaNotificaciones p360notificacion, LaboratoryConstants labConstants)
         {
             try
             {
@@ -523,7 +565,7 @@ namespace SchedulerP360Insight
                     // Reemplazar marcador del mapa, si las coordenadas están disponibles
                     if (!string.IsNullOrEmpty(datosVisita.Latitud) && !string.IsNullOrEmpty(datosVisita.Longitud))
                     {
-                        string googleMapsApiKey = AppConfig.GoogleMapsApiKey;
+                        string googleMapsApiKey = labConstants.GoogleMapsApiKey;
                         string htmlMapa = GenerarTAGImagenEstaticaMapaHTML(datosVisita.Latitud, datosVisita.Longitud, googleMapsApiKey);
                         sb.Replace("[MARCADOR_MAPA]", htmlMapa);
                     }
@@ -566,7 +608,7 @@ namespace SchedulerP360Insight
         /// This method is tailored to handle specific data replacement for a certain type of email template, indicated by "Tipo A" in the method name. It should be adapted to include actual data replacement logic based on the notification's requirements.
         /// </remarks>
         /// <exception cref="Exception">Catches and suppresses any exception, returning the original HTML content if an error occurs during the replacement process.</exception>
-        private static string ReemplazarMarcadoresEspecificosPlantillaHTML_AnulacionVisita(string htmlBodyEmail, InfoColaNotificaciones p360notificacion)
+        private static string ReemplazarMarcadoresEspecificosPlantillaHTML_AnulacionVisita(string htmlBodyEmail, InfoColaNotificaciones p360notificacion, LaboratoryConstants labConstants)
         {
             try
             {
@@ -581,7 +623,7 @@ namespace SchedulerP360Insight
                     // Reemplazar marcador del mapa, si las coordenadas están disponibles
                     if (!string.IsNullOrEmpty(datosVisita.Latitud) && !string.IsNullOrEmpty(datosVisita.Longitud))
                     {
-                        string googleMapsApiKey = AppConfig.GoogleMapsApiKey;
+                        string googleMapsApiKey = labConstants.GoogleMapsApiKey;
                         string htmlMapa = GenerarTAGImagenEstaticaMapaHTML(datosVisita.Latitud, datosVisita.Longitud, googleMapsApiKey);
                         sb.Replace("[MARCADOR_MAPA]", htmlMapa);
                     }
@@ -623,7 +665,7 @@ namespace SchedulerP360Insight
         /// This method is tailored to handle specific data replacement for a certain type of email template, indicated by "Tipo A" in the method name. It should be adapted to include actual data replacement logic based on the notification's requirements.
         /// </remarks>
         /// <exception cref="Exception">Catches and suppresses any exception, returning the original HTML content if an error occurs during the replacement process.</exception>
-        private static string ReemplazarMarcadoresEspecificosPlantillaHTML_RegistroPedido(string htmlBodyEmail, InfoColaNotificaciones p360notificacion)
+        private static string ReemplazarMarcadoresEspecificosPlantillaHTML_RegistroPedido(string htmlBodyEmail, InfoColaNotificaciones p360notificacion, LaboratoryConstants labConstants)
         {
             try
             {
@@ -638,7 +680,7 @@ namespace SchedulerP360Insight
                     // Reemplazar marcador del mapa, si las coordenadas están disponibles
                     if (!string.IsNullOrEmpty(datosPedido.Latitud) && !string.IsNullOrEmpty(datosPedido.Longitud))
                     {
-                        string googleMapsApiKey = AppConfig.GoogleMapsApiKey;
+                        string googleMapsApiKey = labConstants.GoogleMapsApiKey;
                         string htmlMapa = GenerarTAGImagenEstaticaMapaHTML(datosPedido.Latitud, datosPedido.Longitud, googleMapsApiKey);
                         sb.Replace("[MARCADOR_MAPA]", htmlMapa);
                     }
@@ -690,7 +732,7 @@ namespace SchedulerP360Insight
         /// This method is tailored to handle specific data replacement for a certain type of email template, indicated by "Tipo A" in the method name. It should be adapted to include actual data replacement logic based on the notification's requirements.
         /// </remarks>
         /// <exception cref="Exception">Catches and suppresses any exception, returning the original HTML content if an error occurs during the replacement process.</exception>
-        private static string ReemplazarMarcadoresEspecificosPlantillaHTML_DespachoPedido(string htmlBodyEmail, InfoColaNotificaciones p360notificacion)
+        private static string ReemplazarMarcadoresEspecificosPlantillaHTML_DespachoPedido(string htmlBodyEmail, InfoColaNotificaciones p360notificacion, LaboratoryConstants labConstants)
         {
             try
             {
@@ -707,7 +749,7 @@ namespace SchedulerP360Insight
                     // Reemplazar marcador del mapa, si las coordenadas están disponibles
                     if (!string.IsNullOrEmpty(datosPedido.Latitud) && !string.IsNullOrEmpty(datosPedido.Longitud))
                     {
-                        string googleMapsApiKey = AppConfig.GoogleMapsApiKey;
+                        string googleMapsApiKey = labConstants.GoogleMapsApiKey;
                         string htmlMapa = GenerarTAGImagenEstaticaMapaHTML(datosPedido.Latitud, datosPedido.Longitud, googleMapsApiKey);
                         sb.Replace("[MARCADOR_MAPA]", htmlMapa);
                     }
@@ -760,7 +802,7 @@ namespace SchedulerP360Insight
         /// This method is tailored to handle specific data replacement for a certain type of email template, indicated by "Tipo A" in the method name. It should be adapted to include actual data replacement logic based on the notification's requirements.
         /// </remarks>
         /// <exception cref="Exception">Catches and suppresses any exception, returning the original HTML content if an error occurs during the replacement process.</exception>
-        private static string ReemplazarMarcadoresEspecificosPlantillaHTML_AnulacionDevolucionPedido(string htmlBodyEmail, InfoColaNotificaciones p360notificacion)
+        private static string ReemplazarMarcadoresEspecificosPlantillaHTML_AnulacionDevolucionPedido(string htmlBodyEmail, InfoColaNotificaciones p360notificacion, LaboratoryConstants labConstants)
         {
             try
             {

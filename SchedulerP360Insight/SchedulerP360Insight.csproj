@@ -247,7 +247,11 @@
     </Compile>
     <Compile Include="Jobs\P360HtmlReportJob.cs" />
     <Compile Include="Jobs\P360DevExpressReportsReportJob.cs" />
+    <Compile Include="Composition\SchedulerComposition.cs" />
+    <Compile Include="Configuration\ParameterSnapshots.cs" />
+    <Compile Include="Configuration\SchedulerOptions.cs" />
     <Compile Include="Modulos\AppConfig.cs" />
+    <Compile Include="Scheduling\ComposedJobFactory.cs" />
     <Compile Include="Scheduling\ReportJobFactory.cs" />
     <Compile Include="Scheduling\ReportScheduleDefinition.cs" />
     <Compile Include="Services\NotificationDeliveryAbstractions.cs" />

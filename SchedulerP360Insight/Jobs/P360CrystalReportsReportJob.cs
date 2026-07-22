@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using CrystalDecisions.CrystalReports.Engine;
 using System.IO;
 using System.Collections.Generic;
+using SchedulerP360Insight.Configuration;
 using SchedulerP360Insight.Modulos;
 
 namespace ReportGenerator
@@ -13,9 +14,48 @@ namespace ReportGenerator
     {
         string reportFilePath = string.Empty;
         string accion = string.Empty;
-        private readonly LaboratoryConstants labConstants = new LaboratoryConstants();
+        private readonly LaboratoryConstants labConstants;
         readonly string currentUsername = Environment.UserName;
-        readonly ModuleCapaAccesoDatos oModuleCapaAccesoDatos = new ModuleCapaAccesoDatos();
+        readonly ModuleCapaAccesoDatos oModuleCapaAccesoDatos;
+        private readonly Utilitarios utilitarios;
+
+        public P360CrystalReportsReportJob()
+            : this(
+                AppConfig.CurrentOptions,
+                AppConfig.LaboratoryConstants,
+                new ModuleCapaAccesoDatos())
+        {
+        }
+
+        public P360CrystalReportsReportJob(
+            LaboratoryConstants labConstants,
+            ModuleCapaAccesoDatos dataAccess)
+            : this(AppConfig.CurrentOptions, labConstants, dataAccess)
+        {
+        }
+
+        public P360CrystalReportsReportJob(
+            SchedulerOptions schedulerOptions,
+            LaboratoryConstants labConstants,
+            ModuleCapaAccesoDatos dataAccess)
+        {
+            if (schedulerOptions == null)
+            {
+                throw new ArgumentNullException(nameof(schedulerOptions));
+            }
+
+            this.labConstants = labConstants ??
+                throw new ArgumentNullException(nameof(labConstants));
+            oModuleCapaAccesoDatos = dataAccess ??
+                throw new ArgumentNullException(nameof(dataAccess));
+            utilitarios = new Utilitarios(
+                labConstants,
+                null,
+                null,
+                dataAccess,
+                schedulerOptions);
+        }
+
         public Task Execute(IJobExecutionContext context)
         {
             return Task.Run(async () =>
@@ -59,7 +99,6 @@ namespace ReportGenerator
                     // Aquí registrar la llenada de la cola de envío para aquellos eventos asíncronos que no están en la cola.
                     // Dentro de la lógica del SP se evalúa si se efectúa o no la creación de la cola dependiendo de cada reporte reportId.
                     oModuleCapaAccesoDatos.RegistrarInformacionColaNotificacionesEventosAsincronos(reportUID, "ScheduledReports");
-                    Utilitarios utilitarios = new Utilitarios();
                     utilitarios.SetConnectionInfo(report);
                     // Get list of p360Notificaciones from database
                     List<InfoColaNotificaciones> p360Notificaciones = utilitarios.GetInfoColaNotificaciones(reportId);

@@ -68,7 +68,7 @@ namespace SchedulerP360Insight.Services
             int reportId,
             string referenceEventId)
         {
-            return ModuleCapaAccesoDatos.GetDataContactosNotificacionesxReporteyEvento(
+            return dataAccess.GetDataContactosNotificacionesxReporteyEvento(
                 reportId,
                 referenceEventId);
         }

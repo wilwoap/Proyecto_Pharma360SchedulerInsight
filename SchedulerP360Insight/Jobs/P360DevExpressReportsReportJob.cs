@@ -4,6 +4,7 @@ using System;
 using System.Threading.Tasks;
 using System.IO;
 using System.Collections.Generic;
+using SchedulerP360Insight.Configuration;
 using SchedulerP360Insight.Modulos;
 using SchedulerP360Insight.P360Reports;
 
@@ -13,8 +14,47 @@ namespace ReportGenerator
     {
         string reportFilePath = string.Empty;
         string accion = string.Empty;
+        private readonly LaboratoryConstants labConstants;
         readonly string currentUsername = Environment.UserName;
-        readonly ModuleCapaAccesoDatos oModuleCapaAccesoDatos = new ModuleCapaAccesoDatos();
+        readonly ModuleCapaAccesoDatos oModuleCapaAccesoDatos;
+        private readonly Utilitarios utilitarios;
+
+        public P360DevExpressReportsReportJob()
+            : this(
+                AppConfig.CurrentOptions,
+                AppConfig.LaboratoryConstants,
+                new ModuleCapaAccesoDatos())
+        {
+        }
+
+        public P360DevExpressReportsReportJob(
+            LaboratoryConstants labConstants,
+            ModuleCapaAccesoDatos dataAccess)
+            : this(AppConfig.CurrentOptions, labConstants, dataAccess)
+        {
+        }
+
+        public P360DevExpressReportsReportJob(
+            SchedulerOptions schedulerOptions,
+            LaboratoryConstants labConstants,
+            ModuleCapaAccesoDatos dataAccess)
+        {
+            if (schedulerOptions == null)
+            {
+                throw new ArgumentNullException(nameof(schedulerOptions));
+            }
+
+            this.labConstants = labConstants ??
+                throw new ArgumentNullException(nameof(labConstants));
+            oModuleCapaAccesoDatos = dataAccess ??
+                throw new ArgumentNullException(nameof(dataAccess));
+            utilitarios = new Utilitarios(
+                labConstants,
+                null,
+                null,
+                dataAccess,
+                schedulerOptions);
+        }
 
         public Task Execute(IJobExecutionContext context)
         {
@@ -61,7 +101,6 @@ namespace ReportGenerator
                     // Registrar en cola de notificaciones (según lógica del SP)
                     oModuleCapaAccesoDatos.RegistrarInformacionColaNotificacionesEventosAsincronos(reportUID, "ScheduledReports");
 
-                    Utilitarios utilitarios = new Utilitarios();
                     List<InfoColaNotificaciones> p360Notificaciones = utilitarios.GetInfoColaNotificaciones(reportId);
 
                     if (p360Notificaciones.Count > 0)
@@ -110,7 +149,7 @@ namespace ReportGenerator
                                         case "VPED":    // Devolución de pedido
                                             {
                                                 int v_cod_pedido = Convert.ToInt32(p360Notificacion.ReferenceEventId);
-                                                oReporteXtraReport = new XtraReportPedidosP360();
+                                                oReporteXtraReport = new XtraReportPedidosP360(labConstants);
                                                 oReporteXtraReport.Parameters["p_cod_pedido"].Value = v_cod_pedido;
                                                 oReporteXtraReport.RequestParameters = false;
                                                 oReporteXtraReport.ExportToPdf(reporteEnMemoria);
@@ -120,7 +159,7 @@ namespace ReportGenerator
                                             {
                                                 string codigoUnicoDespacho_CUD = p360Notificacion.ReferenceEventId;
                                                 int codigoPedido = ModuleCapaAccesoDatos.GetCodPedidoPorCodUnicoDespachoCUD(codigoUnicoDespacho_CUD);
-                                                oReporteXtraReport = new XtraReportDespachosPedidosP360();
+                                                oReporteXtraReport = new XtraReportDespachosPedidosP360(labConstants);
                                                 oReporteXtraReport.Parameters["p_cod_pedido"].Value = codigoPedido;
                                                 oReporteXtraReport.RequestParameters = false;
                                                 oReporteXtraReport.ExportToPdf(reporteEnMemoria);

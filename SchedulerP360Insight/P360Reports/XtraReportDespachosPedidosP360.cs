@@ -9,12 +9,19 @@ namespace SchedulerP360Insight.P360Reports
 {
     public partial class XtraReportDespachosPedidosP360 : XtraReport
     {
-        private readonly LaboratoryConstants labConstants = new LaboratoryConstants();
+        private readonly LaboratoryConstants labConstants;
         DS_V_REPORTE_HISTORICO_DESPACHOPEDIDOS oDS_V_REPORTE_HISTORICO_DESPACHOPEDIDOS = new DS_V_REPORTE_HISTORICO_DESPACHOPEDIDOS();
         int v_cod_pedido;
 
         public XtraReportDespachosPedidosP360()
+            : this(null)
         {
+        }
+
+        public XtraReportDespachosPedidosP360(
+            LaboratoryConstants labConstants)
+        {
+            this.labConstants = labConstants;
             InitializeComponent();
         }
 
@@ -89,14 +96,16 @@ namespace SchedulerP360Insight.P360Reports
         /// </summary>
         private void ConfiguraValoresGeneralesEmpresa()
         {
-            vendorName.Text = labConstants.LaboratoryName;
-            vendorAddress.Text = labConstants.Pharma360EmpresaDireccion;
-            vendorCity.Text = labConstants.Pharma360EmpresaCiudad;
-            vendorCountry.Text = labConstants.Pharma360EmpresaPais;
-            vendorWebsite.Text = labConstants.Pharma360EmpresaSitioWeb;
-            vendorEmail.Text = labConstants.Pharma360EmpresaEmailContacto;
-            vendorPhone.Text = labConstants.Pharma360EmpresaTelefonoContacto;
-            vendorLogo.ImageUrl = labConstants.Pharma360UrlLogo;
+            LaboratoryConstants settings =
+                labConstants ?? AppConfig.LaboratoryConstants;
+            vendorName.Text = settings.LaboratoryName;
+            vendorAddress.Text = settings.Pharma360EmpresaDireccion;
+            vendorCity.Text = settings.Pharma360EmpresaCiudad;
+            vendorCountry.Text = settings.Pharma360EmpresaPais;
+            vendorWebsite.Text = settings.Pharma360EmpresaSitioWeb;
+            vendorEmail.Text = settings.Pharma360EmpresaEmailContacto;
+            vendorPhone.Text = settings.Pharma360EmpresaTelefonoContacto;
+            vendorLogo.ImageUrl = settings.Pharma360UrlLogo;
         }
     }
 }

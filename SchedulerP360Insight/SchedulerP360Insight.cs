@@ -2,10 +2,10 @@
 using Quartz;
 using Quartz.Impl;
 using SchedulerP360Insight;
+using SchedulerP360Insight.Composition;
 using SchedulerP360Insight.Modulos;
 using SchedulerP360Insight.Scheduling;
 using System;
-using System.Configuration;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
 
@@ -15,16 +15,25 @@ namespace ReportGenerator
     {
         static async Task Main(string[] args)
         {
-            // Obtener la cadena de conexión desde la variable de ambiente
-            string connectionStringObtainedFromMachineEnvironment = GetConnectionStringFromMachineEnvironment();
-            AppConfig.ConnectionString = connectionStringObtainedFromMachineEnvironment;
+            SchedulerRuntime runtime;
+            try
+            {
+                runtime = SchedulerComposition.Create();
+            }
+            catch (Exception configurationError)
+            {
+                Console.Error.WriteLine(
+                    "No fue posible inicializar la configuración requerida: " +
+                    configurationError.Message);
+                return;
+            }
 
-            LaboratoryConstants labConstants = new LaboratoryConstants();
+            LaboratoryConstants labConstants = runtime.LaboratoryConstants;
             System.Diagnostics.StackFrame stackframe = new System.Diagnostics.StackFrame(1);
             string nameFuenteCaller = stackframe.GetMethod().Name;
             string accion = string.Empty;
             string currentUsername = string.Empty;
-            ModuleCapaAccesoDatos oModuleCapaAccesoDatos = new ModuleCapaAccesoDatos();
+            ModuleCapaAccesoDatos oModuleCapaAccesoDatos = runtime.DataAccess;
             ReportJobFactory reportJobFactory = new ReportJobFactory();
 
             try
@@ -37,15 +46,15 @@ namespace ReportGenerator
                 Console.WriteLine("--Pharma360° Derechos reservados ©Bisigma Inteligencia de Negocios");
                 Console.WriteLine($"---------------------------------------------Scheduling platform of Pharma360° & P360° has been started at '{now}'---------------------------------------------");
 
-                // Leer la consulta para los reportes desde app.config
-                string p360ReportsQuery = ConfigurationManager.AppSettings["P360.Reports.Query"];
+                string p360ReportsQuery = runtime.Options.ReportsQuery;
 
                 // Crear la instancia del scheduler
                 ISchedulerFactory schedulerFactory = new StdSchedulerFactory();
                 IScheduler scheduler = await schedulerFactory.GetScheduler();
+                scheduler.JobFactory = runtime.JobFactory;
 
                 // Conectarse a la base de datos y leer los detalles del reporte
-                using (SqlConnection connection = new SqlConnection(connectionStringObtainedFromMachineEnvironment))
+                using (SqlConnection connection = new SqlConnection(runtime.Options.ConnectionString))
                 {
                     await connection.OpenAsync();
                     using (SqlCommand command = new SqlCommand(p360ReportsQuery, connection))

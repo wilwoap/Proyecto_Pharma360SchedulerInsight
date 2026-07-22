@@ -1,25 +1,9 @@
-﻿using SchedulerP360Insight.Modulos;
 using System;
+using System.Collections.Generic;
+using System.Globalization;
 
-public class LaboratoryConstants
+public sealed class LaboratoryConstants
 {
-    private string _laboratoryName;
-    private string _adminEmail;
-    private string _intellectualPropertyNotice;
-    private string _senderEmail;
-    private bool _pharma360MailSSL;
-    private string _pharma360MailSMTP;
-    private string _pharma360MailUser;
-    private string _pharma360MailPass;
-    private int _pharma360MailPort;
-    private string _pharma360UrlLogo;
-    private string _pharma360EmpresaPais;
-    private string _pharma360EmpresaCiudad;
-    private string _pharma360EmpresaDireccion;
-    private string _pharma360EmpresaSitioWeb;
-    private string _pharma360EmpresaEmailContacto;
-    private string _pharma360EmpresaTelefonoContacto;
-
     public LaboratoryConstants(
         string laboratoryName,
         string adminEmail,
@@ -36,149 +20,155 @@ public class LaboratoryConstants
         string pharma360EmpresaSitioWeb,
         string pharma360EmpresaEmailContacto,
         string pharma360EmpresaTelefonoContacto,
-        string pharma360EmpresaDireccion)
+        string pharma360EmpresaDireccion,
+        string googleMapsApiKey = null)
     {
-        _laboratoryName = laboratoryName;
-        _adminEmail = adminEmail;
-        _intellectualPropertyNotice = intellectualPropertyNotice;
-        _senderEmail = senderEmail;
-        _pharma360MailSSL = pharma360MailSSL;
-        _pharma360MailSMTP = pharma360MailSMTP;
-        _pharma360MailUser = pharma360MailUser;
-        _pharma360MailPass = pharma360MailPass;
-        _pharma360MailPort = pharma360MailPort;
-        _pharma360UrlLogo = pharma360UrlLogo;
-        _pharma360EmpresaPais=pharma360EmpresaPais;
-        _pharma360EmpresaCiudad=pharma360EmpresaCiudad;
-        _pharma360EmpresaSitioWeb=pharma360EmpresaSitioWeb;
-        _pharma360EmpresaEmailContacto=pharma360EmpresaEmailContacto;
-        _pharma360EmpresaTelefonoContacto=pharma360EmpresaTelefonoContacto;
-        _pharma360EmpresaDireccion=pharma360EmpresaDireccion;
+        if (pharma360MailPort < 1 || pharma360MailPort > 65535)
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(pharma360MailPort),
+                "El puerto SMTP debe estar entre 1 y 65535.");
+        }
+
+        LaboratoryName = laboratoryName;
+        AdminEmail = adminEmail;
+        IntellectualPropertyNotice = intellectualPropertyNotice;
+        SenderEmail = senderEmail;
+        Pharma360MailSSL = pharma360MailSSL;
+        Pharma360MailSMTP = pharma360MailSMTP;
+        Pharma360MailUser = pharma360MailUser;
+        Pharma360MailPass = pharma360MailPass;
+        Pharma360MailPort = pharma360MailPort;
+        Pharma360UrlLogo = pharma360UrlLogo;
+        Pharma360EmpresaPais = pharma360EmpresaPais;
+        Pharma360EmpresaCiudad = pharma360EmpresaCiudad;
+        Pharma360EmpresaSitioWeb = pharma360EmpresaSitioWeb;
+        Pharma360EmpresaEmailContacto = pharma360EmpresaEmailContacto;
+        Pharma360EmpresaTelefonoContacto = pharma360EmpresaTelefonoContacto;
+        Pharma360EmpresaDireccion = pharma360EmpresaDireccion;
+        GoogleMapsApiKey = string.IsNullOrWhiteSpace(googleMapsApiKey)
+            ? null
+            : googleMapsApiKey;
     }
 
-    public LaboratoryConstants()
-    {
-        string v_Pharma360_mail_ssl = string.Empty;
-        ModuleCapaAccesoDatos oModuleCapaAccesoDatos = new ModuleCapaAccesoDatos();
-        v_Pharma360_mail_ssl=oModuleCapaAccesoDatos.getValorParametroSistemaDB("MAIL_SSL");
-        _intellectualPropertyNotice = "Powered by: Pharma360° ™ Bisigma ® Derechos Intelectuales";
-        _pharma360UrlLogo = oModuleCapaAccesoDatos.getValorParametroSistemaDB("LABORATORIO_URL_LOGO");
-        _laboratoryName = oModuleCapaAccesoDatos.getValorParametroSistemaDB("LABORATORIO_IMPLEMENTACION");
-        _adminEmail = oModuleCapaAccesoDatos.getValorParametroSistemaDB("MAIL_ADMINISTRADOR_LABORATORIO");
-        _pharma360MailSMTP = oModuleCapaAccesoDatos.getValorParametroSistemaDB("MAIL_SMTP");
-        _pharma360MailUser = oModuleCapaAccesoDatos.getValorParametroSistemaDB("MAIL_USER");
-        _pharma360MailPass = oModuleCapaAccesoDatos.getValorParametroSistemaDB("MAIL_PASS");
-        _pharma360MailPort = Convert.ToInt32(oModuleCapaAccesoDatos.getValorParametroSistemaDB("MAIL_PORT"));
-        _pharma360EmpresaPais = oModuleCapaAccesoDatos.getValorParametroSistemaDB("EMPRESA_PAIS");
-        _pharma360EmpresaCiudad = oModuleCapaAccesoDatos.getValorParametroSistemaDB("EMPRESA_CIUDAD");
-        _pharma360EmpresaDireccion = oModuleCapaAccesoDatos.getValorParametroSistemaDB("EMPRESA_DIRECCION");
-        _pharma360EmpresaSitioWeb = oModuleCapaAccesoDatos.getValorParametroSistemaDB("EMPRESA_SITIO_WEB");
-        _pharma360EmpresaEmailContacto = oModuleCapaAccesoDatos.getValorParametroSistemaDB("EMPRESA_EMAIL_CONTACTO");
-        _pharma360EmpresaTelefonoContacto = oModuleCapaAccesoDatos.getValorParametroSistemaDB("EMPRESA_TELEFONO_CONTACTO");
+    public string LaboratoryName { get; }
 
-        _senderEmail=_pharma360MailUser;
-        if (v_Pharma360_mail_ssl == "1")
+    public string AdminEmail { get; }
+
+    public string IntellectualPropertyNotice { get; }
+
+    public string SenderEmail { get; }
+
+    public bool Pharma360MailSSL { get; }
+
+    public string Pharma360MailSMTP { get; }
+
+    public string Pharma360MailUser { get; }
+
+    public string Pharma360MailPass { get; }
+
+    public int Pharma360MailPort { get; }
+
+    public string Pharma360UrlLogo { get; }
+
+    public string Pharma360EmpresaPais { get; }
+
+    public string Pharma360EmpresaCiudad { get; }
+
+    public string Pharma360EmpresaDireccion { get; }
+
+    public string Pharma360EmpresaSitioWeb { get; }
+
+    public string Pharma360EmpresaEmailContacto { get; }
+
+    public string Pharma360EmpresaTelefonoContacto { get; }
+
+    public string GoogleMapsApiKey { get; }
+
+    public static LaboratoryConstants FromParameters(
+        IReadOnlyDictionary<string, string> values,
+        string googleMapsApiKey)
+    {
+        if (values == null)
         {
-            _pharma360MailSSL = true;
+            throw new ArgumentNullException(nameof(values));
+        }
+
+        string sslValue = GetRequired(values, "MAIL_SSL");
+        bool enableSsl;
+        if (sslValue == "1")
+        {
+            enableSsl = true;
+        }
+        else if (sslValue == "0")
+        {
+            enableSsl = false;
         }
         else
         {
-            _pharma360MailSSL = false;
+            throw new InvalidOperationException(
+                "El parámetro 'MAIL_SSL' sólo admite '0' o '1'.");
         }
+
+        int mailPort;
+        string portValue = GetRequired(values, "MAIL_PORT");
+        if (!int.TryParse(
+            portValue,
+            NumberStyles.None,
+            CultureInfo.InvariantCulture,
+            out mailPort) ||
+            mailPort < 1 ||
+            mailPort > 65535)
+        {
+            throw new InvalidOperationException(
+                "El parámetro 'MAIL_PORT' debe ser un entero entre 1 y 65535.");
+        }
+
+        string mailUser = GetRequired(values, "MAIL_USER");
+        return new LaboratoryConstants(
+            GetRequired(values, "LABORATORIO_IMPLEMENTACION"),
+            GetRequired(values, "MAIL_ADMINISTRADOR_LABORATORIO"),
+            "Powered by: Pharma360° ™ Bisigma ® Derechos Intelectuales",
+            mailUser,
+            enableSsl,
+            GetRequired(values, "MAIL_SMTP"),
+            mailUser,
+            GetRequired(values, "MAIL_PASS", allowEmpty: true),
+            mailPort,
+            GetRequired(values, "LABORATORIO_URL_LOGO", allowEmpty: true),
+            GetRequired(values, "EMPRESA_PAIS", allowEmpty: true),
+            GetRequired(values, "EMPRESA_CIUDAD", allowEmpty: true),
+            GetRequired(values, "EMPRESA_SITIO_WEB", allowEmpty: true),
+            GetRequired(values, "EMPRESA_EMAIL_CONTACTO", allowEmpty: true),
+            GetRequired(values, "EMPRESA_TELEFONO_CONTACTO", allowEmpty: true),
+            GetRequired(values, "EMPRESA_DIRECCION", allowEmpty: true),
+            googleMapsApiKey);
     }
 
-    public string LaboratoryName
+    public override string ToString()
     {
-        get { return _laboratoryName; }
-        set { _laboratoryName = value; }
+        return "LaboratoryConstants { " +
+            "Identity=configured, " +
+            "Smtp=[REDACTED], " +
+            "SmtpCredential=[REDACTED], " +
+            "GoogleMapsApiKey=" +
+            (GoogleMapsApiKey == null ? "absent" : "[REDACTED]") + " }";
     }
 
-    public string AdminEmail
+    private static string GetRequired(
+        IReadOnlyDictionary<string, string> values,
+        string name,
+        bool allowEmpty = false)
     {
-        get { return _adminEmail; }
-        set { _adminEmail = value; }
-    }
+        string value;
+        if (!values.TryGetValue(name, out value) ||
+            value == null ||
+            (!allowEmpty && string.IsNullOrWhiteSpace(value)))
+        {
+            throw new InvalidOperationException(
+                "El parámetro requerido '" + name + "' no está configurado.");
+        }
 
-    public string IntellectualPropertyNotice
-    {
-        get { return _intellectualPropertyNotice; }
-        set { _intellectualPropertyNotice = value; }
+        return value;
     }
-
-    public string SenderEmail
-    {
-        get { return _senderEmail; }
-        set { _senderEmail = value; }
-    }
-
-    public bool Pharma360MailSSL
-    {
-        get { return _pharma360MailSSL; }
-        set { _pharma360MailSSL = value; }
-    }
-
-    public string Pharma360MailSMTP
-    {
-        get { return _pharma360MailSMTP; }
-        set { _pharma360MailSMTP = value; }
-    }
-
-    public string Pharma360MailUser
-    {
-        get { return _pharma360MailUser; }
-        set { _pharma360MailUser = value; }
-    }
-
-    public string Pharma360MailPass
-    {
-        get { return _pharma360MailPass; }
-        set { _pharma360MailPass = value; }
-    }
-
-    public int Pharma360MailPort
-    {
-        get { return _pharma360MailPort; }
-        set { _pharma360MailPort = value; }
-    }
-
-    public string Pharma360UrlLogo
-    {
-        get { return _pharma360UrlLogo; }
-        set { _pharma360UrlLogo = value; }
-    }
-    public string Pharma360EmpresaPais
-    {
-        get { return _pharma360EmpresaPais; }
-        set { _pharma360EmpresaPais = value; }
-    }
-
-    public string Pharma360EmpresaCiudad
-    {
-        get { return _pharma360EmpresaCiudad; }
-        set { _pharma360EmpresaCiudad = value; }
-    }
-    public string Pharma360EmpresaDireccion
-    {
-        get { return _pharma360EmpresaDireccion; }
-        set { _pharma360EmpresaDireccion = value; }
-    }
-
-    public string Pharma360EmpresaSitioWeb
-    {
-        get { return _pharma360EmpresaSitioWeb; }
-        set { _pharma360EmpresaSitioWeb = value; }
-    }
-
-    public string Pharma360EmpresaEmailContacto
-    {
-        get { return _pharma360EmpresaEmailContacto; }
-        set { _pharma360EmpresaEmailContacto = value; }
-    }
-
-    public string Pharma360EmpresaTelefonoContacto
-    {
-        get { return _pharma360EmpresaTelefonoContacto; }
-        set { _pharma360EmpresaTelefonoContacto = value; }
-    }
-
 }

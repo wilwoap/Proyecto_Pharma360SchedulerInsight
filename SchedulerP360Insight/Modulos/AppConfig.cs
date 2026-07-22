@@ -1,14 +1,65 @@
+using SchedulerP360Insight.Configuration;
 using System;
+using System.Threading;
 
 public static class AppConfig
 {
-    public const string ConnectionStringEnvironmentVariable = "P360_CONNECTION_PRINCIPAL";
-    public const string GoogleMapsApiKeyEnvironmentVariable = "P360_GOOGLE_MAPS_API_KEY";
+    private static readonly object Sync = new object();
+    private static SchedulerOptions options;
+    private static LaboratoryConstants laboratoryConstants;
 
-    public static string ConnectionString { get; set; }
+    public const string ConnectionStringEnvironmentVariable =
+        SchedulerOptions.ConnectionStringEnvironmentVariable;
+    public const string GoogleMapsApiKeyEnvironmentVariable =
+        SchedulerOptions.GoogleMapsApiKeyEnvironmentVariable;
 
-    public static string GoogleMapsApiKey =>
-        Environment.GetEnvironmentVariable(GoogleMapsApiKeyEnvironmentVariable);
+    public static string ConnectionString => GetOptions().ConnectionString;
+
+    public static string GoogleMapsApiKey => GetOptions().GoogleMapsApiKey;
+
+    public static SchedulerOptions CurrentOptions => GetOptions();
+
+    public static LaboratoryConstants LaboratoryConstants
+    {
+        get
+        {
+            LaboratoryConstants current = Volatile.Read(ref laboratoryConstants);
+            if (current == null)
+            {
+                throw new InvalidOperationException(
+                    "La composición de la aplicación aún no fue inicializada.");
+            }
+
+            return current;
+        }
+    }
+
+    public static void Initialize(
+        SchedulerOptions schedulerOptions,
+        LaboratoryConstants laboratorySnapshot)
+    {
+        if (schedulerOptions == null)
+        {
+            throw new ArgumentNullException(nameof(schedulerOptions));
+        }
+
+        if (laboratorySnapshot == null)
+        {
+            throw new ArgumentNullException(nameof(laboratorySnapshot));
+        }
+
+        lock (Sync)
+        {
+            if (options != null || laboratoryConstants != null)
+            {
+                throw new InvalidOperationException(
+                    "La configuración de la aplicación sólo puede inicializarse una vez.");
+            }
+
+            Volatile.Write(ref laboratoryConstants, laboratorySnapshot);
+            Volatile.Write(ref options, schedulerOptions);
+        }
+    }
 
     public static string GetRequiredEnvironmentVariable(
         string variableName,
@@ -28,5 +79,17 @@ public static class AppConfig
         }
 
         return value;
+    }
+
+    private static SchedulerOptions GetOptions()
+    {
+        SchedulerOptions current = Volatile.Read(ref options);
+        if (current == null)
+        {
+            throw new InvalidOperationException(
+                "La composición de la aplicación aún no fue inicializada.");
+        }
+
+        return current;
     }
 }

@@ -31,6 +31,9 @@ namespace SchedulerP360Insight.CharacterizationTests
             Assert.AreEqual(
                 report.ReportSendMail,
                 job.JobDataMap.GetBoolean("reportSendMail"));
+            Assert.IsFalse(job.JobDataMap.ContainsKey("connectionString"));
+            Assert.IsFalse(job.JobDataMap.ContainsKey("googleMapsApiKey"));
+            Assert.IsFalse(job.JobDataMap.ContainsKey("smtpPassword"));
         }
 
         [TestMethod]
