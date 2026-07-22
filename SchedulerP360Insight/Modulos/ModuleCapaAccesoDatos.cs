@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -17,12 +16,15 @@ using System.Configuration;
 using DevExpress.CodeParser;
 using Dapper;
 using SchedulerP360Insight.UtilitariosyClases;
+using SchedulerP360Insight.Configuration;
+using SchedulerP360Insight.Data;
 
 namespace SchedulerP360Insight.Modulos
 {
     public class ModuleCapaAccesoDatos
     {
-        private readonly int commandTimeoutP360 = 0;
+        private readonly int commandTimeoutP360;
+        private readonly int connectionTimeoutP360;
         private readonly Func<string> connectionStringProvider;
 
         public ModuleCapaAccesoDatos()
@@ -45,6 +47,24 @@ namespace SchedulerP360Insight.Modulos
         {
             this.connectionStringProvider = connectionStringProvider ??
                 throw new ArgumentNullException(nameof(connectionStringProvider));
+            commandTimeoutP360 =
+                Convert.ToInt32(SqlExecutionPolicy.DefaultCommandTimeout.TotalSeconds);
+            connectionTimeoutP360 =
+                Convert.ToInt32(SqlExecutionPolicy.DefaultConnectionTimeout.TotalSeconds);
+        }
+
+        public ModuleCapaAccesoDatos(SchedulerOptions options)
+        {
+            if (options == null)
+            {
+                throw new ArgumentNullException(nameof(options));
+            }
+
+            connectionStringProvider = () => options.ConnectionString;
+            commandTimeoutP360 = Convert.ToInt32(
+                options.SqlCommandTimeout.TotalSeconds);
+            connectionTimeoutP360 = Convert.ToInt32(
+                options.SqlConnectionTimeout.TotalSeconds);
         }
 
         private string ConnectionString
@@ -60,6 +80,25 @@ namespace SchedulerP360Insight.Modulos
 
                 return value;
             }
+        }
+
+        private SqlConnection CreateConnection()
+        {
+            return new SqlExecutionPolicy(
+                ConnectionString,
+                TimeSpan.FromSeconds(connectionTimeoutP360),
+                TimeSpan.FromSeconds(commandTimeoutP360))
+                .CreateConnection();
+        }
+
+        private static SqlExecutionPolicy CreateCurrentPolicy(
+            TimeSpan? commandTimeout = null)
+        {
+            SchedulerOptions options = AppConfig.CurrentOptions;
+            return new SqlExecutionPolicy(
+                options.ConnectionString,
+                options.SqlConnectionTimeout,
+                commandTimeout ?? options.SqlCommandTimeout);
         }
 
         /// <summary>
@@ -95,15 +134,21 @@ namespace SchedulerP360Insight.Modulos
         {
             try
             {
-                using (SqlConnection cnSQL = new SqlConnection(ConnectionString))
+                using (SqlConnection cnSQL = CreateConnection())
                 using (SqlCommand cmSQL = new SqlCommand("P360Insight.SP_RegistrarInformacionColaNotificacionesEventosAsincronos", cnSQL))
                 {
                     cnSQL.Open();
                     cmSQL.CommandTimeout = commandTimeoutP360;
                     cmSQL.CommandType = CommandType.StoredProcedure;
                     // Agregar los parámetros necesarios para el procedimiento almacenado
-                    cmSQL.Parameters.Add("@p_reportUID", SqlDbType.VarChar).Value = reportUID;
-                    cmSQL.Parameters.Add("@p_usuario", SqlDbType.VarChar).Value = usuario;
+                    cmSQL.Parameters.Add(
+                        "@p_reportUID",
+                        SqlDbType.VarChar,
+                        128).Value = reportUID;
+                    cmSQL.Parameters.Add(
+                        "@p_usuario",
+                        SqlDbType.VarChar,
+                        256).Value = usuario;
                     // Ejecutar el procedimiento almacenado
                     cmSQL.ExecuteNonQuery();
                 }
@@ -117,6 +162,9 @@ namespace SchedulerP360Insight.Modulos
                     WriteSafeFailure(
                         "RegistrarInformacionColaNotificaciones",
                         exSql);
+                    throw DataAccessException.Create(
+                        "notification-queue.populate",
+                        exSql);
                 }
                 // throw; No hacer el throw para manejarlo aqui
             }
@@ -124,13 +172,12 @@ namespace SchedulerP360Insight.Modulos
 
         public int getCodigoFicheroVigente()
         {
-            System.Diagnostics.StackFrame stackframe = new System.Diagnostics.StackFrame(1);
-            string nameFuenteCaller = stackframe.GetMethod().Name;
+            const string nameFuenteCaller = "GetCodigoFicheroVigente";
             int codigoFichero = 0;
             try
             {
                 string query = "SELECT cod_fichero FROM prescr.T_FICHERO WHERE vigente = 1";
-                using (SqlConnection cnSQL = new SqlConnection(ConnectionString))
+                using (SqlConnection cnSQL = CreateConnection())
                 using (SqlCommand cmSQL = new SqlCommand(query, cnSQL))
                 {
                     cnSQL.Open();
@@ -148,31 +195,34 @@ namespace SchedulerP360Insight.Modulos
             catch (SqlException exSql)
             {
                 WriteSafeFailure(nameFuenteCaller, exSql);
-                return codigoFichero;
+                throw DataAccessException.Create(
+                    "current-file-code.load",
+                    exSql);
             }
             catch (Exception ex)
             {
                 codigoFichero = 0;
                 throw new Exception("Ha ocurrido un error al consultar el código del fichero vigente.", ex);
-                return codigoFichero;
             }
         }
 
 
         public string getValorParametroSistemaDB(string p_nombreParametro)
         {
-            System.Diagnostics.StackFrame stackframe = new System.Diagnostics.StackFrame(1);
-            string nameFuenteCaller = stackframe.GetMethod().Name;
+            const string nameFuenteCaller = "GetValorParametroSistema";
             string v_valorParametro = string.Empty;
             try
             {
                 string query = "SELECT VALOR as VALOR FROM T_PARAMETROS where parametro=@nombreParametro";
-                using (SqlConnection cnSQL = new SqlConnection(ConnectionString))
+                using (SqlConnection cnSQL = CreateConnection())
                 using (SqlCommand cmSQL = new SqlCommand(query, cnSQL))
                 {
                     cnSQL.Open();
                     cmSQL.CommandTimeout = commandTimeoutP360;
-                    cmSQL.Parameters.AddWithValue("@nombreParametro", p_nombreParametro);
+                    cmSQL.Parameters.Add(
+                        "@nombreParametro",
+                        SqlDbType.VarChar,
+                        128).Value = p_nombreParametro;
                     using (SqlDataReader drSQL = cmSQL.ExecuteReader())
                     {
                         if (!drSQL.HasRows)
@@ -186,13 +236,14 @@ namespace SchedulerP360Insight.Modulos
             catch (SqlException exSql)
             {
                 WriteSafeFailure(nameFuenteCaller, exSql);
-                return v_valorParametro;
+                throw DataAccessException.Create(
+                    "system-parameter.load-legacy",
+                    exSql);
             }
             catch (Exception ex)
             {
                 v_valorParametro = string.Empty;
                 throw new Exception("Ha ocurrido un error en la consulta del parámetro: " + p_nombreParametro + " desde la base de datos. ", ex);
-                return v_valorParametro;
             }
         }
         public static int GetCodPedidoPorCodUnicoDespachoCUD(string p_codigoUnicoDespacho_CUD)
@@ -200,12 +251,16 @@ namespace SchedulerP360Insight.Modulos
             string query = "SELECT DISTINCT cod_pedido FROM mobile.T_DESPACHOSPEDIDO_PED0004 WHERE CUD = @p_codigoUnicoDespacho_CUD";
             try
             {
-                using (SqlConnection cnSQL = new SqlConnection(AppConfig.ConnectionString))
-                using (SqlCommand cmSQL = new SqlCommand(query, cnSQL))
+                SqlExecutionPolicy policy = CreateCurrentPolicy(
+                    TimeSpan.FromSeconds(300));
+                using (SqlConnection cnSQL = policy.CreateConnection())
+                using (SqlCommand cmSQL = policy.CreateCommand(query, cnSQL))
                 {
                     cnSQL.Open();
-                    cmSQL.CommandTimeout = 300; // woap ajustar Asegúrate de que commandTimeoutP360 esté definido correctamente
-                    cmSQL.Parameters.Add("@p_codigoUnicoDespacho_CUD", SqlDbType.VarChar).Value = p_codigoUnicoDespacho_CUD;
+                    cmSQL.Parameters.Add(
+                        "@p_codigoUnicoDespacho_CUD",
+                        SqlDbType.VarChar,
+                        512).Value = p_codigoUnicoDespacho_CUD;
 
                     using (SqlDataReader drSQL = cmSQL.ExecuteReader())
                     {
@@ -239,11 +294,14 @@ namespace SchedulerP360Insight.Modulos
             WHERE cola_notificacion_id = @ColaNotificacionId";
             try
             {
-                using (SqlConnection cnSQL = new SqlConnection(ConnectionString))
+                using (SqlConnection cnSQL = CreateConnection())
                 {
                     using (SqlCommand cmSQL = new SqlCommand(query, cnSQL))
                     {
-                        cmSQL.Parameters.AddWithValue("@ColaNotificacionId", ColaNotificacionId);
+                        cmSQL.CommandTimeout = commandTimeoutP360;
+                        cmSQL.Parameters.Add(
+                            "@ColaNotificacionId",
+                            SqlDbType.Int).Value = ColaNotificacionId;
                         cnSQL.Open();
                         int filasAfectadas = cmSQL.ExecuteNonQuery();
                         // Si filasAfectadas es mayor que 0, entonces la actualización fue exitosa.
@@ -254,30 +312,34 @@ namespace SchedulerP360Insight.Modulos
             catch (SqlException exSql)
             {
                 WriteSafeFailure("ActualizarEstadoNotificacion", exSql);
-                return false;
+                throw DataAccessException.Create(
+                    "notification.mark-sent",
+                    exSql);
             }
             catch (Exception ex)
             {
                 WriteSafeFailure("ActualizarEstadoNotificacion", ex);
-                return false;
+                throw DataAccessException.Create(
+                    "notification.mark-sent",
+                    ex);
             }
         }
         public void RegistraLogConeccionyAccion(string v_usuario, string accion)
         {
-            string source = new System.Diagnostics.StackFrame(1)
-                .GetMethod()
-                .Name;
-            TryRegistraLogCore(v_usuario, accion, source);
+            TryRegistraLogCore(
+                v_usuario,
+                accion,
+                "RegistraLogConeccionyAccion");
         }
 
         public bool TryRegistraLogConeccionyAccion(
             string v_usuario,
             string accion)
         {
-            string source = new System.Diagnostics.StackFrame(1)
-                .GetMethod()
-                .Name;
-            return TryRegistraLogCore(v_usuario, accion, source);
+            return TryRegistraLogCore(
+                v_usuario,
+                accion,
+                "TryRegistraLogConeccionyAccion");
         }
 
         private bool TryRegistraLogCore(
@@ -287,20 +349,33 @@ namespace SchedulerP360Insight.Modulos
         {
             try
             {
-                using (SqlConnection cnSQL = new SqlConnection(ConnectionString))
+                using (SqlConnection cnSQL = CreateConnection())
                 {
                     cnSQL.Open();
                     using (SqlCommand cmSQL = new SqlCommand("INSERT INTO DBO.T_LOG_CONECCIONYACCIONES (USUARIO, IP, ACCION, FUENTE, ORIGEN) VALUES (@col_usuario, @col_ip, @col_accion, @col_fuente, @col_origen)", cnSQL))
                     {
-                        cmSQL.Parameters.AddWithValue(
+                        cmSQL.CommandTimeout = commandTimeoutP360;
+                        cmSQL.Parameters.Add(
                             "@col_usuario",
-                            username ?? string.Empty);
-                        cmSQL.Parameters.AddWithValue("@col_ip", GetIPAddress());
-                        cmSQL.Parameters.AddWithValue(
+                            SqlDbType.NVarChar,
+                            -1).Value = username ?? string.Empty;
+                        cmSQL.Parameters.Add(
+                            "@col_ip",
+                            SqlDbType.NVarChar,
+                            -1).Value = (object)GetIPAddress() ?? DBNull.Value;
+                        cmSQL.Parameters.Add(
                             "@col_accion",
-                            (action ?? string.Empty).Replace("'", " "));
-                        cmSQL.Parameters.AddWithValue("@col_fuente", "schedulerP360");
-                        cmSQL.Parameters.AddWithValue("@col_origen", source);
+                            SqlDbType.NVarChar,
+                            -1).Value = (action ?? string.Empty)
+                                .Replace("'", " ");
+                        cmSQL.Parameters.Add(
+                            "@col_fuente",
+                            SqlDbType.NVarChar,
+                            -1).Value = "schedulerP360";
+                        cmSQL.Parameters.Add(
+                            "@col_origen",
+                            SqlDbType.NVarChar,
+                            -1).Value = source ?? string.Empty;
                         cmSQL.ExecuteNonQuery();
                     }
                 }
@@ -333,8 +408,7 @@ namespace SchedulerP360Insight.Modulos
         }
         public static DatosVacacionAusencia GetDatosVacacionAusenciaById(int idVacacionAusencia)
         {
-            System.Diagnostics.StackFrame stackframe = new System.Diagnostics.StackFrame(1);
-            string nameFuenteCaller = stackframe.GetMethod().Name;
+            const string nameFuenteCaller = "GetDatosVacacionAusenciaById";
             DatosVacacionAusencia datos = null;
 
             string sql = @"
@@ -354,10 +428,14 @@ namespace SchedulerP360Insight.Modulos
 
             try
             {
-                using (var cnSQL = new SqlConnection(AppConfig.ConnectionString))
+                SqlExecutionPolicy policy = CreateCurrentPolicy();
+                using (var cnSQL = policy.CreateConnection())
                 {
                     cnSQL.Open();
-                    datos = cnSQL.QueryFirstOrDefault<DatosVacacionAusencia>(sql, new { Id = idVacacionAusencia });
+                    datos = cnSQL.QueryFirstOrDefault<DatosVacacionAusencia>(
+                        sql,
+                        new { Id = idVacacionAusencia },
+                        commandTimeout: policy.CommandTimeoutSeconds);
                 }
             }
             catch (SqlException exSql)
@@ -374,8 +452,7 @@ namespace SchedulerP360Insight.Modulos
 
         public static DatosVisita GetDatosVisitaByCodVisitaDB(int codigoVisita)
         {
-            System.Diagnostics.StackFrame stackframe = new System.Diagnostics.StackFrame(1);
-            string nameFuenteCaller = stackframe.GetMethod().Name;
+            const string nameFuenteCaller = "GetDatosVisitaByCodVisita";
             DatosVisita datosVisita = null;
             try
             {
@@ -416,10 +493,14 @@ namespace SchedulerP360Insight.Modulos
                 FROM 
                     mobile.V_REPORTE_HISTORICO_VISITA
                 WHERE cod_visita = @CodigoVisita";
-                using (var cnSQL = new SqlConnection(AppConfig.ConnectionString))
+                SqlExecutionPolicy policy = CreateCurrentPolicy();
+                using (var cnSQL = policy.CreateConnection())
                 {
                     cnSQL.Open();
-                    datosVisita = cnSQL.QueryFirstOrDefault<DatosVisita>(sql, new { CodigoVisita = codigoVisita });
+                    datosVisita = cnSQL.QueryFirstOrDefault<DatosVisita>(
+                        sql,
+                        new { CodigoVisita = codigoVisita },
+                        commandTimeout: policy.CommandTimeoutSeconds);
                 }
             }
             catch (SqlException exSql)
@@ -434,8 +515,7 @@ namespace SchedulerP360Insight.Modulos
         }
         public static ClasesObjetosDBP360 GetDatosPedidoByCodPedidoDB(int codigoPedido)
         {
-            System.Diagnostics.StackFrame stackframe = new System.Diagnostics.StackFrame(1);
-            string nameFuenteCaller = stackframe.GetMethod().Name;
+            const string nameFuenteCaller = "GetDatosPedidoByCodPedido";
             ClasesObjetosDBP360 DatosPedido = null;
             try
             {
@@ -474,10 +554,14 @@ namespace SchedulerP360Insight.Modulos
                 FROM 
                     mobile.V_REPORTE_HISTORICO_PEDIDOS_RESUMIDO
                 WHERE cod_pedido = @CodigoPedido";
-                using (var cnSQL = new SqlConnection(AppConfig.ConnectionString))
+                SqlExecutionPolicy policy = CreateCurrentPolicy();
+                using (var cnSQL = policy.CreateConnection())
                 {
                     cnSQL.Open();
-                    DatosPedido = cnSQL.QueryFirstOrDefault<ClasesObjetosDBP360>(sql, new { CodigoPedido = codigoPedido });
+                    DatosPedido = cnSQL.QueryFirstOrDefault<ClasesObjetosDBP360>(
+                        sql,
+                        new { CodigoPedido = codigoPedido },
+                        commandTimeout: policy.CommandTimeoutSeconds);
                 }
             }
             catch (SqlException exSql)
@@ -495,20 +579,30 @@ namespace SchedulerP360Insight.Modulos
             List<DatosContactosNotificaciones> contactosNotificaciones = new List<DatosContactosNotificaciones>();
             try
             {
-                using (var cnSQL = new SqlConnection(ConnectionString))
+                using (var cnSQL = CreateConnection())
                 {
                     cnSQL.Open();
                     var parametros = new { p_report_id = reportId, p_referencia_evento_id = referenciaEventoId };
-                    contactosNotificaciones = cnSQL.Query<DatosContactosNotificaciones>("[P360Insight].[GetDataContactosNotificaciones]", parametros, commandType: CommandType.StoredProcedure).ToList();
+                    contactosNotificaciones = cnSQL.Query<DatosContactosNotificaciones>(
+                        "[P360Insight].[GetDataContactosNotificaciones]",
+                        parametros,
+                        commandTimeout: commandTimeoutP360,
+                        commandType: CommandType.StoredProcedure).ToList();
                 }
             }
             catch (SqlException exSql)
             {
                 WriteSafeFailure("GetContactosNotificaciones", exSql);
+                throw DataAccessException.Create(
+                    "notification-contacts.load",
+                    exSql);
             }
             catch (Exception ex)
             {
                 WriteSafeFailure("GetContactosNotificaciones", ex);
+                throw DataAccessException.Create(
+                    "notification-contacts.load",
+                    ex);
             }
             return contactosNotificaciones;
         }

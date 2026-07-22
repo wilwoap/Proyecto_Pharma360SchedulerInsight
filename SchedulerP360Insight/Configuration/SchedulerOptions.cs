@@ -23,6 +23,10 @@ namespace SchedulerP360Insight.Configuration
             "P360_SHUTDOWN_TIMEOUT_SECONDS";
         public const string HealthFilePathEnvironmentVariable =
             "P360_HEALTH_FILE_PATH";
+        public const string SqlConnectionTimeoutSecondsEnvironmentVariable =
+            "P360_SQL_CONNECTION_TIMEOUT_SECONDS";
+        public const string SqlCommandTimeoutSecondsEnvironmentVariable =
+            "P360_SQL_COMMAND_TIMEOUT_SECONDS";
         public const string ReportsQuerySetting = "P360.Reports.Query";
         public const string NotificationQueueQuerySetting =
             "P360.InfoColaNotificaciones.Query";
@@ -34,7 +38,9 @@ namespace SchedulerP360Insight.Configuration
             string notificationQueueQuery,
             ParameterProviderMode parameterProviderMode,
             TimeSpan? shutdownTimeout = null,
-            string healthFilePath = null)
+            string healthFilePath = null,
+            TimeSpan? sqlConnectionTimeout = null,
+            TimeSpan? sqlCommandTimeout = null)
         {
             ConnectionString = RequireValue(
                 connectionString,
@@ -57,6 +63,18 @@ namespace SchedulerP360Insight.Configuration
             }
 
             HealthFilePath = NormalizeHealthFilePath(healthFilePath);
+            SqlConnectionTimeout = ValidateTimeout(
+                sqlConnectionTimeout ?? TimeSpan.FromSeconds(15),
+                nameof(sqlConnectionTimeout),
+                1,
+                120,
+                "conexion SQL");
+            SqlCommandTimeout = ValidateTimeout(
+                sqlCommandTimeout ?? TimeSpan.FromSeconds(30),
+                nameof(sqlCommandTimeout),
+                1,
+                300,
+                "comando SQL");
         }
 
         public string ConnectionString { get; }
@@ -73,6 +91,10 @@ namespace SchedulerP360Insight.Configuration
 
         public string HealthFilePath { get; }
 
+        public TimeSpan SqlConnectionTimeout { get; }
+
+        public TimeSpan SqlCommandTimeout { get; }
+
         public static SchedulerOptions Load(
             Func<string, string> readEnvironmentVariable = null,
             Func<string, string> readAppSetting = null)
@@ -87,6 +109,20 @@ namespace SchedulerP360Insight.Configuration
             ParameterProviderMode mode = ParseProviderMode(modeValue);
             TimeSpan shutdownTimeout = ParseShutdownTimeout(
                 environmentReader(ShutdownTimeoutSecondsEnvironmentVariable));
+            TimeSpan sqlConnectionTimeout = ParseBoundedTimeout(
+                environmentReader(
+                    SqlConnectionTimeoutSecondsEnvironmentVariable),
+                SqlConnectionTimeoutSecondsEnvironmentVariable,
+                defaultSeconds: 15,
+                minimumSeconds: 1,
+                maximumSeconds: 120);
+            TimeSpan sqlCommandTimeout = ParseBoundedTimeout(
+                environmentReader(
+                    SqlCommandTimeoutSecondsEnvironmentVariable),
+                SqlCommandTimeoutSecondsEnvironmentVariable,
+                defaultSeconds: 30,
+                minimumSeconds: 1,
+                maximumSeconds: 300);
 
             return new SchedulerOptions(
                 RequireSourceValue(
@@ -104,7 +140,9 @@ namespace SchedulerP360Insight.Configuration
                     "appSettings"),
                 mode,
                 shutdownTimeout,
-                environmentReader(HealthFilePathEnvironmentVariable));
+                environmentReader(HealthFilePathEnvironmentVariable),
+                sqlConnectionTimeout,
+                sqlCommandTimeout);
         }
 
         public override string ToString()
@@ -121,6 +159,12 @@ namespace SchedulerP360Insight.Configuration
                     CultureInfo.InvariantCulture) +
                 ", HealthFilePath=" +
                 (HealthFilePath == null ? "disabled" : "configured") +
+                ", SqlConnectionTimeoutSeconds=" +
+                SqlConnectionTimeout.TotalSeconds.ToString(
+                    CultureInfo.InvariantCulture) +
+                ", SqlCommandTimeoutSeconds=" +
+                SqlCommandTimeout.TotalSeconds.ToString(
+                    CultureInfo.InvariantCulture) +
                 " }";
         }
 
@@ -166,6 +210,58 @@ namespace SchedulerP360Insight.Configuration
             }
 
             return TimeSpan.FromSeconds(seconds);
+        }
+
+        private static TimeSpan ParseBoundedTimeout(
+            string value,
+            string variableName,
+            int defaultSeconds,
+            int minimumSeconds,
+            int maximumSeconds)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return TimeSpan.FromSeconds(defaultSeconds);
+            }
+
+            int seconds;
+            if (!int.TryParse(
+                value,
+                NumberStyles.None,
+                CultureInfo.InvariantCulture,
+                out seconds) ||
+                seconds < minimumSeconds ||
+                seconds > maximumSeconds)
+            {
+                throw new InvalidOperationException(
+                    "La variable de entorno '" + variableName +
+                    "' debe ser un entero entre " + minimumSeconds +
+                    " y " + maximumSeconds + ".");
+            }
+
+            return TimeSpan.FromSeconds(seconds);
+        }
+
+        private static TimeSpan ValidateTimeout(
+            TimeSpan value,
+            string parameterName,
+            int minimumSeconds,
+            int maximumSeconds,
+            string description)
+        {
+            double seconds = value.TotalSeconds;
+            if (seconds < minimumSeconds ||
+                seconds > maximumSeconds ||
+                seconds != Math.Truncate(seconds))
+            {
+                throw new ArgumentOutOfRangeException(
+                    parameterName,
+                    "El timeout de " + description +
+                    " debe ser un numero entero de segundos entre " +
+                    minimumSeconds + " y " + maximumSeconds + ".");
+            }
+
+            return value;
         }
 
         private static string NormalizeHealthFilePath(string value)

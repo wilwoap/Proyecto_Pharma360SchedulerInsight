@@ -21,6 +21,7 @@ using System.Runtime.InteropServices;
 
 // El siguiente GUID sirve como id. de typelib si este proyecto se expone a COM.
 [assembly: Guid("0474b48f-1393-4cf9-9f16-aac64991b703")]
+[assembly: InternalsVisibleTo("SchedulerP360Insight.CharacterizationTests")]
 
 // La información de versión de un ensamblado consta de los cuatro valores siguientes:
 //

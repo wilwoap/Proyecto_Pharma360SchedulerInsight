@@ -656,7 +656,9 @@ namespace SchedulerP360Insight.Observability
                 TelemetryOperations.Notification,
                 TelemetryOperations.RenderCrystal,
                 TelemetryOperations.RenderDevExpress,
-                TelemetryOperations.DeliverySmtp
+                TelemetryOperations.DeliverySmtp,
+                TelemetryOperations.DataReportSchedules,
+                TelemetryOperations.DataNotificationQueue
             };
 
         private static readonly HashSet<string> KnownOutcomes =
@@ -665,7 +667,8 @@ namespace SchedulerP360Insight.Observability
                 TelemetryOutcomes.Success,
                 TelemetryOutcomes.Failure,
                 TelemetryOutcomes.Skipped,
-                TelemetryOutcomes.Timeout
+                TelemetryOutcomes.Timeout,
+                TelemetryOutcomes.Cancelled
             };
 
         private static readonly HashSet<string> KnownGauges =

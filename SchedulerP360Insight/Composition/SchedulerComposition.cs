@@ -74,7 +74,7 @@ namespace SchedulerP360Insight.Composition
             }
 
             ModuleCapaAccesoDatos dataAccess =
-                new ModuleCapaAccesoDatos(options.ConnectionString);
+                new ModuleCapaAccesoDatos(options);
 
             ISystemParameterSource source;
             if (options.ParameterProviderMode == ParameterProviderMode.Legacy)
@@ -84,7 +84,7 @@ namespace SchedulerP360Insight.Composition
             }
             else
             {
-                source = new SqlSystemParameterSource(options.ConnectionString);
+                source = new SqlSystemParameterSource(options);
             }
 
             IParameterSnapshotProvider snapshotProvider =

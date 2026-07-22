@@ -16,6 +16,7 @@ namespace SchedulerP360Insight.Observability
         public const string Failure = "failure";
         public const string Skipped = "skipped";
         public const string Timeout = "timeout";
+        public const string Cancelled = "cancelled";
     }
 
     public static class TelemetryOperations
@@ -31,6 +32,8 @@ namespace SchedulerP360Insight.Observability
         public const string RenderCrystal = "render.crystal";
         public const string RenderDevExpress = "render.devexpress";
         public const string DeliverySmtp = "delivery.smtp";
+        public const string DataReportSchedules = "data.report-schedules";
+        public const string DataNotificationQueue = "data.notification-queue";
     }
 
     public interface IOperationScope : IDisposable

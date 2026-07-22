@@ -101,7 +101,10 @@ namespace ReportGenerator
                     // Registrar en cola de notificaciones (según lógica del SP)
                     oModuleCapaAccesoDatos.RegistrarInformacionColaNotificacionesEventosAsincronos(reportUID, "ScheduledReports");
 
-                    List<InfoColaNotificaciones> p360Notificaciones = utilitarios.GetInfoColaNotificaciones(reportId);
+                    IReadOnlyList<InfoColaNotificaciones> p360Notificaciones =
+                        await utilitarios.GetInfoColaNotificacionesAsync(
+                            reportId,
+                            context.CancellationToken);
                     TelemetryContext.ObserveNotificationBatch(
                         p360Notificaciones.Count);
 
@@ -238,6 +241,11 @@ namespace ReportGenerator
                     oModuleCapaAccesoDatos.RegistraLogConeccionyAccion(currentUsername, accion);
                     Console.WriteLine(accion);
                     Console.WriteLine($"Fin de job DevExpress. report_uid='{reportUID}'.");
+                }
+                catch (OperationCanceledException)
+                    when (context.CancellationToken.IsCancellationRequested)
+                {
+                    throw;
                 }
                 catch (Exception ex)
                 {

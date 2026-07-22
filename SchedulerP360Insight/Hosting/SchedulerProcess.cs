@@ -1,6 +1,7 @@
 using Quartz;
 using Quartz.Impl;
 using SchedulerP360Insight.Composition;
+using SchedulerP360Insight.Data;
 using SchedulerP360Insight.Scheduling;
 using System;
 using System.Configuration;
@@ -41,6 +42,11 @@ namespace SchedulerP360Insight.Hosting
             try
             {
                 runtime = SchedulerComposition.Create();
+            }
+            catch (DataAccessException dataError)
+            {
+                WriteDataDependencyError(dataError);
+                return (int)ApplicationExitCode.DependencyFailure;
             }
             catch (SqlException sqlError)
             {
@@ -91,7 +97,9 @@ namespace SchedulerP360Insight.Hosting
                 scheduler.JobFactory = runtime.JobFactory;
 
                 IReportScheduleSource source =
-                    new SqlReportScheduleSource(runtime.Options);
+                    new SqlReportScheduleSource(
+                        runtime.Options,
+                        runtime.Telemetry);
                 IReportScheduleRegistrar registrar =
                     new QuartzReportScheduleRegistrar(
                         scheduler,
@@ -119,6 +127,12 @@ namespace SchedulerP360Insight.Hosting
                         ? (int)ApplicationExitCode.Success
                         : (int)ApplicationExitCode.ShutdownTimeout;
                 }
+            }
+            catch (DataAccessException dataError)
+            {
+                runtime.Telemetry.MarkFaulted(dataError.GetType().Name);
+                WriteDataDependencyError(dataError);
+                return (int)ApplicationExitCode.DependencyFailure;
             }
             catch (SqlException sqlError)
             {
@@ -205,6 +219,17 @@ namespace SchedulerP360Insight.Hosting
             Console.Error.WriteLine(
                 "SQL no estuvo disponible durante el ciclo de vida. Código: " +
                 error.Number + ".");
+        }
+
+        private static void WriteDataDependencyError(DataAccessException error)
+        {
+            Console.Error.WriteLine(
+                "SQL no estuvo disponible durante el ciclo de vida. " +
+                "Clasificacion: " + error.FailureKind +
+                (error.SqlErrorNumber.HasValue
+                    ? ", codigo: " + error.SqlErrorNumber.Value
+                    : string.Empty) +
+                ".");
         }
 
         private static void WriteUnexpectedError(Exception error)

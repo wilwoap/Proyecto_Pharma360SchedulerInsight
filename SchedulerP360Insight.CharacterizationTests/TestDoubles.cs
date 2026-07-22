@@ -37,6 +37,7 @@ namespace SchedulerP360Insight.CharacterizationTests
         INotificationDeliveryStore
     {
         public bool ThrowTimeoutWhenReadingContacts { get; set; }
+        public bool MarkSentResult { get; set; } = true;
         public List<DatosContactosNotificaciones> AdditionalContacts { get; } =
             new List<DatosContactosNotificaciones>();
         public List<int> MarkedNotificationIds { get; } = new List<int>();
@@ -57,7 +58,7 @@ namespace SchedulerP360Insight.CharacterizationTests
         public bool MarkSent(int notificationId)
         {
             MarkedNotificationIds.Add(notificationId);
-            return true;
+            return MarkSentResult;
         }
 
         public void Log(string message)

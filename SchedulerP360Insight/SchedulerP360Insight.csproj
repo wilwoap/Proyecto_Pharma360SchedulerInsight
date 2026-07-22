@@ -250,6 +250,9 @@
     <Compile Include="Composition\SchedulerComposition.cs" />
     <Compile Include="Configuration\ParameterSnapshots.cs" />
     <Compile Include="Configuration\SchedulerOptions.cs" />
+    <Compile Include="Data\DataAccessFailure.cs" />
+    <Compile Include="Data\NotificationQueueRepository.cs" />
+    <Compile Include="Data\SqlExecutionPolicy.cs" />
     <Compile Include="Hosting\ApplicationLifetime.cs" />
     <Compile Include="Hosting\LegacyApplicationEventSink.cs" />
     <Compile Include="Hosting\SchedulerApplication.cs" />

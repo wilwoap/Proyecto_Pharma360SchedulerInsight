@@ -1,3 +1,4 @@
+using SchedulerP360Insight.Data;
 using SchedulerP360Insight.Modulos;
 using System;
 using System.Collections.Generic;
@@ -47,7 +48,9 @@ namespace SchedulerP360Insight.Configuration
 
     public sealed class SqlSystemParameterSource : ISystemParameterSource
     {
-        private readonly string connectionString;
+        public const string OperationName = "system-parameters.load";
+
+        private readonly SqlExecutionPolicy policy;
 
         public SqlSystemParameterSource(string connectionString)
         {
@@ -58,7 +61,13 @@ namespace SchedulerP360Insight.Configuration
                     nameof(connectionString));
             }
 
-            this.connectionString = connectionString;
+            policy = new SqlExecutionPolicy(connectionString);
+        }
+
+        public SqlSystemParameterSource(SchedulerOptions options)
+        {
+            policy = new SqlExecutionPolicy(
+                options ?? throw new ArgumentNullException(nameof(options)));
         }
 
         public IReadOnlyDictionary<string, string> Load(
@@ -90,11 +99,11 @@ namespace SchedulerP360Insight.Configuration
             Dictionary<string, string> values =
                 new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            using (SqlCommand command = new SqlCommand(query, connection))
+            try
             {
-                // Conserva el timeout heredado; PR-08 definirá límites por operación.
-                command.CommandTimeout = 0;
+                using (SqlConnection connection = policy.CreateConnection())
+                using (SqlCommand command = policy.CreateCommand(query, connection))
+                {
                 for (int index = 0; index < names.Length; index++)
                 {
                     command.Parameters.Add(
@@ -124,6 +133,11 @@ namespace SchedulerP360Insight.Configuration
                         values.Add(name, value);
                     }
                 }
+                }
+            }
+            catch (SqlException error)
+            {
+                throw DataAccessException.Create(OperationName, error);
             }
 
             return new ReadOnlyDictionary<string, string>(values);

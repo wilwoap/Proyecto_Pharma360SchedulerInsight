@@ -53,6 +53,7 @@ namespace SchedulerP360Insight.Observability
                 "definitions_count",
                 "duration_ms",
                 "failure_category",
+                "failure_kind",
                 "health_exporter",
                 "job_type",
                 "metric",
@@ -63,6 +64,7 @@ namespace SchedulerP360Insight.Observability
                 "process_id",
                 "report_uid",
                 "state",
+                "sql_code",
                 "value"
             };
 

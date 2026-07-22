@@ -90,7 +90,10 @@ namespace ReportGenerator
                     // Aquí registrar la llenada de la cola de envío para aquellos eventos asíncronos que no están en la cola.
                     // Dentro de la lógica del SP se evalúa si se efectúa o no la creación de la cola dependiendo de cada reporte reportId.
                     oModuleCapaAccesoDatos.RegistrarInformacionColaNotificacionesEventosAsincronos(reportUID, "ScheduledReports");
-                    List<InfoColaNotificaciones> p360Notificaciones = utilitarios.GetInfoColaNotificaciones(reportId);
+                    IReadOnlyList<InfoColaNotificaciones> p360Notificaciones =
+                        await utilitarios.GetInfoColaNotificacionesAsync(
+                            reportId,
+                            context.CancellationToken);
                     TelemetryContext.ObserveNotificationBatch(
                         p360Notificaciones.Count);
                     if (p360Notificaciones.Count > 0)
@@ -140,6 +143,11 @@ namespace ReportGenerator
                     oModuleCapaAccesoDatos.RegistraLogConeccionyAccion(currentUsername, accion);
                     Console.WriteLine(accion);
                     Console.WriteLine($"Fin de job HTML. report_uid='{reportUID}'.");
+                }
+                catch (OperationCanceledException)
+                    when (context.CancellationToken.IsCancellationRequested)
+                {
+                    throw;
                 }
                 catch (Exception ex)
                 {

@@ -102,7 +102,10 @@ namespace ReportGenerator
                     oModuleCapaAccesoDatos.RegistrarInformacionColaNotificacionesEventosAsincronos(reportUID, "ScheduledReports");
                     utilitarios.SetConnectionInfo(report);
                     // Get list of p360Notificaciones from database
-                    List<InfoColaNotificaciones> p360Notificaciones = utilitarios.GetInfoColaNotificaciones(reportId);
+                    IReadOnlyList<InfoColaNotificaciones> p360Notificaciones =
+                        await utilitarios.GetInfoColaNotificacionesAsync(
+                            reportId,
+                            context.CancellationToken);
                     TelemetryContext.ObserveNotificationBatch(
                         p360Notificaciones.Count);
                     if (p360Notificaciones.Count > 0)
@@ -192,6 +195,11 @@ namespace ReportGenerator
                     oModuleCapaAccesoDatos.RegistraLogConeccionyAccion(currentUsername, accion);
                     Console.WriteLine(accion);
                     Console.WriteLine($"Fin de job Crystal. report_uid='{reportUID}'.");
+                }
+                catch (OperationCanceledException)
+                    when (context.CancellationToken.IsCancellationRequested)
+                {
+                    throw;
                 }
                 catch (Exception ex)
                 {

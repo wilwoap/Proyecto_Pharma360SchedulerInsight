@@ -1,5 +1,9 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SchedulerP360Insight.Services;
+using SchedulerP360Insight.Observability;
+using SchedulerP360Insight.Data;
+using System;
+using System.IO;
 using System.Linq;
 using System.Net.Mail;
 using System.Threading.Tasks;
@@ -102,6 +106,49 @@ namespace SchedulerP360Insight.CharacterizationTests
             Assert.IsFalse(
                 store.LogEntries.Any(entry =>
                     entry.Contains("Simulated SQL timeout")));
+        }
+
+        [TestMethod]
+        public async Task QueueConfirmationFailureCannotCompleteAsSuccess()
+        {
+            FakeEmailTransport transport = new FakeEmailTransport();
+            FakeNotificationDeliveryStore store =
+                new FakeNotificationDeliveryStore
+                {
+                    MarkSentResult = false
+                };
+            Utilitarios utilities = new Utilitarios(
+                SyntheticFixtures.CreateLaboratory(),
+                transport,
+                store);
+
+            using (OperationalTelemetry telemetry = new OperationalTelemetry(
+                new JsonLineStructuredEventSink(new StringWriter()),
+                NullHealthPublisher.Instance,
+                TimeSpan.FromHours(1)))
+            using (TelemetryContext.Push(
+                telemetry,
+                "cccccccccccccccccccccccccccccccc"))
+            using (IOperationScope notification =
+                TelemetryContext.BeginNotification())
+            {
+                await utilities.SendReportbyEmailWithOutAttachmentAsync(
+                    "Entrega [REPORT_NAME]",
+                    "HTMLBody_Plantilla_VM_01",
+                    SyntheticFixtures.CreateNotification(),
+                    false);
+                notification.Complete();
+
+                Assert.AreEqual(1, transport.CallCount);
+                Assert.AreEqual(1, store.MarkedNotificationIds.Count);
+                Assert.AreEqual(
+                    1L,
+                    telemetry.GetMetricSnapshot().Single(item =>
+                        item.Operation == TelemetryOperations.Notification &&
+                        item.Outcome == TelemetryOutcomes.Failure).Count);
+                Assert.IsTrue(store.LogEntries.Any(entry =>
+                    entry.Contains(nameof(DataAccessException))));
+            }
         }
     }
 }

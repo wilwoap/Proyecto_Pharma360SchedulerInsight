@@ -19,10 +19,11 @@ using DevExpress.XtraReports.Serialization;
 using SchedulerP360Insight.UtilitariosyClases;
 using SchedulerP360Insight.Services;
 using SchedulerP360Insight.Observability;
+using SchedulerP360Insight.Data;
 using System.Globalization;
 using System.Text;
 using System.Linq;
-using System.Diagnostics.Contracts;
+using System.Threading;
 
 namespace SchedulerP360Insight
 {
@@ -34,6 +35,7 @@ namespace SchedulerP360Insight
         private readonly SchedulerOptions schedulerOptions;
         private readonly IEmailTransport emailTransport;
         private readonly INotificationDeliveryStore notificationDeliveryStore;
+        private INotificationQueueRepository notificationQueueRepository;
         string accion = string.Empty;
         public static bool NotificaAdministrador { get; set; } = false;
 
@@ -79,7 +81,8 @@ namespace SchedulerP360Insight
             IEmailTransport emailTransport,
             INotificationDeliveryStore notificationDeliveryStore,
             ModuleCapaAccesoDatos dataAccess,
-            SchedulerOptions schedulerOptions)
+            SchedulerOptions schedulerOptions,
+            INotificationQueueRepository notificationQueueRepository = null)
         {
             this.labConstants = labConstants ?? throw new ArgumentNullException(nameof(labConstants));
             this.schedulerOptions = schedulerOptions;
@@ -88,6 +91,7 @@ namespace SchedulerP360Insight
             this.emailTransport = emailTransport ?? new SmtpEmailTransport(labConstants);
             this.notificationDeliveryStore = notificationDeliveryStore ??
                 new SqlNotificationDeliveryStore(oModuleCapaAccesoDatos, currentUsername);
+            this.notificationQueueRepository = notificationQueueRepository;
         }
         /// <summary>
         /// Configura la conexión de base de datos para todas las tablas en un documento de reporte, registrando las acciones y errores.
@@ -143,7 +147,6 @@ namespace SchedulerP360Insight
             try
             {
                 // Obtiene la cadena de conexión desde el archivo de configuración.
-                //string connectionString = ConfigurationManager.ConnectionStrings["CadenaConeccionP360"].ConnectionString;
                 string connectionString = GetSchedulerOptions().ConnectionString;
                 // Construye un objeto SqlConnectionStringBuilder con la cadena de conexión.
                 SqlConnectionStringBuilder connStringBuilder = new SqlConnectionStringBuilder(connectionString);
@@ -192,66 +195,39 @@ namespace SchedulerP360Insight
         /// <returns>Una lista de objetos InfoColaNotificaciones que contienen los detalles de las notificaciones.</returns>
         public List<InfoColaNotificaciones> GetInfoColaNotificaciones(int reportId)
         {
-            // Obtiene la cadena de conexión desde el archivo de configuración.
-            //string connectionString = ConfigurationManager.ConnectionStrings["CadenaConeccionP360"].ConnectionString;
-            SchedulerOptions options = GetSchedulerOptions();
-            string connectionString = options.ConnectionString;
-            List<InfoColaNotificaciones> notifications = new List<InfoColaNotificaciones>();
+            return new List<InfoColaNotificaciones>(
+                GetInfoColaNotificacionesAsync(
+                    reportId,
+                    CancellationToken.None)
+                    .GetAwaiter()
+                    .GetResult());
+        }
 
-            try
+        public Task<IReadOnlyList<InfoColaNotificaciones>>
+            GetInfoColaNotificacionesAsync(
+                int reportId,
+                CancellationToken cancellationToken)
+        {
+            INotificationQueueRepository repository =
+                GetNotificationQueueRepository();
+            return repository.LoadPendingAsync(reportId, cancellationToken);
+        }
+
+        private INotificationQueueRepository GetNotificationQueueRepository()
+        {
+            INotificationQueueRepository current = notificationQueueRepository;
+            if (current != null)
             {
-                using (SqlConnection connection = new SqlConnection(connectionString))
-                {
-                    connection.Open(); // Abre la conexión a la base de datos.
-
-                    string query = options.NotificationQueueQuery;
-
-                    using (SqlCommand command = new SqlCommand(query, connection))
-                    {
-                        command.Parameters.AddWithValue("@ReportId", reportId); // Establece el parámetro para la consulta.
-
-                        using (SqlDataReader reader = command.ExecuteReader())
-                        {
-                            while (reader.Read()) // Lee cada fila del resultado.
-                            {
-                                // Crea un nuevo objeto InfoColaNotificaciones y lo llena con los datos de la fila actual.
-                                InfoColaNotificaciones notification = new InfoColaNotificaciones
-                                {
-                                    ColaNotificacionId = Convert.ToInt32(reader["cola_notificacion_id"]),
-                                    ReportId = Convert.ToInt32(reader["report_id"]),
-                                    ReportUID = Convert.ToString(reader["report_uid"]),
-                                    ReportName = Convert.ToString(reader["report_name"]),
-                                    ReportInsight = Convert.ToString(reader["report_insight"]),
-                                    ReportType = Convert.ToString(reader["report_type"]),
-                                    ReferenceEvent = Convert.ToString(reader["referencia_evento"]),
-                                    ReferenceEventId = Convert.ToString(reader["referencia_evento_id"]),
-                                    CodColab = Convert.ToInt32(reader["cod_colab"]),
-                                    NameColab = Convert.ToString(reader["nombre_colab"]),
-                                    EmailColab = Convert.ToString(reader["email_colab"]),
-                                    CodSup = Convert.ToInt32(reader["cod_sup"]),
-                                    NameSup = Convert.ToString(reader["nombre_sup"]),
-                                    EmailSup = Convert.ToString(reader["email_sup"])
-                                };
-
-                                notifications.Add(notification); // Agrega el objeto a la lista de notificaciones.
-                            }
-                        }
-                    }
-                }
+                return current;
             }
-            catch (SqlException ex)
-            {
-                // Maneja excepciones específicas de SQL Server.
-                string errorMessage = $"Error al recuperar las notificaciones de la base de datos: {ex.Message}";
-                throw new CustomException(errorMessage, ex);
-            }
-            catch (Exception ex)
-            {
-                // Maneja todas las otras excepciones.
-                string errorMessage = $"Error al recuperar las notificaciones de la base de datos: {ex.Message}";
-                throw new CustomException(errorMessage, ex);
-            }
-            return notifications; // Devuelve la lista de notificaciones.
+
+            INotificationQueueRepository created =
+                new SqlNotificationQueueRepository(GetSchedulerOptions());
+            Interlocked.CompareExchange(
+                ref notificationQueueRepository,
+                created,
+                null);
+            return notificationQueueRepository;
         }
 
         private SchedulerOptions GetSchedulerOptions()
@@ -993,7 +969,7 @@ namespace SchedulerP360Insight
                     notificationDeliveryStore.Log(accion);
                 }
                 // Actualizacion de bandera de envio de notificacion
-                notificationDeliveryStore.MarkSent(colaNotificacionId);
+                ConfirmNotificationSent(colaNotificacionId);
             }
             catch (SmtpFailedRecipientException ex)
             {
@@ -1121,7 +1097,7 @@ namespace SchedulerP360Insight
                     notificationDeliveryStore.Log(accion);
                 }
                 // Actualizacion de bandera de envio de notificacion
-                notificationDeliveryStore.MarkSent(colaNotificacionId);
+                ConfirmNotificationSent(colaNotificacionId);
                 NotificaAdministrador = false;
             }
             catch (SmtpFailedRecipientException ex)
@@ -1149,6 +1125,21 @@ namespace SchedulerP360Insight
                 Console.Error.WriteLine(accion);
                 notificationDeliveryStore.Log(accion);
             }
+        }
+
+        private void ConfirmNotificationSent(int notificationId)
+        {
+            if (notificationDeliveryStore.MarkSent(notificationId))
+            {
+                return;
+            }
+
+            throw new DataAccessException(
+                "notification.mark-sent",
+                DataFailureKind.Unknown,
+                null,
+                new InvalidOperationException(
+                    "La confirmacion no afecto ninguna fila."));
         }
 
         private async Task SendEmailObservedAsync(MailMessage message)

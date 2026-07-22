@@ -57,6 +57,12 @@ namespace SchedulerP360Insight.Scheduling
                     await inner.Execute(context);
                     scope.Complete();
                 }
+                catch (OperationCanceledException)
+                    when (context.CancellationToken.IsCancellationRequested)
+                {
+                    scope.Complete(TelemetryOutcomes.Cancelled);
+                    throw;
+                }
                 catch (Exception error)
                 {
                     scope.Fail(error);
