@@ -77,9 +77,7 @@ Gate aislado normal:
 
 Resultado al cerrar la implementación: 68/68 pruebas net48 x64, sin SQL, SMTP ni Internet. Cubren defaults/rangos, redacción, conexión finita, comando y parámetro tipados, mapeo de ambos contratos, lista vacía frente a excepción, clasificación, cancelación previa, confirmación fallida de cola y telemetría acotada.
 
-Artefacto Release x64: SHA-256 `2F67A8025D703641511305344D879AAF987670FAD88168F48CB3FF57FDC2FC5B`.
-
-SBOM SPDX 2.2 validado: 77 paquetes, 111 archivos, SHA-256 `4F7D3653C42B1EFEEF85FE77268D6BE6C843DA722D61DD4744DDF047088752F5`. Política de dependencias: cero vulnerabilidades altas/críticas, una moderada de log4net bajo la excepción vigente y cero paquetes obsoletos.
+El gate del PR registra fuera del commit el SHA-256 del ejecutable, porque el SDK incorpora la revisión Git y el hash cambia al crear un commit. El SBOM SPDX 2.2 validó 77 paquetes y 111 archivos. Política de dependencias: cero vulnerabilidades altas/críticas, una moderada de log4net bajo la excepción vigente y cero paquetes obsoletos.
 
 Contrato SQL real y efímero:
 
