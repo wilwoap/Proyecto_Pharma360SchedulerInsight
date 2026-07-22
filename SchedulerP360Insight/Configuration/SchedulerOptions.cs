@@ -1,5 +1,6 @@
 using System;
 using System.Configuration;
+using System.Globalization;
 
 namespace SchedulerP360Insight.Configuration
 {
@@ -17,6 +18,8 @@ namespace SchedulerP360Insight.Configuration
             "P360_GOOGLE_MAPS_API_KEY";
         public const string ParameterProviderModeEnvironmentVariable =
             "P360_PARAMETER_PROVIDER_MODE";
+        public const string ShutdownTimeoutSecondsEnvironmentVariable =
+            "P360_SHUTDOWN_TIMEOUT_SECONDS";
         public const string ReportsQuerySetting = "P360.Reports.Query";
         public const string NotificationQueueQuerySetting =
             "P360.InfoColaNotificaciones.Query";
@@ -26,7 +29,8 @@ namespace SchedulerP360Insight.Configuration
             string googleMapsApiKey,
             string reportsQuery,
             string notificationQueueQuery,
-            ParameterProviderMode parameterProviderMode)
+            ParameterProviderMode parameterProviderMode,
+            TimeSpan? shutdownTimeout = null)
         {
             ConnectionString = RequireValue(
                 connectionString,
@@ -39,6 +43,14 @@ namespace SchedulerP360Insight.Configuration
                 notificationQueueQuery,
                 NotificationQueueQuerySetting);
             ParameterProviderMode = parameterProviderMode;
+            ShutdownTimeout = shutdownTimeout ?? TimeSpan.FromSeconds(30);
+            if (ShutdownTimeout < TimeSpan.FromSeconds(1) ||
+                ShutdownTimeout > TimeSpan.FromMinutes(15))
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(shutdownTimeout),
+                    "El tiempo de apagado debe estar entre 1 y 900 segundos.");
+            }
         }
 
         public string ConnectionString { get; }
@@ -50,6 +62,8 @@ namespace SchedulerP360Insight.Configuration
         public string NotificationQueueQuery { get; }
 
         public ParameterProviderMode ParameterProviderMode { get; }
+
+        public TimeSpan ShutdownTimeout { get; }
 
         public static SchedulerOptions Load(
             Func<string, string> readEnvironmentVariable = null,
@@ -63,6 +77,8 @@ namespace SchedulerP360Insight.Configuration
             string modeValue = environmentReader(
                 ParameterProviderModeEnvironmentVariable);
             ParameterProviderMode mode = ParseProviderMode(modeValue);
+            TimeSpan shutdownTimeout = ParseShutdownTimeout(
+                environmentReader(ShutdownTimeoutSecondsEnvironmentVariable));
 
             return new SchedulerOptions(
                 RequireSourceValue(
@@ -78,7 +94,8 @@ namespace SchedulerP360Insight.Configuration
                     settingReader,
                     NotificationQueueQuerySetting,
                     "appSettings"),
-                mode);
+                mode,
+                shutdownTimeout);
         }
 
         public override string ToString()
@@ -89,7 +106,10 @@ namespace SchedulerP360Insight.Configuration
                 (GoogleMapsApiKey == null ? "absent" : "[REDACTED]") +
                 ", ReportsQuery=configured, " +
                 "NotificationQueueQuery=configured, " +
-                "ParameterProviderMode=" + ParameterProviderMode + " }";
+                "ParameterProviderMode=" + ParameterProviderMode +
+                ", ShutdownTimeoutSeconds=" +
+                ShutdownTimeout.TotalSeconds.ToString(
+                    CultureInfo.InvariantCulture) + " }";
         }
 
         private static ParameterProviderMode ParseProviderMode(string value)
@@ -109,6 +129,31 @@ namespace SchedulerP360Insight.Configuration
                 "La variable de entorno '" +
                 ParameterProviderModeEnvironmentVariable +
                 "' sólo admite 'batch' o 'legacy'.");
+        }
+
+        private static TimeSpan ParseShutdownTimeout(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return TimeSpan.FromSeconds(30);
+            }
+
+            int seconds;
+            if (!int.TryParse(
+                value,
+                NumberStyles.None,
+                CultureInfo.InvariantCulture,
+                out seconds) ||
+                seconds < 1 ||
+                seconds > 900)
+            {
+                throw new InvalidOperationException(
+                    "La variable de entorno '" +
+                    ShutdownTimeoutSecondsEnvironmentVariable +
+                    "' debe ser un entero entre 1 y 900.");
+            }
+
+            return TimeSpan.FromSeconds(seconds);
         }
 
         private static string RequireSourceValue(

@@ -1,6 +1,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Quartz;
 using Quartz.Impl;
+using SchedulerP360Insight.Scheduling;
 using System;
 using System.Collections.Specialized;
 using System.Threading.Tasks;
@@ -28,9 +29,11 @@ namespace SchedulerP360Insight.CharacterizationTests
             ProbeJob.Execution = execution;
 
             IScheduler scheduler = await new StdSchedulerFactory(properties).GetScheduler();
+            QuartzSchedulerLifecycle lifecycle =
+                new QuartzSchedulerLifecycle(scheduler);
             try
             {
-                await scheduler.Start();
+                await lifecycle.StartAsync(default(System.Threading.CancellationToken));
 
                 IJobDetail job = JobBuilder.Create<ProbeJob>()
                     .WithIdentity("compatibility-job", "characterization")
@@ -50,7 +53,9 @@ namespace SchedulerP360Insight.CharacterizationTests
             }
             finally
             {
-                await scheduler.Shutdown(waitForJobsToComplete: true);
+                await lifecycle.ShutdownAsync(
+                    waitForJobsToComplete: true,
+                    cancellationToken: default(System.Threading.CancellationToken));
                 ProbeJob.Execution = null;
             }
 

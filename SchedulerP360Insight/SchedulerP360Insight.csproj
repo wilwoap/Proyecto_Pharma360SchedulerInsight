@@ -250,10 +250,16 @@
     <Compile Include="Composition\SchedulerComposition.cs" />
     <Compile Include="Configuration\ParameterSnapshots.cs" />
     <Compile Include="Configuration\SchedulerOptions.cs" />
+    <Compile Include="Hosting\ApplicationLifetime.cs" />
+    <Compile Include="Hosting\LegacyApplicationEventSink.cs" />
+    <Compile Include="Hosting\SchedulerApplication.cs" />
+    <Compile Include="Hosting\SchedulerProcess.cs" />
     <Compile Include="Modulos\AppConfig.cs" />
     <Compile Include="Scheduling\ComposedJobFactory.cs" />
+    <Compile Include="Scheduling\QuartzLifecycleAdapters.cs" />
     <Compile Include="Scheduling\ReportJobFactory.cs" />
     <Compile Include="Scheduling\ReportScheduleDefinition.cs" />
+    <Compile Include="Scheduling\ReportScheduleSource.cs" />
     <Compile Include="Services\NotificationDeliveryAbstractions.cs" />
     <Compile Include="Services\ReportPathPolicy.cs" />
     <Compile Include="P360Reports\DashboardPerformanceVisita.cs">

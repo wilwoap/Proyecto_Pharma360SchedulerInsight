@@ -57,7 +57,7 @@ namespace SchedulerP360Insight.P360Reports
                 this.Dispose();
                 throw new BusinessP360Exception(exSql.Number.ToString(), exSql.Message, exSql.Procedure);
             }
-            catch (BusinessP360Exception be)
+            catch (BusinessP360Exception)
             {
                 this.Dispose();
                 throw;
@@ -81,13 +81,11 @@ namespace SchedulerP360Insight.P360Reports
             }
             catch (Exception ex)
             {
-                // Aquí podrías agregar notificación al usuario o logueo del error.
-                System.Windows.Forms.MessageBox.Show("Error al cargar el reporte: " + ex.Message,
-                                                     "Error",
-                                                     System.Windows.Forms.MessageBoxButtons.OK,
-                                                     System.Windows.Forms.MessageBoxIcon.Error);
                 e.Cancel = true;
                 this.Dispose();
+                throw new InvalidOperationException(
+                    "Error no interactivo al cargar el reporte.",
+                    ex);
             }
         }
 

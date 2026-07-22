@@ -9,7 +9,6 @@ using DevExpress.XtraPivotGrid;
 using System.Configuration;
 using DevExpress.CodeParser;
 using System.Reflection;
-using System.Windows.Forms;  // Para MessageBox
 
 namespace SchedulerP360Insight.P360Reports
 {
@@ -34,19 +33,19 @@ namespace SchedulerP360Insight.P360Reports
                 funcionSeteaTitulosDinamicosCampos(v_fechaCorteReporte);
                 funcionEstableceColoresSeries();
             }
-            catch (BusinessP360Exception be)
+            catch (BusinessP360Exception)
             {
-                MessageBox.Show("Error de negocio: " + be.Message,
-                                "Error en el Reporte", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 e.Cancel = true;
                 this.Dispose();
+                throw;
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Excepción en " + MethodBase.GetCurrentMethod().Name + ": " + ex.Message,
-                                "Error en el Reporte", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 e.Cancel = true;
                 this.Dispose();
+                throw new InvalidOperationException(
+                    "Error no interactivo al preparar el reporte.",
+                    ex);
             }
         }
 
@@ -84,10 +83,11 @@ namespace SchedulerP360Insight.P360Reports
                 }
                 else
                 {
-                    MessageBox.Show("No se encontraron datos para los parámetros especificados.",
-                                    "Reporte sin Datos", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     this.DataSource = null;
-                    return;
+                    throw new BusinessP360Exception(
+                        "10001",
+                        "No se encontraron datos para los parámetros especificados.",
+                        MethodBase.GetCurrentMethod().Name);
                 }
             }
             catch (SqlException exSql)
@@ -96,7 +96,7 @@ namespace SchedulerP360Insight.P360Reports
                 this.Dispose();
                 throw new BusinessP360Exception(exSql.Number.ToString(), errorMsg, exSql.Procedure);
             }
-            catch (BusinessP360Exception be)
+            catch (BusinessP360Exception)
             {
                 this.Dispose();
                 throw;
@@ -134,8 +134,9 @@ namespace SchedulerP360Insight.P360Reports
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error configurando colores de series: " + ex.Message,
-                                "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                Console.Error.WriteLine(
+                    "No fue posible aplicar los colores configurados al reporte: " +
+                    ex.Message);
             }
         }
 

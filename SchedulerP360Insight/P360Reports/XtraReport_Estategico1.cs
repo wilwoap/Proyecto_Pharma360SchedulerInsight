@@ -41,13 +41,11 @@ namespace SchedulerP360Insight.P360Reports
             }
             catch (Exception ex)
             {
-                // Si ocurre algún error, se notifica al usuario y se cancela la impresión
-                System.Windows.Forms.MessageBox.Show("Error en el reporte: " + ex.Message,
-                                                      "Error",
-                                                      System.Windows.Forms.MessageBoxButtons.OK,
-                                                      System.Windows.Forms.MessageBoxIcon.Error);
                 e.Cancel = true;
                 this.Dispose();
+                throw new InvalidOperationException(
+                    "Error no interactivo al preparar el reporte estratégico.",
+                    ex);
             }
         }
 
@@ -110,7 +108,7 @@ namespace SchedulerP360Insight.P360Reports
                 this.Dispose();
                 throw new BusinessP360Exception(exSql.Number.ToString(), exSql.Message, exSql.Procedure);
             }
-            catch (BusinessP360Exception be)
+            catch (BusinessP360Exception)
             {
                 this.Dispose();
                 throw;

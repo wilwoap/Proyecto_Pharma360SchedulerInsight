@@ -5,7 +5,6 @@ using System;
 using System.Data.SqlClient;
 using System.Drawing.Printing;
 using System.Reflection;
-using System.Windows.Forms;
 
 namespace SchedulerP360Insight.P360Reports
 {
@@ -62,7 +61,7 @@ namespace SchedulerP360Insight.P360Reports
                 this.Dispose();
                 throw new BusinessP360Exception(exSql.Number.ToString(), errorMsg, exSql.Procedure);
             }
-            catch (BusinessP360Exception be)
+            catch (BusinessP360Exception)
             {
                 // Registrar o manejar el error según tu lógica de negocio
                 this.Dispose();
@@ -88,13 +87,11 @@ namespace SchedulerP360Insight.P360Reports
             }
             catch (Exception ex)
             {
-                // Manejo de errores: se muestra un mensaje de error y se cancela la impresión
-                MessageBox.Show("Error al cargar los datos para el reporte:\n" + ex.Message,
-                                "Error en Reporte",
-                                MessageBoxButtons.OK,
-                                MessageBoxIcon.Error);
                 this.DataSource = null;
                 e.Cancel = true;
+                throw new InvalidOperationException(
+                    "Error no interactivo al cargar los datos del reporte.",
+                    ex);
             }
         }
 
