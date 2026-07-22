@@ -17,6 +17,7 @@
 | D-011 | Retención de PDF, logs y cola muerta | Pendiente | Definir por clasificación y SLO |
 | D-012 | Runner y licencias propietarias | Pendiente | Windows self-hosted autorizado inicialmente |
 | D-013 | Soporte del OS de producción | Pendiente | Inventario de edición/build/ESU o migración |
+| D-014 | Refresh de parámetros del scheduler | Aceptada técnicamente 2026-07-22 | Snapshot inmutable al arrancar; refresh mediante reinicio controlado; PR-05 |
 
 “Propuesta” no autoriza implementación si cambia comportamiento o infraestructura.
 

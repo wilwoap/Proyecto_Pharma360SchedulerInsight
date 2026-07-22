@@ -1,6 +1,6 @@
 # Arnés de caracterización
 
-Estado: implementado en PR-02 y ampliado/validado localmente en PR-04 el 2026-07-22.
+Estado: implementado en PR-02 y ampliado/validado localmente hasta PR-05 el 2026-07-22.
 
 ## Decisión de framework
 
@@ -24,7 +24,7 @@ Para desarrollo con paquetes ya restaurados:
 
 SkipTests existe sólo para diagnóstico del build. No debe usarse como evidencia de un PR.
 
-El gate exige al menos 25 pruebas, un timeout global de 60 segundos y genera TRX bajo artifacts/test-results. Esa carpeta no se versiona.
+El gate exige al menos 37 pruebas, un timeout global de 60 segundos y genera TRX bajo artifacts/test-results. Esa carpeta no se versiona.
 
 ## Fronteras introducidas
 
@@ -54,6 +54,10 @@ La aplicación usa la fábrica de jobs y las fronteras de correo. La política d
 | Dapper | Materialización de un registro con un proveedor ADO.NET simulado y cierre de conexión |
 | Quartz | Inicio, agenda, ejecución y parada de un job sobre RAMJobStore |
 | Crystal/log4net | El host no referencia log4net y Crystal declara exactamente la ABI 2.0.12.0 |
+| Configuración | Opciones completas/incompletas, modo batch/legacy y redacción de secretos |
+| Snapshot | Inmutabilidad, validación, concurrencia, fallo transitorio y reducción de lecturas |
+| Composición | Los tres jobs se crean sin I/O ni secretos en JobDataMap |
+| Excepciones | BusinessP360Exception mapea mensajes sin escribir en SQL desde el constructor |
 
 ## Deudas observadas, no corregidas en este PR
 

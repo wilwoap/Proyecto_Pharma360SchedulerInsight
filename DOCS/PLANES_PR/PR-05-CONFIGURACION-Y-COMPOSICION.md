@@ -1,6 +1,6 @@
 # PR-05 — Configuración, composición y caché
 
-Estado: propuesto. Dependencias: PR-02; preferible PR-03.
+Estado: validado localmente el 2026-07-22. Dependencias: PR-02 a PR-04 completadas.
 
 ## Propósito
 
@@ -15,17 +15,18 @@ Eliminar I/O en constructores y estado global, validando una configuración inmu
 - Carga de parámetros en bloque y caché con política explícita.
 - BusinessP360Exception sin efectos secundarios.
 
-## Implementación
+## Implementación realizada
 
-1. Caracterizar valores, defaults y errores actuales.
-2. Definir modelos de opciones sin secretos imprimibles.
-3. Introducir IParameterSnapshotProvider.
-4. Cargar parámetros requeridos en una operación SQL o lote.
-5. Validar presencia, tipo/rango y coherencia al arrancar.
-6. Inyectar snapshot/servicios en jobs y reportes.
-7. retirar construcciones repetidas de LaboratoryConstants;
-8. separar creación de error y escritura de log;
-9. definir refresh: reinicio, TTL o señal controlada.
+1. Se caracterizaron los 14 nombres, conversiones, defaults y errores del constructor heredado.
+2. `SchedulerOptions` concentra entorno y appSettings y redacta todos los secretos al imprimirse.
+3. `IParameterSnapshotProvider` publica un `LaboratoryConstants` inmutable y thread-safe.
+4. El proveedor `batch` obtiene los 14 parámetros con un único comando SQL parametrizado.
+5. La composición valida presencia, `MAIL_SSL` y el rango de `MAIL_PORT` antes de crear Quartz.
+6. `ComposedJobFactory` inyecta opciones, snapshot y acceso de datos en los tres jobs.
+7. Se eliminaron todas las construcciones de `new LaboratoryConstants()` en producción.
+8. `BusinessP360Exception` quedó libre de I/O y conserva el mapeo de mensajes.
+9. La política de refresh es reinicio controlado; no se mezclan snapshots durante la ejecución.
+10. `P360_PARAMETER_PROVIDER_MODE=legacy` permite rollback temporal sin repetir consultas por job.
 
 ## Fuera de alcance
 
@@ -43,14 +44,24 @@ Eliminar I/O en constructores y estado global, validando una configuración inmu
 
 ## Criterios de aceptación
 
-- Ningún constructor nuevo realiza I/O.
-- Jobs no reciben connection strings/secretos en JobDataMap.
-- Cero dependencia nueva del estado global.
-- Snapshot inmutable y validado antes del scheduler.
-- Reducción de consultas demostrada.
-- Existe modo de compatibilidad/reversión durante despliegue.
+- [x] Ningún constructor nuevo realiza I/O.
+- [x] Jobs no reciben connection strings ni secretos en `JobDataMap`.
+- [x] La ruta nueva recibe dependencias explícitas; `AppConfig` queda sólo como adaptador heredado.
+- [x] Snapshot inmutable y validado antes del scheduler.
+- [x] Reducción demostrada de 14 lecturas por instancia a una carga batch por proceso.
+- [x] Existe modo de compatibilidad/reversión durante despliegue.
+- [x] 37/37 pruebas pasan y ningún `.rpt` cambia.
+
+## Evidencia de cierre
+
+- `build.ps1 -Configuration Release -Target Rebuild`: correcto, 37/37 pruebas.
+- concurrencia: ocho consumidores, una carga y una instancia compartida.
+- fallo de carga: no se publica ni cachea un snapshot parcial.
+- modo heredado: 14 nombres/14 lecturas sólo al arrancar.
+- creación de los tres jobs: cero llamadas adicionales al proveedor.
+- golden master DevExpress actualizado únicamente por inyección de configuración; Designer y `.resx` intactos.
+- inventario y operación: `DOCS/15_CONFIGURACION_Y_COMPOSICION.md`.
 
 ## Rollback
 
-Conservar temporalmente un adaptador LegacyParameterProvider seleccionable por configuración no sensible. Retirarlo en un PR posterior cuando el nuevo proveedor lleve una ventana estable.
-
+Establecer `P360_PARAMETER_PROVIDER_MODE=legacy` y reiniciar para volver temporalmente a la lectura histórica. Si la incidencia no está aislada al batch, revertir el PR completo. Retirar el adaptador tras una ventana operativa estable; nunca persistir su selección en código ni incluir secretos en la variable.

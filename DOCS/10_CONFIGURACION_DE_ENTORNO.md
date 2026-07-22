@@ -10,8 +10,11 @@ El repositorio, el binario y su archivo .config no contienen credenciales. Los v
 |---|---|---|
 | P360_CONNECTION_PRINCIPAL | Sí | Conexión principal de SQL Server |
 | P360_GOOGLE_MAPS_API_KEY | No | Imagen estática del mapa en correos |
+| P360_PARAMETER_PROVIDER_MODE | No | `batch` por defecto; `legacy` sólo para rollback temporal |
 
 Si no existe P360_GOOGLE_MAPS_API_KEY, el correo incluye únicamente un enlace a la ubicación. La aplicación nunca crea variables, imprime sus valores ni incorpora una conexión predeterminada.
+
+`P360_PARAMETER_PROVIDER_MODE` no es sensible. El valor normal es `batch`, incluso cuando la variable no existe. `legacy` conserva temporalmente la lectura histórica de parámetros, cacheada al arrancar; cualquier otro valor detiene el proceso antes de iniciar Quartz.
 
 ## Desarrollo local
 
@@ -19,6 +22,7 @@ Obtener los valores desde el almacén autorizado y configurarlos sólo para la s
 
     $env:P360_CONNECTION_PRINCIPAL = "<valor obtenido del almacén autorizado>"
     $env:P360_GOOGLE_MAPS_API_KEY = "<valor obtenido del almacén autorizado>"
+    $env:P360_PARAMETER_PROVIDER_MODE = "batch"
 
 No guardar esos comandos con valores reales en scripts, historial de terminal, perfiles, capturas o documentación.
 
@@ -26,6 +30,7 @@ No guardar esos comandos con valores reales en scripts, historial de terminal, p
 
 - Configurar las variables para la identidad que ejecuta el servicio mediante la plataforma de despliegue.
 - Reiniciar el proceso después de una rotación.
+- Reiniciar también después de cambiar parámetros en `T_PARAMETROS`: PR-05 usa un snapshot por vida del proceso.
 - Verificar sólo presencia y conectividad; nunca mostrar el valor.
 - Restringir lectura/configuración a operación y a la identidad de servicio.
 - Mantener valores distintos por ambiente.

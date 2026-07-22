@@ -1,6 +1,6 @@
 # Modernización de Scheduler P360 Insight
 
-Estado del expediente: valoración y Gate 0 completados. PR-01 a PR-04 validados; PR-05 es el siguiente incremento.
+Estado del expediente: valoración y Gate 0 completados. PR-01 a PR-05 validados; PR-06 es el siguiente incremento.
 
 Este directorio es la fuente de verdad del programa de modernización. El objetivo es conservar el comportamiento funcional mientras se reduce, mediante cambios pequeños y reversibles, el riesgo de seguridad, operación y mantenimiento.
 
@@ -21,8 +21,9 @@ Este directorio es la fuente de verdad del programa de modernización. El objeti
 13. [12_ARNES_DE_CARACTERIZACION.md](12_ARNES_DE_CARACTERIZACION.md): pruebas aisladas, fixtures y deudas observadas.
 14. [13_SDK_STYLE_Y_PACKAGEREFERENCE.md](13_SDK_STYLE_Y_PACKAGEREFERENCE.md): formato SDK, restauración bloqueada y compatibilidad del output.
 15. [14_DEPENDENCIAS_Y_SBOM.md](14_DEPENDENCIAS_Y_SBOM.md): grafo actualizado, excepción limitada de log4net y SBOM SPDX.
-16. [GUIA_DE_TRABAJO_POR_PR.md](GUIA_DE_TRABAJO_POR_PR.md): instrucciones para desarrollar y revisar cada cambio.
-17. [PLANES_PR/README.md](PLANES_PR/README.md): índice de las fichas de implementación.
+16. [15_CONFIGURACION_Y_COMPOSICION.md](15_CONFIGURACION_Y_COMPOSICION.md): opciones inmutables, snapshot, composición de jobs y rollback.
+17. [GUIA_DE_TRABAJO_POR_PR.md](GUIA_DE_TRABAJO_POR_PR.md): instrucciones para desarrollar y revisar cada cambio.
+18. [PLANES_PR/README.md](PLANES_PR/README.md): índice de las fichas de implementación.
 
 ## Principios no negociables
 
