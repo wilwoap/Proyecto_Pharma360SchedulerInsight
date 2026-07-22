@@ -76,8 +76,10 @@ namespace SchedulerP360Insight.Hosting
             }
 
             IApplicationEventSink events = new LegacyApplicationEventSink(
-                runtime.DataAccess,
-                Environment.UserName);
+                runtime.Telemetry,
+                new SqlAuditEventSink(
+                    runtime.DataAccess,
+                    Environment.UserName));
             IScheduler scheduler = null;
 
             try
@@ -108,7 +110,8 @@ namespace SchedulerP360Insight.Hosting
                             lifecycle,
                             lifetime,
                             events,
-                            runtime.Options.ShutdownTimeout);
+                            runtime.Options.ShutdownTimeout,
+                            runtime.Telemetry);
 
                     SchedulerRunResult result = await application.RunAsync(
                         CancellationToken.None);
@@ -119,11 +122,13 @@ namespace SchedulerP360Insight.Hosting
             }
             catch (SqlException sqlError)
             {
+                runtime.Telemetry.MarkFaulted(sqlError.GetType().Name);
                 WriteSqlDependencyError(sqlError);
                 return (int)ApplicationExitCode.DependencyFailure;
             }
             catch (SchedulerException schedulerError)
             {
+                runtime.Telemetry.MarkFaulted(schedulerError.GetType().Name);
                 Console.Error.WriteLine(
                     "Quartz no pudo completar una operación de ciclo de vida. " +
                     "Tipo: " + schedulerError.GetType().Name + ".");
@@ -131,6 +136,7 @@ namespace SchedulerP360Insight.Hosting
             }
             catch (Exception unexpectedError)
             {
+                runtime.Telemetry.MarkFaulted(unexpectedError.GetType().Name);
                 WriteUnexpectedError(unexpectedError);
                 return (int)ApplicationExitCode.UnexpectedFailure;
             }
@@ -149,6 +155,8 @@ namespace SchedulerP360Insight.Hosting
                         // El código de salida original conserva la causa principal.
                     }
                 }
+
+                runtime.Dispose();
             }
         }
 

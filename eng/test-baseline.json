@@ -4,7 +4,7 @@
   "frameworkVersion": "4.3.2",
   "targetFramework": "net48",
   "platform": "x64",
-  "minimumExpectedTests": 45,
+  "minimumExpectedTests": 56,
   "timeout": "60s",
   "networkPolicy": "Sin SQL, SMTP ni Internet; sólo dobles en memoria y archivos sintéticos."
 }

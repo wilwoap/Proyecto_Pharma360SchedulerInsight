@@ -1,6 +1,7 @@
 using System;
 using System.Configuration;
 using System.Globalization;
+using System.IO;
 
 namespace SchedulerP360Insight.Configuration
 {
@@ -20,6 +21,8 @@ namespace SchedulerP360Insight.Configuration
             "P360_PARAMETER_PROVIDER_MODE";
         public const string ShutdownTimeoutSecondsEnvironmentVariable =
             "P360_SHUTDOWN_TIMEOUT_SECONDS";
+        public const string HealthFilePathEnvironmentVariable =
+            "P360_HEALTH_FILE_PATH";
         public const string ReportsQuerySetting = "P360.Reports.Query";
         public const string NotificationQueueQuerySetting =
             "P360.InfoColaNotificaciones.Query";
@@ -30,7 +33,8 @@ namespace SchedulerP360Insight.Configuration
             string reportsQuery,
             string notificationQueueQuery,
             ParameterProviderMode parameterProviderMode,
-            TimeSpan? shutdownTimeout = null)
+            TimeSpan? shutdownTimeout = null,
+            string healthFilePath = null)
         {
             ConnectionString = RequireValue(
                 connectionString,
@@ -51,6 +55,8 @@ namespace SchedulerP360Insight.Configuration
                     nameof(shutdownTimeout),
                     "El tiempo de apagado debe estar entre 1 y 900 segundos.");
             }
+
+            HealthFilePath = NormalizeHealthFilePath(healthFilePath);
         }
 
         public string ConnectionString { get; }
@@ -64,6 +70,8 @@ namespace SchedulerP360Insight.Configuration
         public ParameterProviderMode ParameterProviderMode { get; }
 
         public TimeSpan ShutdownTimeout { get; }
+
+        public string HealthFilePath { get; }
 
         public static SchedulerOptions Load(
             Func<string, string> readEnvironmentVariable = null,
@@ -95,7 +103,8 @@ namespace SchedulerP360Insight.Configuration
                     NotificationQueueQuerySetting,
                     "appSettings"),
                 mode,
-                shutdownTimeout);
+                shutdownTimeout,
+                environmentReader(HealthFilePathEnvironmentVariable));
         }
 
         public override string ToString()
@@ -109,7 +118,10 @@ namespace SchedulerP360Insight.Configuration
                 "ParameterProviderMode=" + ParameterProviderMode +
                 ", ShutdownTimeoutSeconds=" +
                 ShutdownTimeout.TotalSeconds.ToString(
-                    CultureInfo.InvariantCulture) + " }";
+                    CultureInfo.InvariantCulture) +
+                ", HealthFilePath=" +
+                (HealthFilePath == null ? "disabled" : "configured") +
+                " }";
         }
 
         private static ParameterProviderMode ParseProviderMode(string value)
@@ -154,6 +166,47 @@ namespace SchedulerP360Insight.Configuration
             }
 
             return TimeSpan.FromSeconds(seconds);
+        }
+
+        private static string NormalizeHealthFilePath(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return null;
+            }
+
+            try
+            {
+                if (!Path.IsPathRooted(value) ||
+                    !string.Equals(
+                        Path.GetExtension(value),
+                        ".json",
+                        StringComparison.OrdinalIgnoreCase))
+                {
+                    throw new InvalidOperationException();
+                }
+
+                string fullPath = Path.GetFullPath(value);
+                string directory = Path.GetDirectoryName(fullPath);
+                if (string.IsNullOrWhiteSpace(directory) ||
+                    string.IsNullOrWhiteSpace(Path.GetFileName(fullPath)))
+                {
+                    throw new InvalidOperationException();
+                }
+
+                return fullPath;
+            }
+            catch (Exception error)
+                when (error is ArgumentException ||
+                      error is NotSupportedException ||
+                      error is PathTooLongException ||
+                      error is InvalidOperationException)
+            {
+                throw new InvalidOperationException(
+                    "La variable de entorno '" +
+                    HealthFilePathEnvironmentVariable +
+                    "' debe contener una ruta absoluta a un archivo .json.");
+            }
         }
 
         private static string RequireSourceValue(

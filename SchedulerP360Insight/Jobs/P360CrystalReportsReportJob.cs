@@ -7,6 +7,7 @@ using System.IO;
 using System.Collections.Generic;
 using SchedulerP360Insight.Configuration;
 using SchedulerP360Insight.Modulos;
+using SchedulerP360Insight.Observability;
 
 namespace ReportGenerator
 {
@@ -79,18 +80,18 @@ namespace ReportGenerator
                     // obtain next job execution time
                     DateTimeOffset? nextFireTime = context.Trigger.GetNextFireTimeUtc();
                     DateTimeOffset nextFireTimeLocal = nextFireTime.Value.ToLocalTime();
-                    Console.WriteLine($"************************************************************ Start P360° Schedule processing for: '{reportName}' ************************************************************");
-                    oModuleCapaAccesoDatos.RegistraLogConeccionyAccion(currentUsername, $"Start P360° Schedule processing for: '{reportName}'");
+                    Console.WriteLine($"Inicio de job Crystal. report_uid='{reportUID}'.");
+                    oModuleCapaAccesoDatos.RegistraLogConeccionyAccion(currentUsername, $"Inicio de job Crystal. report_uid='{reportUID}'.");
                     DateTime now = DateTime.Now;
-                    accion = $"Preparing call & trigger schedule for '{reportName}', with Report file '{reportFileName}' from '{reportPathSource}'";
+                    accion = $"Preparando job Crystal. report_uid='{reportUID}'.";
                     Console.WriteLine(accion);
                     oModuleCapaAccesoDatos.RegistraLogConeccionyAccion(currentUsername, accion);
                     Console.ForegroundColor = ConsoleColor.DarkBlue;
-                    accion = $"Process for report '{reportName}'. Start execution at: {now} ---> Next execution at: '{nextFireTimeLocal}'";
+                    accion = $"Job Crystal iniciado en '{now}'. Próxima ejecución: '{nextFireTimeLocal}'.";
                     Console.WriteLine(accion);
                     Console.ResetColor();
                     oModuleCapaAccesoDatos.RegistraLogConeccionyAccion(currentUsername, accion);
-                    accion = $"Loading report name '{reportName}' --> '{reportFileName}' from '{reportPathSource}'";
+                    accion = $"Cargando renderer Crystal. report_uid='{reportUID}'.";
                     Console.WriteLine(accion);
                     oModuleCapaAccesoDatos.RegistraLogConeccionyAccion(currentUsername, accion);
                     reportFilePath = Path.Combine(reportPathSource, reportFileName);
@@ -102,12 +103,23 @@ namespace ReportGenerator
                     utilitarios.SetConnectionInfo(report);
                     // Get list of p360Notificaciones from database
                     List<InfoColaNotificaciones> p360Notificaciones = utilitarios.GetInfoColaNotificaciones(reportId);
+                    TelemetryContext.ObserveNotificationBatch(
+                        p360Notificaciones.Count);
                     if (p360Notificaciones.Count > 0)
                     {
                         // Loop through each p360Notificacion and generate report and send email
                         (DateTime firstDayOfMonth, DateTime lastDayOfMonth) = utilitarios.GetFirstAndLastDayOfMonth();
                         foreach (InfoColaNotificaciones p360Notificacion in p360Notificaciones)
                         {
+                            using (IOperationScope notification =
+                                TelemetryContext.BeginNotification(
+                                    new Dictionary<string, string>
+                                    {
+                                        ["report_uid"] = reportUID
+                                    }))
+                            {
+                                try
+                                {
                             string outputReportName = $"{reportName}_{p360Notificacion.CodColab}({timestamp}).pdf";
                             string outputPathandReportName = Path.Combine(reportPathOutput, outputReportName);
                             //Configuración de parámetros dependiendo el reporte.
@@ -130,39 +142,63 @@ namespace ReportGenerator
                                     // Manejo opcional de casos no reconocidos
                                     break;
                             }
-                            utilitarios.ExportReportToPdf(outputPathandReportName, report);
+                            using (IOperationScope render =
+                                TelemetryContext.BeginOperation(
+                                    TelemetryOperations.RenderCrystal))
+                            {
+                                try
+                                {
+                                    utilitarios.ExportReportToPdf(
+                                        outputPathandReportName,
+                                        report);
+                                    render.Complete();
+                                }
+                                catch (Exception renderError)
+                                {
+                                    render.Fail(renderError);
+                                    throw;
+                                }
+                            }
+
                             if (reportSendMail)
                             {
                                 await utilitarios.SendReportbyEmailWithAttachmentAsync(outputPathandReportName, reportSubjectText, reportBodyResourceKey, p360Notificacion, reportSendMailCopySupervisor);
+                                notification.Complete();
                             }
                             else
                             {
-                                accion = $"Bandera de envío de correo para reporte '{reportName}' está apagada. No se envió correo a: '{p360Notificacion.EmailColab}'";
+                                accion = $"Envío desactivado. report_uid='{reportUID}'.";
                                 oModuleCapaAccesoDatos.RegistraLogConeccionyAccion(currentUsername, accion);
                                 Console.WriteLine(accion);
+                                notification.Complete(
+                                    TelemetryOutcomes.Skipped);
+                            }
+                                }
+                                catch (Exception notificationError)
+                                {
+                                    notification.Fail(notificationError);
+                                    throw;
+                                }
                             }
                         }
                     }
                     else
                     {
-                        accion = $"No existen notificaciones pendientes en la cola para el reporte: '{reportName}'";
+                        accion = $"No existen notificaciones pendientes. report_uid='{reportUID}'.";
                         Console.WriteLine(accion);
                     }
                     TimeSpan duration = DateTime.Now - startTime;
-                    accion = $"Process for report '{reportName}'. Finished execution at: {DateTime.Now}. Se han procesado: '{p360Notificaciones.Count}' registros. Duración: {duration.TotalSeconds} segundos";
+                    accion = $"Job Crystal finalizado. report_uid='{reportUID}', registros='{p360Notificaciones.Count}', duración_segundos='{duration.TotalSeconds}'.";
                     oModuleCapaAccesoDatos.RegistraLogConeccionyAccion(currentUsername, accion);
                     Console.WriteLine(accion);
-                    Console.WriteLine($"************************************************************ Fin P360° Schedule processing for: '{reportName}' ************************************************************");
+                    Console.WriteLine($"Fin de job Crystal. report_uid='{reportUID}'.");
                 }
                 catch (Exception ex)
                 {
-                    accion = $"No fue posible cargar o encontrar reporte: '{reportFilePath}'";
+                    accion = "Fallo del job Crystal. Categoría: " +
+                        ex.GetType().Name;
                     oModuleCapaAccesoDatos.RegistraLogConeccionyAccion(currentUsername, accion);
-                    accion = $"mas detalle del error: '{ex.Message}'";
-                    oModuleCapaAccesoDatos.RegistraLogConeccionyAccion(currentUsername, accion);
-                    Console.WriteLine(accion);
-                    Console.WriteLine($"Causa: " + ex.Message);
-                    Console.WriteLine($"Causa basal: " + ex.InnerException.Message);
+                    Console.Error.WriteLine(accion);
                     throw new JobExecutionException(ex);
                 }
             });

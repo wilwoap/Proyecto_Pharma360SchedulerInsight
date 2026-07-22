@@ -114,7 +114,9 @@ namespace SchedulerP360Insight.Modulos
                 // mas bien si es que es DISTINTO a 50000 significa que algo extraño puede estar ucediendo y se imprime en consola
                 if (exSql.Number != 50000) 
                 {
-                    Console.WriteLine($"verificar SP (P360Insight.SP_RegistrarInformacionColaNotificacionesEventosAsincronos). Ha ocurrido un error {exSql.Number}. SQL Error: {exSql.Message}. StackTrace: {exSql.StackTrace}");
+                    WriteSafeFailure(
+                        "RegistrarInformacionColaNotificaciones",
+                        exSql);
                 }
                 // throw; No hacer el throw para manejarlo aqui
             }
@@ -145,7 +147,7 @@ namespace SchedulerP360Insight.Modulos
             }
             catch (SqlException exSql)
             {
-                Console.WriteLine($"SQL Error in {nameFuenteCaller}: {exSql.Message}. StackTrace: {exSql.StackTrace}");
+                WriteSafeFailure(nameFuenteCaller, exSql);
                 return codigoFichero;
             }
             catch (Exception ex)
@@ -183,7 +185,7 @@ namespace SchedulerP360Insight.Modulos
             }
             catch (SqlException exSql)
             {
-                Console.WriteLine($"SQL Error in {nameFuenteCaller}: {exSql.Message}. StackTrace: {exSql.StackTrace}");
+                WriteSafeFailure(nameFuenteCaller, exSql);
                 return v_valorParametro;
             }
             catch (Exception ex)
@@ -217,7 +219,7 @@ namespace SchedulerP360Insight.Modulos
             }
             catch (SqlException exSql)
             {
-                Console.WriteLine($"SQL Error: {exSql.Message}. StackTrace: {exSql.StackTrace}");
+                WriteSafeFailure("GetCodPedidoPorCud", exSql);
                 throw; // Considera si deseas propagar la excepción o manejarla de manera diferente
             }
             catch (Exception ex)
@@ -251,54 +253,70 @@ namespace SchedulerP360Insight.Modulos
             }
             catch (SqlException exSql)
             {
-                Console.WriteLine($"Error SQL al actualizar el estado de envío del reporte {ColaNotificacionId}: {exSql.Message}");
+                WriteSafeFailure("ActualizarEstadoNotificacion", exSql);
                 return false;
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error general al actualizar el estado de envío del reporte {ColaNotificacionId}: {ex.Message}");
+                WriteSafeFailure("ActualizarEstadoNotificacion", ex);
                 return false;
             }
         }
         public void RegistraLogConeccionyAccion(string v_usuario, string accion)
         {
-            System.Diagnostics.StackFrame stackframe = new System.Diagnostics.StackFrame(1);
-            string nameFuenteCaller = stackframe.GetMethod().Name;
+            string source = new System.Diagnostics.StackFrame(1)
+                .GetMethod()
+                .Name;
+            TryRegistraLogCore(v_usuario, accion, source);
+        }
+
+        public bool TryRegistraLogConeccionyAccion(
+            string v_usuario,
+            string accion)
+        {
+            string source = new System.Diagnostics.StackFrame(1)
+                .GetMethod()
+                .Name;
+            return TryRegistraLogCore(v_usuario, accion, source);
+        }
+
+        private bool TryRegistraLogCore(
+            string username,
+            string action,
+            string source)
+        {
             try
             {
-                 try
+                using (SqlConnection cnSQL = new SqlConnection(ConnectionString))
                 {
-                    using (SqlConnection cnSQL = new SqlConnection(ConnectionString))
+                    cnSQL.Open();
+                    using (SqlCommand cmSQL = new SqlCommand("INSERT INTO DBO.T_LOG_CONECCIONYACCIONES (USUARIO, IP, ACCION, FUENTE, ORIGEN) VALUES (@col_usuario, @col_ip, @col_accion, @col_fuente, @col_origen)", cnSQL))
                     {
-                        cnSQL.Open();
-                        using (SqlCommand cmSQL = new SqlCommand("INSERT INTO DBO.T_LOG_CONECCIONYACCIONES (USUARIO, IP, ACCION, FUENTE, ORIGEN) VALUES (@col_usuario, @col_ip, @col_accion, @col_fuente, @col_origen)", cnSQL))
-                        {
-                            cmSQL.Parameters.AddWithValue("@col_usuario", v_usuario);
-                            cmSQL.Parameters.AddWithValue("@col_ip", GetIPAddress());
-                            cmSQL.Parameters.AddWithValue("@col_accion", accion.Replace("'", " "));
-                            cmSQL.Parameters.AddWithValue("@col_fuente", "schedulerP360");
-                            cmSQL.Parameters.AddWithValue("@col_origen", nameFuenteCaller);
-                            cmSQL.ExecuteNonQuery();
-                        }
+                        cmSQL.Parameters.AddWithValue(
+                            "@col_usuario",
+                            username ?? string.Empty);
+                        cmSQL.Parameters.AddWithValue("@col_ip", GetIPAddress());
+                        cmSQL.Parameters.AddWithValue(
+                            "@col_accion",
+                            (action ?? string.Empty).Replace("'", " "));
+                        cmSQL.Parameters.AddWithValue("@col_fuente", "schedulerP360");
+                        cmSQL.Parameters.AddWithValue("@col_origen", source);
+                        cmSQL.ExecuteNonQuery();
                     }
                 }
-                catch (SqlException exSql)
-                {
-                    Console.WriteLine($"SQL Error in {nameFuenteCaller}: {exSql.Message}. StackTrace: {exSql.StackTrace}");
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Error in {nameFuenteCaller}: {ex.Message}. StackTrace: {ex.StackTrace}");
-                }
+
+                return true;
             }
             catch (SqlException exSql)
             {
-                Console.WriteLine($"SQL Error: {exSql.Message}. StackTrace: {exSql.StackTrace}");
+                WriteSafeFailure(source, exSql);
+                return false;
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error: {ex.Message}. StackTrace: {ex.StackTrace}");
-            }           
+                WriteSafeFailure(source, ex);
+                return false;
+            }
         }
         public string GetIPAddress()
         {
@@ -309,7 +327,7 @@ namespace SchedulerP360Insight.Modulos
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error in GetIPAddress: {ex.Message}. StackTrace: {ex.StackTrace}");
+                WriteSafeFailure("GetIPAddress", ex);
                 return null;
             }
         }
@@ -344,11 +362,11 @@ namespace SchedulerP360Insight.Modulos
             }
             catch (SqlException exSql)
             {
-                Console.WriteLine($"SQL Error in {nameFuenteCaller}: {exSql.Message}. StackTrace: {exSql.StackTrace}");
+                WriteSafeFailure(nameFuenteCaller, exSql);
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"General Error in {nameFuenteCaller}: {ex.Message}. StackTrace: {ex.StackTrace}");
+                WriteSafeFailure(nameFuenteCaller, ex);
             }
 
             return datos;
@@ -406,11 +424,11 @@ namespace SchedulerP360Insight.Modulos
             }
             catch (SqlException exSql)
             {
-                Console.WriteLine($"SQL Error in {nameFuenteCaller}: {exSql.Message}. StackTrace: {exSql.StackTrace}");
+                WriteSafeFailure(nameFuenteCaller, exSql);
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"General Error in {nameFuenteCaller}: {ex.Message}. StackTrace: {ex.StackTrace}");
+                WriteSafeFailure(nameFuenteCaller, ex);
             }
             return datosVisita;
         }
@@ -464,11 +482,11 @@ namespace SchedulerP360Insight.Modulos
             }
             catch (SqlException exSql)
             {
-                Console.WriteLine($"SQL Error in {nameFuenteCaller}: {exSql.Message}. StackTrace: {exSql.StackTrace}");
+                WriteSafeFailure(nameFuenteCaller, exSql);
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"General Error in {nameFuenteCaller}: {ex.Message}. StackTrace: {ex.StackTrace}");
+                WriteSafeFailure(nameFuenteCaller, ex);
             }
             return DatosPedido;
         }
@@ -486,13 +504,26 @@ namespace SchedulerP360Insight.Modulos
             }
             catch (SqlException exSql)
             {
-                Console.WriteLine($"SQL Error: {exSql.Message}. StackTrace: {exSql.StackTrace}");
+                WriteSafeFailure("GetContactosNotificaciones", exSql);
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"General Error: {ex.Message}. StackTrace: {ex.StackTrace}");
+                WriteSafeFailure("GetContactosNotificaciones", ex);
             }
             return contactosNotificaciones;
+        }
+
+        private static void WriteSafeFailure(
+            string operation,
+            Exception error)
+        {
+            SqlException sqlError = error as SqlException;
+            string sqlCode = sqlError == null
+                ? string.Empty
+                : ", sql_code=" + sqlError.Number;
+            Console.Error.WriteLine(
+                "Fallo de acceso a datos. operation=" + operation +
+                ", category=" + error.GetType().Name + sqlCode + ".");
         }
 
     }
@@ -544,7 +575,9 @@ namespace SchedulerP360Insight.Modulos
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Console.Error.WriteLine(
+                    "Fallo al construir tabla de filtros. Categoría: " +
+                    ex.GetType().Name);
                 return tablaFiltros;
             }
         }

@@ -4,6 +4,7 @@ using Quartz.Spi;
 using ReportGenerator;
 using SchedulerP360Insight.Configuration;
 using SchedulerP360Insight.Modulos;
+using SchedulerP360Insight.Observability;
 using System;
 
 namespace SchedulerP360Insight.Scheduling
@@ -13,11 +14,25 @@ namespace SchedulerP360Insight.Scheduling
         private readonly SchedulerOptions schedulerOptions;
         private readonly LaboratoryConstants laboratoryConstants;
         private readonly ModuleCapaAccesoDatos dataAccess;
+        private readonly IOperationalTelemetry telemetry;
 
         public ComposedJobFactory(
             SchedulerOptions schedulerOptions,
             LaboratoryConstants laboratoryConstants,
             ModuleCapaAccesoDatos dataAccess)
+            : this(
+                schedulerOptions,
+                laboratoryConstants,
+                dataAccess,
+                NullOperationalTelemetry.Instance)
+        {
+        }
+
+        public ComposedJobFactory(
+            SchedulerOptions schedulerOptions,
+            LaboratoryConstants laboratoryConstants,
+            ModuleCapaAccesoDatos dataAccess,
+            IOperationalTelemetry telemetry)
         {
             this.schedulerOptions = schedulerOptions ??
                 throw new ArgumentNullException(nameof(schedulerOptions));
@@ -25,6 +40,8 @@ namespace SchedulerP360Insight.Scheduling
                 throw new ArgumentNullException(nameof(laboratoryConstants));
             this.dataAccess = dataAccess ??
                 throw new ArgumentNullException(nameof(dataAccess));
+            this.telemetry = telemetry ??
+                throw new ArgumentNullException(nameof(telemetry));
         }
 
         public override IJob NewJob(
@@ -36,7 +53,12 @@ namespace SchedulerP360Insight.Scheduling
                 throw new ArgumentNullException(nameof(bundle));
             }
 
-            return CreateJob(bundle.JobDetail.JobType);
+            Type jobType = bundle.JobDetail.JobType;
+            return new ObservedJob(
+                CreateJob(jobType),
+                telemetry,
+                ResolveTelemetryOperation(jobType),
+                ResolveTelemetryJobType(jobType));
         }
 
         public IJob CreateJob(Type jobType)
@@ -80,6 +102,46 @@ namespace SchedulerP360Insight.Scheduling
             }
 
             return job;
+        }
+
+        private static string ResolveTelemetryOperation(Type jobType)
+        {
+            if (jobType == typeof(P360CrystalReportsReportJob))
+            {
+                return TelemetryOperations.JobCrystal;
+            }
+
+            if (jobType == typeof(P360DevExpressReportsReportJob))
+            {
+                return TelemetryOperations.JobDevExpress;
+            }
+
+            if (jobType == typeof(P360HtmlReportsReportJob))
+            {
+                return TelemetryOperations.JobHtml;
+            }
+
+            return TelemetryOperations.JobOther;
+        }
+
+        private static string ResolveTelemetryJobType(Type jobType)
+        {
+            if (jobType == typeof(P360CrystalReportsReportJob))
+            {
+                return "crystal";
+            }
+
+            if (jobType == typeof(P360DevExpressReportsReportJob))
+            {
+                return "devexpress";
+            }
+
+            if (jobType == typeof(P360HtmlReportsReportJob))
+            {
+                return "html";
+            }
+
+            return "other";
         }
     }
 }

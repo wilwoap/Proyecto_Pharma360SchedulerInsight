@@ -1,4 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Quartz;
+using Quartz.Spi;
 using ReportGenerator;
 using SchedulerP360Insight.Configuration;
 using SchedulerP360Insight.Modulos;
@@ -240,6 +242,25 @@ namespace SchedulerP360Insight.CharacterizationTests
             Assert.IsInstanceOfType(
                 factory.CreateJob(typeof(P360HtmlReportsReportJob)),
                 typeof(P360HtmlReportsReportJob));
+
+            ReportJobFactory reportJobFactory = new ReportJobFactory();
+            ReportScheduleDefinition definition = TestSupport.CreateReport(
+                reportType: "html");
+            IJobDetail jobDetail = reportJobFactory.CreateJob(definition);
+            IOperableTrigger trigger = (IOperableTrigger)
+                reportJobFactory.CreateTrigger(definition);
+            TriggerFiredBundle bundle = new TriggerFiredBundle(
+                jobDetail,
+                trigger,
+                null,
+                false,
+                DateTimeOffset.UtcNow,
+                null,
+                null,
+                null);
+            Assert.IsInstanceOfType(
+                factory.NewJob(bundle, null),
+                typeof(ObservedJob));
             Assert.AreEqual(1, source.CallCount);
         }
 

@@ -255,7 +255,13 @@
     <Compile Include="Hosting\SchedulerApplication.cs" />
     <Compile Include="Hosting\SchedulerProcess.cs" />
     <Compile Include="Modulos\AppConfig.cs" />
+    <Compile Include="Observability\HealthPublisher.cs" />
+    <Compile Include="Observability\OperationalTelemetry.cs" />
+    <Compile Include="Observability\StructuredEventSink.cs" />
+    <Compile Include="Observability\TelemetryContext.cs" />
+    <Compile Include="Observability\TelemetryContracts.cs" />
     <Compile Include="Scheduling\ComposedJobFactory.cs" />
+    <Compile Include="Scheduling\ObservedJob.cs" />
     <Compile Include="Scheduling\QuartzLifecycleAdapters.cs" />
     <Compile Include="Scheduling\ReportJobFactory.cs" />
     <Compile Include="Scheduling\ReportScheduleDefinition.cs" />

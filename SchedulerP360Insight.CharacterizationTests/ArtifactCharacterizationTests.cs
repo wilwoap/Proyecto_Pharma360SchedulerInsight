@@ -46,12 +46,11 @@ namespace SchedulerP360Insight.CharacterizationTests
                 string assetPath = Path.Combine(repositoryRoot, relativePath);
                 Assert.IsTrue(File.Exists(assetPath), relativePath);
 
-                string actualHash;
-                using (SHA256 algorithm = SHA256.Create())
-                using (FileStream stream = File.OpenRead(assetPath))
-                {
-                    actualHash = ToLowerHex(algorithm.ComputeHash(stream));
-                }
+                string actualHash = relativePath.EndsWith(
+                    ".rpt",
+                    StringComparison.OrdinalIgnoreCase)
+                    ? ComputeBinaryHash(assetPath)
+                    : ComputeNormalizedTextHash(assetPath);
 
                 Assert.AreEqual(fields[0], actualHash, relativePath);
             }
@@ -96,6 +95,28 @@ namespace SchedulerP360Insight.CharacterizationTests
             return BitConverter.ToString(bytes)
                 .Replace("-", string.Empty)
                 .ToLowerInvariant();
+        }
+
+        private static string ComputeBinaryHash(string path)
+        {
+            using (SHA256 algorithm = SHA256.Create())
+            using (FileStream stream = File.OpenRead(path))
+            {
+                return ToLowerHex(algorithm.ComputeHash(stream));
+            }
+        }
+
+        private static string ComputeNormalizedTextHash(string path)
+        {
+            string normalized = File.ReadAllText(path, Encoding.UTF8)
+                .Replace("\r\n", "\n")
+                .Replace("\r", "\n");
+            byte[] content = new UTF8Encoding(
+                encoderShouldEmitUTF8Identifier: false).GetBytes(normalized);
+            using (SHA256 algorithm = SHA256.Create())
+            {
+                return ToLowerHex(algorithm.ComputeHash(content));
+            }
         }
     }
 }

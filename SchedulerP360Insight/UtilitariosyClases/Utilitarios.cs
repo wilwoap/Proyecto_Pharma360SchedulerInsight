@@ -18,6 +18,7 @@ using ExportOptions = CrystalDecisions.Shared.ExportOptions;
 using DevExpress.XtraReports.Serialization;
 using SchedulerP360Insight.UtilitariosyClases;
 using SchedulerP360Insight.Services;
+using SchedulerP360Insight.Observability;
 using System.Globalization;
 using System.Text;
 using System.Linq;
@@ -95,9 +96,6 @@ namespace SchedulerP360Insight
         /// <param name="myReportDocument">El documento de reporte a configurar.</param>
         public void SetDBLogonForReport(ConnectionInfo myConnectionInfo, ReportDocument myReportDocument)
         {
-            // Obtiene el nombre del método que llamó a esta función para fines de registro.
-            System.Diagnostics.StackFrame stackframe = new System.Diagnostics.StackFrame(1);
-            string nameFuenteCaller = stackframe.GetMethod().Name;
             // Instancia para registro de acciones.
             string currentUsername = Environment.UserName; // Usuario actual para registrar quién realiza la acción.
             string accion = $"Ingresa a SetDBLogonForReport para establecer conexión del reporte: {myReportDocument.Name}";
@@ -117,18 +115,20 @@ namespace SchedulerP360Insight
             catch (SqlException exSql)
             {
                 // Registro de errores SQL
-                accion = $"Error al intentar establecimiento de conexión para la tabla: {exSql.Message}";
+                accion = "Fallo SQL al establecer conexión de reporte. Código: " +
+                    exSql.Number + ".";
                 oModuleCapaAccesoDatos.RegistraLogConeccionyAccion(currentUsername, accion);
-                Console.WriteLine($"SQL Error in {nameFuenteCaller}: {exSql.Message}. StackTrace: {exSql.StackTrace}");
+                Console.Error.WriteLine(accion);
                 // Considera re-lanzar la excepción si es necesario que el llamador maneje este error.
                 // throw;
             }
             catch (Exception ex)
             {
                 // Registro de errores generales
-                accion = $"Error general al intentar establecer la conexión: {ex.Message}";
+                accion = "Fallo al establecer conexión de reporte. Categoría: " +
+                    ex.GetType().Name;
                 oModuleCapaAccesoDatos.RegistraLogConeccionyAccion(currentUsername, accion);
-                Console.WriteLine($"General Error in {nameFuenteCaller}: {ex.Message}. StackTrace: {ex.StackTrace}");
+                Console.Error.WriteLine(accion);
                 // Considera re-lanzar la excepción si es necesario que el llamador maneje este error.
                 // throw;
             }
@@ -178,7 +178,9 @@ namespace SchedulerP360Insight
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"An error occurred in SetConnectionInfo: {ex.Message}");
+                Console.Error.WriteLine(
+                    "Fallo al configurar conexión del renderer. Categoría: " +
+                    ex.GetType().Name);
                 // Re-lanzar la excepción permite que el llamador maneje este error de manera adecuada.
                 throw;
             }
@@ -452,14 +454,16 @@ namespace SchedulerP360Insight
                 }
                 else
                 {
-                    Console.WriteLine($"No se encontraron datos para el código de visita {codigoVisita} proporcionado.");
+                    Console.WriteLine("No se encontraron datos para la visita solicitada.");
                     return htmlBodyEmail;
                 }
             }
             catch (Exception ex)
             {
                 // Considera registrar el error
-                Console.WriteLine($"Error al reemplazar marcadores en la plantilla: {ex.Message}");
+                Console.Error.WriteLine(
+                    "Fallo al reemplazar marcadores. Categoría: " +
+                    ex.GetType().Name);
                 return htmlBodyEmail;
             }
         }
@@ -524,14 +528,16 @@ namespace SchedulerP360Insight
                 }
                 else
                 {
-                    Console.WriteLine($"No se encontraron datos para el código de visita {codigoVisita} proporcionado.");
+                    Console.WriteLine("No se encontraron datos para la visita solicitada.");
                     return htmlBodyEmail;
                 }
             }
             catch (Exception ex)
             {
                 // Considera registrar el error
-                Console.WriteLine($"Error al reemplazar marcadores en la plantilla: {ex.Message}");
+                Console.Error.WriteLine(
+                    "Fallo al reemplazar marcadores. Categoría: " +
+                    ex.GetType().Name);
                 return htmlBodyEmail;
             }
         }
@@ -587,14 +593,16 @@ namespace SchedulerP360Insight
                 }
                 else
                 {
-                    Console.WriteLine($"No se encontraron datos para el código de visita {codigoVisita} proporcionado.");
+                    Console.WriteLine("No se encontraron datos para la visita solicitada.");
                     return htmlBodyEmail;
                 }
             }
             catch (Exception ex)
             {
                 // Considera registrar el error
-                Console.WriteLine($"Error al reemplazar marcadores en la plantilla: {ex.Message}");
+                Console.Error.WriteLine(
+                    "Fallo al reemplazar marcadores. Categoría: " +
+                    ex.GetType().Name);
                 return htmlBodyEmail;
             }
         }
@@ -644,14 +652,16 @@ namespace SchedulerP360Insight
                 }
                 else
                 {
-                    Console.WriteLine($"No se encontraron datos para el código de visita {codigoVisita} proporcionado.");
+                    Console.WriteLine("No se encontraron datos para la visita solicitada.");
                     return htmlBodyEmail;
                 }
             }
             catch (Exception ex)
             {
                 // Considera registrar el error
-                Console.WriteLine($"Error al reemplazar marcadores en la plantilla: {ex.Message}");
+                Console.Error.WriteLine(
+                    "Fallo al reemplazar marcadores. Categoría: " +
+                    ex.GetType().Name);
                 return htmlBodyEmail;
             }
         }
@@ -710,14 +720,16 @@ namespace SchedulerP360Insight
                 }
                 else
                 {
-                    Console.WriteLine($"No se encontraron datos para el código de pedido {codigoPedido} proporcionado.");
+                    Console.WriteLine("No se encontraron datos para el pedido solicitado.");
                     return htmlBodyEmail;
                 }
             }
             catch (Exception ex)
             {
                 // Considera registrar el error
-                Console.WriteLine($"Error al reemplazar marcadores en la plantilla: {ex.Message}");
+                Console.Error.WriteLine(
+                    "Fallo al reemplazar marcadores. Categoría: " +
+                    ex.GetType().Name);
                 return htmlBodyEmail;
             }
         }
@@ -780,14 +792,16 @@ namespace SchedulerP360Insight
                 }
                 else
                 {
-                    Console.WriteLine($"No se encontraron datos para el código de pedido {codigoPedido} proporcionado.");
+                    Console.WriteLine("No se encontraron datos para el pedido solicitado.");
                     return htmlBodyEmail;
                 }
             }
             catch (Exception ex)
             {
                 // Considera registrar el error
-                Console.WriteLine($"Error al reemplazar marcadores en la plantilla: {ex.Message}");
+                Console.Error.WriteLine(
+                    "Fallo al reemplazar marcadores. Categoría: " +
+                    ex.GetType().Name);
                 return htmlBodyEmail;
             }
         }
@@ -840,14 +854,16 @@ namespace SchedulerP360Insight
                 }
                 else
                 {
-                    Console.WriteLine($"No se encontraron datos para el código de pedido {codigoPedido} proporcionado.");
+                    Console.WriteLine("No se encontraron datos para el pedido solicitado.");
                     return htmlBodyEmail;
                 }
             }
             catch (Exception ex)
             {
                 // Considera registrar el error
-                Console.WriteLine($"Error al reemplazar marcadores en la plantilla: {ex.Message}");
+                Console.Error.WriteLine(
+                    "Fallo al reemplazar marcadores. Categoría: " +
+                    ex.GetType().Name);
                 return htmlBodyEmail;
             }
         }
@@ -943,11 +959,11 @@ namespace SchedulerP360Insight
                     if (reportSendMailCopySupervisor)
                     {
                         message.CC.Add(p360notificacion.EmailSup);
-                        accion = $"Report: '{attachmentPath}' Cid=('{colaNotificacionId}') --> Sent to: {p360notificacion.EmailColab} with copy to: {p360notificacion.EmailSup}";
+                        accion = "Notificación con adjunto preparada con copia configurada.";
                     }
                     else
                     {
-                        accion = $"Report: '{attachmentPath}' Cid=('{colaNotificacionId}') --> Sent to: {p360notificacion.EmailColab}";
+                        accion = "Notificación con adjunto preparada.";
                     }
                     // Envía a contactos adicionales asociados con el reporte y el evento especifico evento(si es que están configurados)
                     List<DatosContactosNotificaciones> contactosNotificaciones = notificationDeliveryStore.GetAdditionalContacts(p360notificacion.ReportId, p360notificacion.ReferenceEventId);
@@ -962,7 +978,7 @@ namespace SchedulerP360Insight
                             if (destinatariosInfo.Length > 0) destinatariosInfo.Append(" / ");// Separa los contactos con " / " si ya hay contenido
                             destinatariosInfo.Append($"{contacto.Email} ({contacto.Nombre})");
                         }
-                        accion = $"Report: '{attachmentPath}' Cid=('{colaNotificacionId}') --> Sent to: {p360notificacion.EmailColab} with aditional copy to: {destinatariosInfo}";
+                        accion = "Notificación con adjunto preparada con copias adicionales.";
                     }
                     // Fin: Setea los destinatarios en función de la configuración de cada tipo de reporte.
                     // set the message body as HTML
@@ -971,7 +987,8 @@ namespace SchedulerP360Insight
                     message.Body = ConstruirCuerpoEmailPlantillaHTML(p360notificacion, labConstants, emailBodyKey);
                     // add attachment
                     message.Attachments.Add(attachment);
-                    await emailTransport.SendAsync(message);
+                    await SendEmailObservedAsync(message);
+                    accion = "Notificación con adjunto enviada por SMTP.";
                     Console.WriteLine(accion);
                     notificationDeliveryStore.Log(accion);
                 }
@@ -981,35 +998,44 @@ namespace SchedulerP360Insight
             catch (SmtpFailedRecipientException ex)
             {
                 // Error específico para un destinatario fallido
-                accion = $"Cid=['{colaNotificacionId}']. Error sending email to {ex.FailedRecipient}. Código de error:{ex.StatusCode}. Detalle error: {ex.Message}";
-                Console.WriteLine(accion);
+                TelemetryContext.FailCurrentNotification(ex);
+                accion = "Fallo SMTP de destinatario. Estado: " +
+                    ex.StatusCode + ".";
+                Console.Error.WriteLine(accion);
                 notificationDeliveryStore.Log(accion);
             }
             catch (SmtpException ex)
             {
                 // Error general de SMTP
-                accion = $"Cid=['{colaNotificacionId}']. Código de error: {ex.StatusCode}. Detalle error: {ex.Message}";
-                Console.WriteLine(accion);
+                TelemetryContext.FailCurrentNotification(ex);
+                accion = "Fallo SMTP. Estado: " + ex.StatusCode + ".";
+                Console.Error.WriteLine(accion);
                 notificationDeliveryStore.Log(accion);
             }
             catch (ConfigurationErrorsException ex)
             {
                 // Error en la configuración de la aplicación
-                accion = $"Cid=('{colaNotificacionId}'). Error sending email: Configuration error: {ex.Message}";
-                Console.WriteLine(accion);
+                TelemetryContext.FailCurrentNotification(ex);
+                accion = "Fallo de configuración de correo. Categoría: " +
+                    ex.GetType().Name;
+                Console.Error.WriteLine(accion);
                 notificationDeliveryStore.Log(accion);
             }
             catch (FormatException ex)
             {
                 // Error de formato de datos
-                accion = $"Cid=('{colaNotificacionId}'). Error sending email: Format error: {ex.Message}";
-                Console.WriteLine(accion);
+                TelemetryContext.FailCurrentNotification(ex);
+                accion = "Fallo de formato al preparar correo. Categoría: " +
+                    ex.GetType().Name;
+                Console.Error.WriteLine(accion);
                 notificationDeliveryStore.Log(accion);
             }
             catch (Exception ex)
             {
-                accion = $"Cid=['{colaNotificacionId}']. Error sending email: {ex.Message}";
-                Console.WriteLine(accion);
+                TelemetryContext.FailCurrentNotification(ex);
+                accion = "Fallo al preparar o enviar correo. Categoría: " +
+                    ex.GetType().Name;
+                Console.Error.WriteLine(accion);
                 notificationDeliveryStore.Log(accion);
             }
         }
@@ -1054,11 +1080,11 @@ namespace SchedulerP360Insight
                     if (reportSendMailCopySupervisor)
                     {
                         message.CC.Add(p360notificacion.EmailSup);
-                        accion = $"Report: '{p360notificacion.ReportName}' Cid=('{colaNotificacionId}') --> Sent to: {p360notificacion.EmailColab} with copy to: {p360notificacion.EmailSup}";
+                        accion = "Notificación preparada con copia configurada.";
                     }
                     else
                     {
-                        accion = $"Report: '{p360notificacion.ReportName}' Cid=('{colaNotificacionId}') --> Sent to: {p360notificacion.EmailColab}";
+                        accion = "Notificación preparada.";
                     }
                     // Envía a contactos adicionales asociados con el reporte y el evento especifico evento(si es que están configurados)
                     List<DatosContactosNotificaciones> contactosNotificaciones = notificationDeliveryStore.GetAdditionalContacts(p360notificacion.ReportId, p360notificacion.ReferenceEventId);
@@ -1073,7 +1099,7 @@ namespace SchedulerP360Insight
                             if (destinatariosInfo.Length > 0) destinatariosInfo.Append(" / ");// Separa los contactos con " / " si ya hay contenido
                             destinatariosInfo.Append($"{contacto.Email} ({contacto.Nombre})");
                         }
-                        accion = $"Report: '{p360notificacion.ReportName}' Cid=('{colaNotificacionId}') --> Sent to: {p360notificacion.EmailColab} with aditional copy to: {destinatariosInfo}";
+                        accion = "Notificación preparada con copias adicionales.";
                     }
                     // Fin: Setea los destinatarios en función de la configuración de cada tipo de reporte.
                     // set the message body as HTML
@@ -1086,10 +1112,11 @@ namespace SchedulerP360Insight
                         message.Bcc.Add(labConstants.AdminEmail);
                         if (destinatariosInfo.Length > 0) destinatariosInfo.Append(" / ");// Separa los contactos con " / " si ya hay contenido
                         destinatariosInfo.Append($"{labConstants.AdminEmail} ({"Email administrador"})");
-                        accion = accion + $". With extra-aditional Bcc copy to: {labConstants.AdminEmail}";
+                        accion = "Notificación preparada con copia administrativa.";
                     }
                     // add attachment
-                    await emailTransport.SendAsync(message);
+                    await SendEmailObservedAsync(message);
+                    accion = "Notificación enviada por SMTP.";
                     Console.WriteLine(accion);
                     notificationDeliveryStore.Log(accion);
                 }
@@ -1100,22 +1127,46 @@ namespace SchedulerP360Insight
             catch (SmtpFailedRecipientException ex)
             {
                 // Error específico para un destinatario fallido
-                accion = $"Cid=['{colaNotificacionId}']. Error sending email to {ex.FailedRecipient}. Código de error:{ex.StatusCode}. Detalle error: {ex.Message}";
-                Console.WriteLine(accion);
+                TelemetryContext.FailCurrentNotification(ex);
+                accion = "Fallo SMTP de destinatario. Estado: " +
+                    ex.StatusCode + ".";
+                Console.Error.WriteLine(accion);
                 notificationDeliveryStore.Log(accion);
             }
             catch (SmtpException ex)
             {
                 // Error general de SMTP
-                accion = $"Cid=['{colaNotificacionId}']. Código de error: {ex.StatusCode}. Detalle error: {ex.Message}";
-                Console.WriteLine(accion);
+                TelemetryContext.FailCurrentNotification(ex);
+                accion = "Fallo SMTP. Estado: " + ex.StatusCode + ".";
+                Console.Error.WriteLine(accion);
                 notificationDeliveryStore.Log(accion);
             }
             catch (Exception ex)
             {
-                accion = $"Cid=['{colaNotificacionId}']. Error sending email: {ex.Message}";
-                Console.WriteLine(accion);
+                TelemetryContext.FailCurrentNotification(ex);
+                accion = "Fallo al preparar o enviar correo. Categoría: " +
+                    ex.GetType().Name;
+                Console.Error.WriteLine(accion);
                 notificationDeliveryStore.Log(accion);
+            }
+        }
+
+        private async Task SendEmailObservedAsync(MailMessage message)
+        {
+            using (IOperationScope delivery = TelemetryContext.BeginOperation(
+                TelemetryOperations.DeliverySmtp))
+            {
+                try
+                {
+                    await emailTransport.SendAsync(message);
+                    delivery.Complete();
+                }
+                catch (Exception deliveryError)
+                {
+                    delivery.Fail(deliveryError);
+                    TelemetryContext.FailCurrentNotification(deliveryError);
+                    throw;
+                }
             }
         }
 
@@ -1213,13 +1264,13 @@ namespace SchedulerP360Insight
                     DiskFileName = outputPath
                 };
 
-                accion = $"Iniciando exportación Crystal PDF. Archivo destino: '{outputPath}'";
+                accion = "Iniciando exportación Crystal PDF.";
                 Console.WriteLine(accion);
                 oModuleCapaAccesoDatos.RegistraLogConeccionyAccion(currentUsername, accion);
 
                 report.Export();
 
-                accion = $"Report: '{outputPath}' --> Generated and saved";
+                accion = "Crystal PDF generado y guardado.";
                 Console.WriteLine(accion);
                 oModuleCapaAccesoDatos.RegistraLogConeccionyAccion(currentUsername, accion);
             }
@@ -1233,7 +1284,7 @@ namespace SchedulerP360Insight
                     "Si el .rpt usa Provider=MSOLEDBSQL, la versión 19 puede exigir Encrypt=Mandatory/certificado válido por defecto. " +
                     "En servidores con certificado autofirmado puede fallar con 'No se pudo conectar con la base de datos'. " +
                     "Comparar contra un equipo funcional la existencia de msoledbsql.dll, msoledbsql19.dll y las versiones instaladas de Microsoft OLE DB Driver for SQL Server. " +
-                    $"Archivo destino: '{outputPath}'. Detalle Crystal: '{ex.Message}'";
+                    "Categoría: " + ex.GetType().Name + ".";
 
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.WriteLine(accion);
@@ -1241,58 +1292,34 @@ namespace SchedulerP360Insight
 
                 oModuleCapaAccesoDatos.RegistraLogConeccionyAccion(currentUsername, accion);
 
-                Exception inner = ex.InnerException;
-                int nivel = 1;
-
-                while (inner != null)
-                {
-                    accion = $"Detalle interno Crystal LogOnException. Nivel='{nivel}', Tipo='{inner.GetType().FullName}', Mensaje='{inner.Message}'";
-                    Console.WriteLine(accion);
-                    oModuleCapaAccesoDatos.RegistraLogConeccionyAccion(currentUsername, accion);
-
-                    inner = inner.InnerException;
-                    nivel++;
-                }
-
                 throw;
             }
             catch (InvalidCastException e)
             {
-                accion = $"Invalid cast exception occurred al exportar Crystal PDF. Archivo destino: '{outputPath}'. Detalle: {e.Message}";
-                Console.WriteLine(accion);
+                accion = "Fallo de conversión al exportar Crystal PDF. " +
+                    "Categoría: " + e.GetType().Name + ".";
+                Console.Error.WriteLine(accion);
                 oModuleCapaAccesoDatos.RegistraLogConeccionyAccion(currentUsername, accion);
 
                 throw;
             }
             catch (IOException e)
             {
-                accion = $"I/O exception occurred al exportar Crystal PDF. Validar permisos/ruta de salida. Archivo destino: '{outputPath}'. Detalle: {e.Message}";
-                Console.WriteLine(accion);
+                accion = "Fallo de E/S al exportar Crystal PDF; " +
+                    "validar permisos y ruta de salida. Categoría: " +
+                    e.GetType().Name + ".";
+                Console.Error.WriteLine(accion);
                 oModuleCapaAccesoDatos.RegistraLogConeccionyAccion(currentUsername, accion);
 
                 throw;
             }
             catch (Exception ex)
             {
-                accion =
-                    $"Error general al exportar Crystal PDF. Archivo destino: '{outputPath}'. " +
-                    $"Tipo='{ex.GetType().FullName}', Mensaje='{ex.Message}'";
+                accion = "Fallo general al exportar Crystal PDF. Categoría: " +
+                    ex.GetType().Name + ".";
 
-                Console.WriteLine(accion);
+                Console.Error.WriteLine(accion);
                 oModuleCapaAccesoDatos.RegistraLogConeccionyAccion(currentUsername, accion);
-
-                Exception inner = ex.InnerException;
-                int nivel = 1;
-
-                while (inner != null)
-                {
-                    accion = $"Detalle interno exportación Crystal. Nivel='{nivel}', Tipo='{inner.GetType().FullName}', Mensaje='{inner.Message}'";
-                    Console.WriteLine(accion);
-                    oModuleCapaAccesoDatos.RegistraLogConeccionyAccion(currentUsername, accion);
-
-                    inner = inner.InnerException;
-                    nivel++;
-                }
 
                 throw;
             }

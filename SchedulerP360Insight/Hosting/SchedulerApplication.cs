@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using SchedulerP360Insight.Observability;
 
 namespace SchedulerP360Insight.Hosting
 {
@@ -28,7 +30,9 @@ namespace SchedulerP360Insight.Hosting
 
     public interface IApplicationEventSink
     {
-        void Write(string message);
+        void Write(
+            string eventName,
+            IReadOnlyDictionary<string, string> fields = null);
     }
 
     public sealed class SchedulerApplication
@@ -37,6 +41,8 @@ namespace SchedulerP360Insight.Hosting
         private readonly ISchedulerLifecycle scheduler;
         private readonly IApplicationLifetime lifetime;
         private readonly IApplicationEventSink events;
+        private readonly IServiceHealth health;
+        private readonly IOperationalTelemetry telemetry;
         private readonly TimeSpan shutdownTimeout;
 
         public SchedulerApplication(
@@ -44,7 +50,8 @@ namespace SchedulerP360Insight.Hosting
             ISchedulerLifecycle scheduler,
             IApplicationLifetime lifetime,
             IApplicationEventSink events,
-            TimeSpan shutdownTimeout)
+            TimeSpan shutdownTimeout,
+            IOperationalTelemetry telemetry = null)
         {
             this.registrar = registrar ??
                 throw new ArgumentNullException(nameof(registrar));
@@ -54,6 +61,8 @@ namespace SchedulerP360Insight.Hosting
                 throw new ArgumentNullException(nameof(lifetime));
             this.events = events ??
                 throw new ArgumentNullException(nameof(events));
+            this.telemetry = telemetry ?? NullOperationalTelemetry.Instance;
+            health = this.telemetry;
             if (shutdownTimeout <= TimeSpan.Zero)
             {
                 throw new ArgumentOutOfRangeException(nameof(shutdownTimeout));
@@ -67,19 +76,64 @@ namespace SchedulerP360Insight.Hosting
         {
             try
             {
-                events.Write("Cargando definiciones del scheduler.");
-                int registered = await registrar.RegisterAsync(cancellationToken);
-                events.Write(
-                    "Definiciones registradas: " + registered + ".");
+                health.MarkStarting();
+                events.Write("scheduler.definitions.loading");
+                int registered;
+                using (IOperationScope registration =
+                    telemetry.BeginOperation(
+                        TelemetryOperations.SchedulerRegistration,
+                        telemetry.ProcessCorrelationId))
+                {
+                    try
+                    {
+                        registered = await registrar.RegisterAsync(
+                            cancellationToken);
+                        registration.Complete(
+                            fields: new Dictionary<string, string>
+                            {
+                                ["definitions_count"] =
+                                    registered.ToString()
+                            });
+                    }
+                    catch (Exception registrationError)
+                    {
+                        registration.Fail(registrationError);
+                        throw;
+                    }
+                }
 
-                await scheduler.StartAsync(cancellationToken);
-                events.Write("Scheduler iniciado y listo para ejecutar triggers.");
+                events.Write(
+                    "scheduler.definitions.loaded",
+                    new Dictionary<string, string>
+                    {
+                        ["definitions_count"] = registered.ToString()
+                    });
+
+                using (IOperationScope startup = telemetry.BeginOperation(
+                    TelemetryOperations.SchedulerStart,
+                    telemetry.ProcessCorrelationId))
+                {
+                    try
+                    {
+                        await scheduler.StartAsync(cancellationToken);
+                        startup.Complete();
+                    }
+                    catch (Exception startupError)
+                    {
+                        startup.Fail(startupError);
+                        throw;
+                    }
+                }
+
+                health.MarkReady(registered);
+                events.Write("scheduler.started");
 
                 await lifetime.WaitForStopAsync(cancellationToken);
                 return await StopAsync();
             }
-            catch
+            catch (Exception error)
             {
+                health.MarkFaulted(error.GetType().Name);
                 await TryForceShutdownAsync();
                 throw;
             }
@@ -87,10 +141,14 @@ namespace SchedulerP360Insight.Hosting
 
         private async Task<SchedulerRunResult> StopAsync()
         {
-            events.Write(
-                "Parada solicitada; suspendiendo nuevos triggers.");
+            health.MarkStopping();
+            events.Write("scheduler.stopping");
+            IOperationScope shutdown = telemetry.BeginOperation(
+                TelemetryOperations.SchedulerShutdown,
+                telemetry.ProcessCorrelationId);
             using (CancellationTokenSource timeout =
                 new CancellationTokenSource(shutdownTimeout))
+            using (shutdown)
             {
                 try
                 {
@@ -98,19 +156,26 @@ namespace SchedulerP360Insight.Hosting
                     await scheduler.ShutdownAsync(
                         waitForJobsToComplete: true,
                         cancellationToken: timeout.Token);
-                    events.Write("Scheduler detenido de forma ordenada.");
+                    health.MarkStopped();
+                    events.Write("scheduler.stopped");
+                    shutdown.Complete();
                     return SchedulerRunResult.Completed;
                 }
                 catch (OperationCanceledException)
                     when (timeout.IsCancellationRequested)
                 {
-                    events.Write(
-                        "El apagado ordenado excedió el presupuesto; " +
-                        "se solicita shutdown sin espera.");
+                    events.Write("scheduler.shutdown.timeout");
                     await scheduler.ShutdownAsync(
                         waitForJobsToComplete: false,
                         cancellationToken: CancellationToken.None);
+                    health.MarkStopped();
+                    shutdown.Complete(TelemetryOutcomes.Timeout);
                     return SchedulerRunResult.ShutdownTimedOut;
+                }
+                catch (Exception shutdownError)
+                {
+                    shutdown.Fail(shutdownError);
+                    throw;
                 }
             }
         }

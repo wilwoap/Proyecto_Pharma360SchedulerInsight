@@ -1,6 +1,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SchedulerP360Insight.Configuration;
 using SchedulerP360Insight.Hosting;
+using SchedulerP360Insight.Observability;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -21,24 +22,40 @@ namespace SchedulerP360Insight.CharacterizationTests
             FakeLifetime lifetime = new FakeLifetime();
             FakeSchedulerLifecycle scheduler =
                 new FakeSchedulerLifecycle(sequence);
-            SchedulerApplication application = CreateApplication(
-                new FakeRegistrar(sequence),
-                scheduler,
-                lifetime,
-                TimeSpan.FromSeconds(1));
+            using (OperationalTelemetry telemetry = new OperationalTelemetry(
+                new JsonLineStructuredEventSink(new StringWriter()),
+                NullHealthPublisher.Instance,
+                TimeSpan.FromHours(1)))
+            {
+                SchedulerApplication application = CreateApplication(
+                    new FakeRegistrar(sequence),
+                    scheduler,
+                    lifetime,
+                    TimeSpan.FromSeconds(1),
+                    telemetry);
 
-            Task<SchedulerRunResult> run = application.RunAsync(
-                CancellationToken.None);
-            await scheduler.Started.Task;
+                Task<SchedulerRunResult> run = application.RunAsync(
+                    CancellationToken.None);
+                await scheduler.Started.Task;
 
-            Assert.IsFalse(run.IsCompleted);
-            lifetime.StopApplication();
-            SchedulerRunResult result = await run;
+                Assert.IsFalse(run.IsCompleted);
+                lifetime.StopApplication();
+                SchedulerRunResult result = await run;
 
-            Assert.AreEqual(SchedulerRunResult.Completed, result);
-            CollectionAssert.AreEqual(
-                new[] { "Register", "Start", "Standby", "Shutdown:True" },
-                sequence);
+                Assert.AreEqual(SchedulerRunResult.Completed, result);
+                CollectionAssert.AreEqual(
+                    new[] { "Register", "Start", "Standby", "Shutdown:True" },
+                    sequence);
+                Assert.AreEqual("stopped", telemetry.GetHealthSnapshot().State);
+                Assert.AreEqual(
+                    3,
+                    telemetry.GetMetricSnapshot().Count(item =>
+                        item.Outcome == TelemetryOutcomes.Success &&
+                        item.Operation.StartsWith(
+                            "scheduler.",
+                            StringComparison.Ordinal)));
+            }
+
             lifetime.Dispose();
         }
 
@@ -252,14 +269,16 @@ namespace SchedulerP360Insight.CharacterizationTests
             IReportScheduleRegistrar registrar,
             ISchedulerLifecycle scheduler,
             IApplicationLifetime lifetime,
-            TimeSpan shutdownTimeout)
+            TimeSpan shutdownTimeout,
+            IOperationalTelemetry telemetry = null)
         {
             return new SchedulerApplication(
                 registrar,
                 scheduler,
                 lifetime,
                 new FakeEventSink(),
-                shutdownTimeout);
+                shutdownTimeout,
+                telemetry);
         }
 
         private static string GetValue(
@@ -382,7 +401,9 @@ namespace SchedulerP360Insight.CharacterizationTests
 
         private sealed class FakeEventSink : IApplicationEventSink
         {
-            public void Write(string message)
+            public void Write(
+                string eventName,
+                IReadOnlyDictionary<string, string> fields = null)
             {
             }
         }

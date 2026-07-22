@@ -74,8 +74,12 @@ namespace SchedulerP360Insight.Scheduling
                 ITrigger trigger = jobFactory.CreateTrigger(report);
                 await scheduler.ScheduleJob(job, trigger, cancellationToken);
                 events.Write(
-                    "Definición registrada para reporte '" +
-                    report.ReportName + "'.");
+                    "scheduler.definition.registered",
+                    new Dictionary<string, string>
+                    {
+                        ["report_uid"] = report.ReportUID,
+                        ["job_type"] = report.ReportType
+                    });
             }
 
             return reports.Count;

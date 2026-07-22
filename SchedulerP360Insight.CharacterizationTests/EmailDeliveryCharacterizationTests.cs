@@ -65,7 +65,13 @@ namespace SchedulerP360Insight.CharacterizationTests
             Assert.AreEqual(0, store.MarkedNotificationIds.Count);
             Assert.IsTrue(
                 store.LogEntries.Any(entry =>
+                    entry.Contains("Fallo SMTP")));
+            Assert.IsFalse(
+                store.LogEntries.Any(entry =>
                     entry.Contains("Simulated SMTP failure")));
+            Assert.IsFalse(
+                store.LogEntries.Any(entry =>
+                    entry.Contains("recipient@example.test")));
         }
 
         [TestMethod]
@@ -91,6 +97,9 @@ namespace SchedulerP360Insight.CharacterizationTests
             Assert.AreEqual(0, transport.CallCount);
             Assert.AreEqual(0, store.MarkedNotificationIds.Count);
             Assert.IsTrue(
+                store.LogEntries.Any(entry =>
+                    entry.Contains("TimeoutException")));
+            Assert.IsFalse(
                 store.LogEntries.Any(entry =>
                     entry.Contains("Simulated SQL timeout")));
         }
