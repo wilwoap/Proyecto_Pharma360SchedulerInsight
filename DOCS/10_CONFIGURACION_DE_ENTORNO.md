@@ -11,10 +11,13 @@ El repositorio, el binario y su archivo .config no contienen credenciales. Los v
 | P360_CONNECTION_PRINCIPAL | Sí | Conexión principal de SQL Server |
 | P360_GOOGLE_MAPS_API_KEY | No | Imagen estática del mapa en correos |
 | P360_PARAMETER_PROVIDER_MODE | No | `batch` por defecto; `legacy` sólo para rollback temporal |
+| P360_SHUTDOWN_TIMEOUT_SECONDS | No | Presupuesto de apagado de 1–900 segundos; 30 por defecto |
 
 Si no existe P360_GOOGLE_MAPS_API_KEY, el correo incluye únicamente un enlace a la ubicación. La aplicación nunca crea variables, imprime sus valores ni incorpora una conexión predeterminada.
 
 `P360_PARAMETER_PROVIDER_MODE` no es sensible. El valor normal es `batch`, incluso cuando la variable no existe. `legacy` conserva temporalmente la lectura histórica de parámetros, cacheada al arrancar; cualquier otro valor detiene el proceso antes de iniciar Quartz.
+
+`P360_SHUTDOWN_TIMEOUT_SECONDS` tampoco es sensible. Debe ser un entero decimal entre 1 y 900. El presupuesto incluye `Standby` y `Shutdown(true)`; al agotarse se solicita un apagado sin espera y el proceso devuelve código 4.
 
 ## Desarrollo local
 
@@ -23,6 +26,7 @@ Obtener los valores desde el almacén autorizado y configurarlos sólo para la s
     $env:P360_CONNECTION_PRINCIPAL = "<valor obtenido del almacén autorizado>"
     $env:P360_GOOGLE_MAPS_API_KEY = "<valor obtenido del almacén autorizado>"
     $env:P360_PARAMETER_PROVIDER_MODE = "batch"
+    $env:P360_SHUTDOWN_TIMEOUT_SECONDS = "30"
 
 No guardar esos comandos con valores reales en scripts, historial de terminal, perfiles, capturas o documentación.
 

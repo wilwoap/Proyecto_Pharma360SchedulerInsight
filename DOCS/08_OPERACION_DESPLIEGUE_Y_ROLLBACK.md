@@ -2,7 +2,7 @@
 
 ## Estado actual y objetivo
 
-El código actual se comporta como consola interactiva y conserva propiedades ClickOnce. Falta confirmar cómo se inicia realmente en cada ambiente. El objetivo recomendado es un Windows Service x64 con modo consola sólo para diagnóstico, identidad dedicada y ciclo de vida administrado.
+Desde PR-06, el núcleo ejecuta un ciclo no interactivo con señales, `Standby`, apagado acotado y códigos de salida. Se mantiene un adaptador de consola y la compatibilidad temporal sin argumentos; falta confirmar cómo se inicia realmente en cada ambiente. El objetivo recomendado sigue siendo un Windows Service x64 con identidad dedicada y ciclo de vida administrado.
 
 ClickOnce no es el mecanismo recomendado para un proceso desatendido. Mientras Crystal siga presente, el runtime oficial debe instalarse mediante un medio soportado por SAP; para el servicio/aplicación se elegirá MSI, paquete corporativo o automatización equivalente después de D-006.
 
@@ -46,7 +46,13 @@ Parada:
 6. liberar renderers, SMTP, archivos y scheduler;
 7. terminar con código significativo.
 
-No debe existir ReadKey, MessageBox, prompt ni modificación automática de variables de máquina.
+No existe ReadKey, MessageBox, prompt ni modificación automática de variables de máquina. El flujo implementado y sus límites se documentan en `16_CICLO_DE_VIDA_NO_INTERACTIVO.md`.
+
+Mientras D-006 permanezca pendiente, el inicio explícito es:
+
+    .\SchedulerP360Insight.exe --console
+
+La parada se solicita con `Ctrl+C` o mediante la señal del host. El proceso espera 30 segundos por defecto, configurable con `P360_SHUTDOWN_TIMEOUT_SECONDS`, y devuelve 4 si necesita forzar el apagado. El adaptador `ServiceBase`, la identidad y el instalador todavía no están implementados.
 
 ## Telemetría mínima
 
@@ -166,4 +172,3 @@ Definir por ambiente:
 - backups de configuración/esquema.
 
 Toda eliminación debe ser trazable, limitada a rutas validadas y coherente con regulación/negocio.
-
