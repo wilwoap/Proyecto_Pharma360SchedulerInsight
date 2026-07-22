@@ -8,7 +8,6 @@
     "CS0169",
     "CS0219",
     "CS0414",
-    "MSB3277",
     "NU1902"
   ],
   "warningMaximums": {
@@ -19,9 +18,6 @@
     "CS0414": 1,
     "NU1902": 1
   },
-  "knownReferenceConflicts": [
-    "Microsoft.Extensions.Configuration.Abstractions",
-    "System.Memory"
-  ],
-  "policy": "PR-01 congela la deuda observada. Ningun codigo nuevo ni aumento de advertencias esta permitido. Los MSB3277 y NU1902 se resolveran al modernizar dependencias en PR-04."
+  "knownReferenceConflicts": [],
+  "policy": "PR-04 elimino los conflictos MSB3277. Ningun conflicto nuevo ni aumento de advertencias esta permitido. NU1902 permanece limitado a la excepcion temporal documentada para log4net requerido por Crystal Reports."
 }
