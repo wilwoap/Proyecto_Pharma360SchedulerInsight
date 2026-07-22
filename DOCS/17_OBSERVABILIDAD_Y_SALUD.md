@@ -1,6 +1,6 @@
 # Observabilidad y salud
 
-Estado: núcleo neutral validado localmente en PR-07 el 2026-07-22. La conexión a una plataforma corporativa, retención, costes y alertas desplegadas siguen pendientes de D-010/D-011.
+Estado: núcleo neutral validado localmente en PR-07 y ampliado hasta PR-09 el 2026-07-22. La conexión a una plataforma corporativa, retención, costes y alertas desplegadas siguen pendientes de D-010/D-011.
 
 ## Resultado
 
@@ -30,21 +30,30 @@ Campos permitidos:
     active_jobs
     active_notifications
     audit_sink
+    definitions_added
     definitions_count
+    definitions_rejected
+    definitions_removed
+    definitions_unchanged
+    definitions_updated
     duration_ms
     failure_category
     failure_kind
     health_exporter
     job_type
     metric
+    misfire_count
+    misfire_policy
     notification_count
     operation
     outcome
+    overlap_policy
     parent_correlation_id
     process_id
     report_uid
     state
     sql_code
+    time_zone
     value
 
 Cualquier clave no incluida se descarta. Los valores se limitan a 128 caracteres y se eliminan caracteres de control. No se aceptan destinatarios, nombres, cuerpos/asuntos de correo, rutas, cadenas de conexión, claves, tokens, mensajes de excepción ni stack traces.
@@ -55,8 +64,14 @@ Cualquier clave no incluida se descarta. Los valores se limitan a 128 caracteres
 |---|---|
 | `scheduler.definitions.loading` | antes de cargar/agendar definiciones |
 | `scheduler.definition.registered` | definición aceptada por Quartz |
+| `scheduler.definition.rejected` | fila inválida pausada sin abortar las válidas |
+| `scheduler.definition.unchanged` | definición ya equivalente por fingerprint |
+| `scheduler.definition.updated` | job/trigger reemplazado por cambio aprobado |
+| `scheduler.definition.removed` | ID retirado del conjunto administrado |
+| `scheduler.definitions.reconciled` | resumen de altas/cambios/bajas |
 | `scheduler.definitions.loaded` | lote completo registrado |
 | `scheduler.started` | Quartz listo |
+| `scheduler.trigger.misfired` | trigger retrasado por encima del umbral |
 | `scheduler.stopping` | se retiró readiness y comienza standby |
 | `scheduler.stopped` | apagado ordenado finalizado |
 | `scheduler.shutdown.timeout` | se agotó el presupuesto y se fuerza shutdown sin espera |
@@ -87,6 +102,7 @@ Operaciones permitidas:
 | `scheduler.registration` | carga y registro de definiciones |
 | `scheduler.start` | inicio de Quartz |
 | `scheduler.shutdown` | standby y shutdown |
+| `scheduler.misfire` | tratamiento explícito de un trigger retrasado |
 | `job.crystal` | ejecución completa del job Crystal |
 | `job.devexpress` | ejecución completa del job DevExpress |
 | `job.html` | ejecución completa del job HTML |
@@ -99,6 +115,8 @@ Operaciones permitidas:
 | `data.notification-queue` | consulta y mapeo de la cola pendiente |
 
 Por operación y resultado (`success`, `failure`, `skipped`, `timeout`, `cancelled`) se exponen `count`, duración acumulada y duración máxima. La métrica gauge `notification_batch_size` representa el último lote observado por un job; no equivale al backlog global y no debe usarse todavía como SLO de cola.
+
+PR-09 añade gauges acotados `scheduler_definition_rows_rejected`, `scheduler_definitions_rejected`, `scheduler_definitions_active`, `scheduler_max_concurrency` y `scheduler_misfires_total`. No incluyen ID/nombre dinámico. El backlog se demuestra en pruebas de límite, pero no se publica como gauge durable: con `RAMJobStore` no existe una medida persistente de antigüedad.
 
 El snapshot también incluye `workingSetBytes`, `handleCount`, jobs activos, notificaciones activas y definiciones registradas. Ningún identificador dinámico forma parte de la clave de una métrica.
 
@@ -161,7 +179,7 @@ Rollback del exporter: quitar `P360_HEALTH_FILE_PATH` y reiniciar. Rollback comp
 
 ## Evidencia
 
-- 56/56 pruebas aisladas aprobadas;
+- 85/85 pruebas aisladas aprobadas;
 - redacción de secretos, destinatarios, cuerpos y detalles de excepción;
 - correlación y métricas de éxito/fallo/duración;
 - cardinalidad acotada frente a valores dinámicos;
@@ -169,5 +187,6 @@ Rollback del exporter: quitar `P360_HEALTH_FILE_PATH` y reiniciar. Rollback comp
 - fallo del sink SQL no suprime el evento estructurado;
 - archivo de salud reemplazado atómicamente sin temporales residuales;
 - salud integrada con arranque y apagado del scheduler;
+- políticas Quartz, reconciliación, misfires y concurrencia observables;
 - hash de texto de reportes normalizado entre LF/CRLF; `.rpt` continúa validándose byte a byte;
 - ningún archivo `.rpt`, `.Designer.cs` o `.resx` fue modificado.

@@ -1,6 +1,6 @@
 # Arnés de caracterización
 
-Estado: implementado en PR-02 y ampliado/validado localmente hasta PR-07 el 2026-07-22.
+Estado: implementado en PR-02 y ampliado/validado localmente hasta PR-09 el 2026-07-22.
 
 ## Decisión de framework
 
@@ -24,7 +24,7 @@ Para desarrollo con paquetes ya restaurados:
 
 SkipTests existe sólo para diagnóstico del build. No debe usarse como evidencia de un PR.
 
-El gate exige al menos 56 pruebas, un timeout global de 60 segundos y genera TRX bajo artifacts/test-results. Esa carpeta no se versiona.
+El gate exige al menos 85 pruebas, un timeout global de 60 segundos y genera TRX bajo artifacts/test-results. Esa carpeta no se versiona.
 
 ## Fronteras introducidas
 
@@ -37,6 +37,9 @@ El gate exige al menos 56 pruebas, un timeout global de 60 segundos y genera TRX
 - ConsoleApplicationLifetime convierte señales en cancelación idempotente sin leer input.
 - OperationalTelemetry concentra eventos permitidos, métricas acotadas y salud sin proveedor externo.
 - TelemetryContext propaga correlación padre/hija a través de tareas asíncronas.
+- ReportScheduleValidator y QuartzReportScheduleRegistrar separan validación, preparación y reconciliación.
+- QuartzSchedulingPolicy hace explícitos zona, misfire, solapamiento y límite global.
+- QuartzOperationalTriggerListener observa misfires sin poder interrumpir el scheduler.
 - Los constructores predeterminados conservan los adaptadores SQL y SMTP actuales.
 
 La aplicación usa la fábrica de jobs y las fronteras de correo. La política de rutas se conectará al pipeline completo en PR-11, donde podrá aplicarse a todos los renderizadores con rollback conjunto.
@@ -57,6 +60,10 @@ La aplicación usa la fábrica de jobs y las fronteras de correo. La política d
 | Reportes | SHA-256 de cinco .rpt y una definición DevExpress representativa |
 | Dapper | Materialización de un registro con un proveedor ADO.NET simulado y cierre de conexión |
 | Quartz | Inicio, agenda, ejecución y parada de un job sobre RAMJobStore |
+| Quartz endurecido | Filas inválidas aisladas, claves por ID, alta/cambio/baja idempotente y política registrada |
+| Misfire | Fire once/skip después del umbral y listener con métrica acotada |
+| Zona horaria | Cron evaluado en zona DST sintética sin alterar el reloj del host |
+| Concurrencia | Dos triggers del mismo job no se solapan; cuatro jobs respetan límite 2 y backlog |
 | Crystal/log4net | El host no referencia log4net y Crystal declara exactamente la ABI 2.0.12.0 |
 | Configuración | Opciones completas/incompletas, modo batch/legacy y redacción de secretos |
 | Snapshot | Inmutabilidad, validación, concurrencia, fallo transitorio y reducción de lecturas |

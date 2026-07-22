@@ -10,9 +10,9 @@
 | D-004 | Runtime objetivo | Propuesta | .NET 10 LTS; revisar soporte al iniciar PR-14 |
 | D-005 | Destino de Crystal | Aceptada 2026-07-21 | Preservar los .rpt sin cambios y aislarlos en un worker net48 x64; conversión fuera del programa |
 | D-006 | Empaquetado y hosting | Pendiente | Windows Service; mecanismo corporativo/MSI por decidir |
-| D-007 | Misfire, zona horaria y solapamiento | Pendiente | Política explícita por schedule |
+| D-007 | Misfire, zona horaria y solapamiento | Aceptada técnicamente 2026-07-22 | Zona local explícita/configurable; Cron `fire_once_now` compatible; no catch-up tras terminar el proceso; no solapamiento por `report_id`; PR-09 |
 | D-008 | Proveedor de secretos | Pendiente | Almacén administrado/identidad; DPAPI como puente |
-| D-009 | Persistencia de Quartz | Pendiente | SQL actual como fuente más rebuild, o job store persistente |
+| D-009 | Persistencia de Quartz | Aceptada técnicamente 2026-07-22 | SQL continúa como fuente y `RAMJobStore` se reconstruye al arrancar; una instancia, sin polling ni tablas Quartz; revisar si se aprueba clustering/catch-up; PR-09 |
 | D-010 | Plataforma de telemetría | Pendiente | Logs/métricas compatibles con estándar corporativo |
 | D-011 | Retención de PDF, logs y cola muerta | Pendiente | Definir por clasificación y SLO |
 | D-012 | Runner y licencias propietarias | Pendiente | Windows self-hosted autorizado inicialmente |
@@ -60,11 +60,11 @@
 
 ## Preguntas antes de PR-09
 
-- ¿Qué zona horaria gobierna cada Cron?
-- ¿Qué debe ocurrir con ejecuciones perdidas durante una caída?
-- ¿Se permite solapamiento del mismo reporte?
-- ¿Cambiar la programación en SQL debe surtir efecto sin reiniciar?
-- ¿Se necesitan calendarios de feriados?
+- Zona: se conserva explícitamente la zona local; despliegue puede fijar `P360_QUARTZ_TIME_ZONE` después de verificar el ID en el Windows objetivo.
+- Caída completa: `RAMJobStore` no conserva ocurrencias y el reinicio continúa con la siguiente; no hay catch-up masivo. Un retraso dentro del mismo proceso usa `fire_once_now` por compatibilidad.
+- Solapamiento: se prohíbe para el mismo `report_id`; reportes distintos pueden compartir el límite global.
+- Cambios SQL: se aplican mediante reinicio controlado; no existe polling.
+- Feriados: no se añade calendario sin una regla funcional aprobada.
 
 ## Preguntas antes de PR-13
 

@@ -15,6 +15,10 @@ El repositorio, el binario y su archivo .config no contienen credenciales. Los v
 | P360_HEALTH_FILE_PATH | No | Ruta absoluta `.json` para liveness/readiness; deshabilitado por defecto |
 | P360_SQL_CONNECTION_TIMEOUT_SECONDS | No | Apertura SQL de 1–120 segundos; 15 por defecto |
 | P360_SQL_COMMAND_TIMEOUT_SECONDS | No | Comandos SQL de 1–300 segundos; 30 por defecto |
+| P360_QUARTZ_TIME_ZONE | No | ID `TimeZoneInfo` del host; zona local por defecto |
+| P360_QUARTZ_MISFIRE_POLICY | No | `fire_once_now` por defecto o `do_nothing` |
+| P360_QUARTZ_DISALLOW_CONCURRENT_EXECUTION | No | Impide solapar el mismo `report_id`; `true` por defecto |
+| P360_QUARTZ_MAX_CONCURRENCY | No | Límite global de 1–64 jobs; 10 por defecto |
 
 Si no existe P360_GOOGLE_MAPS_API_KEY, el correo incluye únicamente un enlace a la ubicación. La aplicación nunca crea variables, imprime sus valores ni incorpora una conexión predeterminada.
 
@@ -25,6 +29,8 @@ Si no existe P360_GOOGLE_MAPS_API_KEY, el correo incluye únicamente un enlace a
 `P360_HEALTH_FILE_PATH` no es sensible, pero su valor no se imprime. Si se configura, el directorio debe existir y la identidad del proceso debe poder crear/reemplazar el archivo. El snapshot se actualiza atómicamente cada 15 segundos y en cambios de estado. Si no existe la variable, sólo se desactiva el archivo; los eventos estructurados permanecen en stdout.
 
 Los dos timeouts SQL son enteros en segundos y nunca admiten cero: en `System.Data.SqlClient`, cero significaría una espera indefinida. El valor de conexión reemplaza cualquier `Connect Timeout` recibido dentro de la cadena, sin imprimirla. El comando particular que conserva un baseline histórico de 300 segundos es la búsqueda de pedido por CUD; las demás rutas usan el presupuesto configurado. Cambiar estos valores exige reiniciar el proceso.
+
+Las cuatro variables Quartz tampoco son sensibles y todo cambio exige reinicio. Si no se fija zona, el proceso resuelve `TimeZoneInfo.Local` una vez al arrancar. Un ID desconocido, una política distinta de `fire_once_now`/`do_nothing`, un booleano inválido o una concurrencia fuera de 1–64 impiden iniciar; el valor recibido no se imprime. `fire_once_now` conserva la interpretación Cron histórica. `false` en la política de solapamiento existe sólo como rollback temporal.
 
 ## Desarrollo local
 
@@ -37,6 +43,10 @@ Obtener los valores desde el almacén autorizado y configurarlos sólo para la s
     $env:P360_HEALTH_FILE_PATH = "D:\Pharma360\Scheduler\state\health.json"
     $env:P360_SQL_CONNECTION_TIMEOUT_SECONDS = "15"
     $env:P360_SQL_COMMAND_TIMEOUT_SECONDS = "30"
+    $env:P360_QUARTZ_TIME_ZONE = "SA Pacific Standard Time"
+    $env:P360_QUARTZ_MISFIRE_POLICY = "fire_once_now"
+    $env:P360_QUARTZ_DISALLOW_CONCURRENT_EXECUTION = "true"
+    $env:P360_QUARTZ_MAX_CONCURRENCY = "10"
 
 No guardar esos comandos con valores reales en scripts, historial de terminal, perfiles, capturas o documentación.
 
@@ -45,6 +55,8 @@ No guardar esos comandos con valores reales en scripts, historial de terminal, p
 - Configurar las variables para la identidad que ejecuta el servicio mediante la plataforma de despliegue.
 - Reiniciar el proceso después de una rotación.
 - Reiniciar también después de cambiar parámetros en `T_PARAMETROS`: PR-05 usa un snapshot por vida del proceso.
+- Reiniciar después de cambiar definiciones SQL: PR-09 reconcilia una vez antes de iniciar Quartz y no hace polling.
+- Validar el ID de zona horaria en la imagen Windows exacta antes de promoverlo.
 - Verificar sólo presencia y conectividad; nunca mostrar el valor.
 - Restringir lectura/configuración a operación y a la identidad de servicio.
 - Mantener valores distintos por ambiente.
