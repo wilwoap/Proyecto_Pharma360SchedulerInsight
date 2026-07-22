@@ -54,9 +54,9 @@
       },
       "Quartz": {
         "type": "Direct",
-        "requested": "[3.6.2, )",
-        "resolved": "3.6.2",
-        "contentHash": "wCNiVQKdwSz85fOFvEixOuxiIqsenixf34b8w21oGF0qw9oylFPDrV/ri02cX531WelFsN8K5w6E5/qop5mRYw==",
+        "requested": "[3.18.2, )",
+        "resolved": "3.18.2",
+        "contentHash": "/KaRLj7jv84RSIR/UtAWnzYRmS7o/mA6CdEuoLwxhLa9Nfl7Q1keMA7Fe/r2BzRfDf+7YpN1QNEYSSU89DA3OA==",
         "dependencies": {
           "Microsoft.Extensions.Logging.Abstractions": "2.1.1",
           "System.Diagnostics.DiagnosticSource": "4.7.1"
