@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -69,6 +70,25 @@ namespace SchedulerP360Insight.CharacterizationTests
             Assert.AreEqual(
                 "%PDF-",
                 Encoding.ASCII.GetString(content, 0, 5));
+        }
+
+        [TestMethod]
+        public void Log4Net_IsReferencedOnlyByCrystalAtTheFrozenAbi()
+        {
+            Assembly application = typeof(Scheduling.ReportJobFactory).Assembly;
+            Assert.IsFalse(
+                application.GetReferencedAssemblies()
+                    .Any(reference => reference.Name == "log4net"),
+                "El host no debe usar log4net directamente.");
+
+            string crystalSharedPath = Path.Combine(
+                AppContext.BaseDirectory,
+                "CrystalDecisions.Shared.dll");
+            Assembly crystalShared = Assembly.ReflectionOnlyLoadFrom(crystalSharedPath);
+            AssemblyName log4NetReference = crystalShared.GetReferencedAssemblies()
+                .Single(reference => reference.Name == "log4net");
+
+            Assert.AreEqual(new Version(2, 0, 12, 0), log4NetReference.Version);
         }
 
         private static string ToLowerHex(byte[] bytes)

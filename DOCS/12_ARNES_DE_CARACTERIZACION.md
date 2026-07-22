@@ -1,6 +1,6 @@
 # Arnés de caracterización
 
-Estado: implementado y validado localmente en PR-02 el 2026-07-21.
+Estado: implementado en PR-02 y ampliado/validado localmente en PR-04 el 2026-07-22.
 
 ## Decisión de framework
 
@@ -24,7 +24,7 @@ Para desarrollo con paquetes ya restaurados:
 
 SkipTests existe sólo para diagnóstico del build. No debe usarse como evidencia de un PR.
 
-El gate exige al menos 22 pruebas, un timeout global de 60 segundos y genera TRX bajo artifacts/test-results. Esa carpeta no se versiona.
+El gate exige al menos 25 pruebas, un timeout global de 60 segundos y genera TRX bajo artifacts/test-results. Esa carpeta no se versiona.
 
 ## Fronteras introducidas
 
@@ -51,6 +51,9 @@ La aplicación usa la fábrica de jobs y las fronteras de correo. La política d
 | SQL | Timeout simulado antes del envío, sin conexión real |
 | Rutas | Ruta hija aceptada; traversal y ruta absoluta rechazados |
 | Reportes | SHA-256 de cinco .rpt y una definición DevExpress representativa |
+| Dapper | Materialización de un registro con un proveedor ADO.NET simulado y cierre de conexión |
+| Quartz | Inicio, agenda, ejecución y parada de un job sobre RAMJobStore |
+| Crystal/log4net | El host no referencia log4net y Crystal declara exactamente la ABI 2.0.12.0 |
 
 ## Deudas observadas, no corregidas en este PR
 
@@ -64,7 +67,7 @@ Estas observaciones son intencionales: PR-02 impide que cambien accidentalmente.
 
 ## Datos y aislamiento
 
-Todas las identidades, correos, teléfonos, rutas y contenido de prueba son sintéticos. Los dominios usan example.test. El arnés no lee P360_CONNECTION_PRINCIPAL, no abre SQL, no inicia Quartz y no envía correo.
+Todas las identidades, correos, teléfonos, rutas y contenido de prueba son sintéticos. Los dominios usan example.test. El arnés no lee P360_CONNECTION_PRINCIPAL, no abre SQL y no envía correo. La prueba de Quartz usa exclusivamente RAMJobStore en proceso y no abre servicios externos.
 
 Los cinco .rpt sólo se leen como bytes para calcular SHA-256. No se cargan con Crystal, no se convierten y no se reescriben.
 

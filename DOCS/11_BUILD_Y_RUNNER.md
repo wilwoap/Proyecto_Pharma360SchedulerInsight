@@ -1,6 +1,6 @@
 # Build reproducible y runner Windows x64
 
-Estado: build implementado en PR-01 y restauración bloqueada validada localmente en PR-03; pendiente validar el primer job en el runner autorizado.
+Estado: build implementado en PR-01, restauración bloqueada validada en PR-03 y política de dependencias/SBOM validada localmente en PR-04; pendiente validar el primer job en el runner autorizado.
 
 ## Plataforma soportada
 
@@ -23,6 +23,8 @@ Desde la raíz del repositorio:
 
     .\eng\verify-repository.ps1
     .\build.ps1 -Configuration Release -Target Rebuild
+    .\eng\verify-dependencies.ps1
+    .\eng\generate-sbom.ps1 -Configuration Release -PackageVersion 1.0.0
 
 Para repetir un build con paquetes ya restaurados:
 
@@ -34,7 +36,7 @@ La ejecución normal restaura exclusivamente las versiones fijadas en los `packa
 
 `NuGet.Config` limpia las fuentes heredadas de la estación y permite sólo nuget.org. Los ensamblados licenciados de SAP Crystal Reports y DevExpress no se restauran mediante NuGet: deben existir en las rutas de instalación del proveedor indicadas en los prerrequisitos.
 
-El script siempre fija Platform=x64, valida que no aumenten las advertencias heredadas, ejecuta al menos 22 pruebas de caracterización y muestra el SHA-256 del ejecutable producido.
+El script siempre fija Platform=x64, valida que no aumenten las advertencias heredadas, ejecuta al menos 25 pruebas de caracterización y muestra el SHA-256 del ejecutable producido.
 
 ## Baseline de advertencias
 
@@ -45,16 +47,15 @@ El script siempre fija Platform=x64, valida que no aumenten las advertencias her
 | CS0169 | 2 | Deuda congelada |
 | CS0219 | 1 | Deuda congelada |
 | CS0414 | 1 | Deuda congelada |
-| MSB3277 | 2 familias | Resolver en PR-04 |
-| NU1902 | 1 | log4net 2.0.12; resolver en PR-04 |
+| NU1902 | 1 | Excepción temporal exacta para log4net 2.0.12 hasta 2026-10-31 o PR-13 |
 
-Las familias MSB3277 conocidas son Microsoft.Extensions.Configuration.Abstractions y System.Memory. La restauración también informa la vulnerabilidad moderada GHSA-4f7c-pmjv-c25w en log4net 2.0.12. PR-01 congela ambos hallazgos; PR-04 debe resolverlos después de contar con el arnés de caracterización de PR-02.
+PR-04 eliminó los conflictos `MSB3277` alineando Microsoft.Extensions y System.Memory con DevExpress 25.2.8. La restauración conserva `NU1902` para log4net 2.0.12 porque Crystal 13.0.4000 requiere su ABI exacta. `eng/verify-dependencies.ps1` limita ese único hallazgo moderado y bloquea cualquier hallazgo nuevo, alto/crítico, obsoleto o vencido. La justificación completa está en `14_DEPENDENCIAS_Y_SBOM.md`.
 
 ## GitHub Actions
 
 El workflow requiere un runner propio con las etiquetas self-hosted, Windows, X64 y p360-build. Ese runner debe tener las dependencias propietarias anteriores y una versión compatible con actions/checkout v6. Un runner genérico de GitHub no contiene SAP Crystal ni la licencia de DevExpress.
 
-El job usa permisos de solo lectura, verifica higiene del repositorio y ejecuta exactamente el mismo build local. No recibe credenciales SQL, SMTP ni claves de API.
+El job usa permisos de solo lectura, verifica higiene del repositorio, ejecuta exactamente el mismo build local, aplica la política de dependencias y genera un SBOM SPDX 2.2. El manifiesto validado se publica durante 30 días. El job no recibe credenciales SQL, SMTP ni claves de API.
 
 ## Artefacto y reproducibilidad
 

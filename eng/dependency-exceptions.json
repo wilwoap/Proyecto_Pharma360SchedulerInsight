@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "exceptions": [
+    {
+      "packageId": "log4net",
+      "version": "2.0.12",
+      "severity": "Moderate",
+      "advisoryUrl": "https://github.com/advisories/GHSA-4f7c-pmjv-c25w",
+      "expiresOn": "2026-10-31",
+      "scope": "Dependencia binaria de CrystalDecisions.Shared.dll y CrystalDecisions.Web.dll 13.0.4000.",
+      "reason": "Actualizar a log4net 3.x cambia la ABI requerida por Crystal Reports. La excepcion vence al aislar Crystal en PR-13 o en la fecha indicada, lo que ocurra primero."
+    }
+  ]
+}

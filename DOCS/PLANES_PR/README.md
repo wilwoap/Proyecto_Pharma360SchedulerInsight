@@ -8,7 +8,7 @@ Cada archivo define un incremento revisable. Los números expresan dependencia l
 | PR-01-BUILD-REPRODUCIBLE-X64.md | Validado |
 | PR-02-PRUEBAS-DE-CARACTERIZACION.md | Validado |
 | PR-03-SDK-PACKAGEREFERENCE-NET48.md | Validado |
-| PR-04-DEPENDENCIAS.md | Propuesto |
+| PR-04-DEPENDENCIAS.md | Validado |
 | PR-05-CONFIGURACION-Y-COMPOSICION.md | Propuesto |
 | PR-06-CICLO-DE-VIDA-DE-SERVICIO.md | Propuesto |
 | PR-07-OBSERVABILIDAD-Y-SALUD.md | Propuesto |

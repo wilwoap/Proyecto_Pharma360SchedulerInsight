@@ -25,3 +25,19 @@ jobs:
       - name: Restore and rebuild
         shell: powershell
         run: .\build.ps1 -Configuration Release -Target Rebuild
+
+      - name: Verify dependency policy
+        shell: powershell
+        run: .\eng\verify-dependencies.ps1
+
+      - name: Generate and validate SPDX SBOM
+        shell: powershell
+        run: .\eng\generate-sbom.ps1 -Configuration Release -PackageVersion 1.0.0
+
+      - name: Upload SPDX SBOM
+        uses: actions/upload-artifact@v7
+        with:
+          name: SchedulerP360Insight-spdx
+          path: artifacts/sbom/_manifest/spdx_2.2/manifest.spdx.json
+          if-no-files-found: error
+          retention-days: 30
