@@ -1,6 +1,6 @@
 # PR-02 — Pruebas de caracterización
 
-Estado: propuesto. Dependencia: PR-01.
+Estado: validado localmente el 2026-07-21. Dependencia PR-01 satisfecha.
 
 ## Propósito
 
@@ -58,3 +58,15 @@ Capturar el comportamiento crítico actual antes de extraer/refactorizar compone
 
 Las pruebas y seams deben ser aditivos. Si un seam cambia comportamiento, revertirlo y elegir una frontera menor; no conservar una abstracción sin prueba.
 
+## Evidencia
+
+- MSTest.Sdk 4.3.2, net48 y x64.
+- 22 pruebas descubiertas y ejecutadas; 22 correctas, cero omitidas y cero fallidas.
+- Tiempo local aproximado del arnés: un segundo; timeout global: 60 segundos.
+- TRX generado bajo artifacts/test-results y excluido de Git.
+- Cinco binarios Crystal protegidos por SHA-256 sin carga ni modificación.
+- Un reporte DevExpress representativo protegido por hash de código, diseñador y recursos.
+- Cero acceso a SQL, SMTP externo o Internet durante las pruebas.
+- Dos deudas capturadas: HTML sin codificar y clave de plantilla inexistente que retorna null.
+
+La generación de PDFs reales queda pendiente de un fixture SQL anonimizado y de aprobación visual; no se usarán datos productivos para cerrar ese punto.

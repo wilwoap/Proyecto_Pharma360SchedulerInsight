@@ -6,7 +6,9 @@ param(
     [ValidateSet('Build', 'Rebuild', 'Clean')]
     [string]$Target = 'Rebuild',
 
-    [switch]$SkipRestore
+    [switch]$SkipRestore,
+
+    [switch]$SkipTests
 )
 
 Set-StrictMode -Version Latest
@@ -15,7 +17,10 @@ $ErrorActionPreference = 'Stop'
 $repositoryRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
 $solutionPath = Join-Path $repositoryRoot 'SchedulerP360Insight.sln'
 $baselinePath = Join-Path $repositoryRoot 'eng\warnings-baseline.json'
+$testBaselinePath = Join-Path $repositoryRoot 'eng\test-baseline.json'
 $artifactPath = Join-Path $repositoryRoot "SchedulerP360Insight\bin\x64\$Configuration\SchedulerP360Insight.exe"
+$testArtifactPath = Join-Path $repositoryRoot "SchedulerP360Insight.CharacterizationTests\bin\x64\$Configuration\net48\SchedulerP360Insight.CharacterizationTests.exe"
+$testResultsPath = Join-Path $repositoryRoot 'artifacts\test-results'
 
 function Resolve-MSBuild {
     $command = Get-Command msbuild.exe -ErrorAction SilentlyContinue
@@ -140,4 +145,43 @@ if ($Target -ne 'Clean') {
     $artifactHash = (Get-FileHash -LiteralPath $artifactPath -Algorithm SHA256).Hash
     Write-Host "Artefacto: $artifactPath"
     Write-Host "SHA256: $artifactHash"
+
+    if (-not $SkipTests) {
+        if (-not (Test-Path -LiteralPath $testArtifactPath)) {
+            throw "El build no produjo el ejecutable de pruebas esperado: $testArtifactPath"
+        }
+
+        $testBaseline = Get-Content -LiteralPath $testBaselinePath -Raw | ConvertFrom-Json
+        $testArguments = @(
+            '--minimum-expected-tests',
+            [string]$testBaseline.minimumExpectedTests,
+            '--timeout',
+            $testBaseline.timeout,
+            '--no-ansi',
+            '--progress',
+            'off',
+            '--results-directory',
+            $testResultsPath,
+            '--report-trx',
+            '--output',
+            'Normal'
+        )
+
+        $previousTelemetryPreference = $env:TESTINGPLATFORM_TELEMETRY_OPTOUT
+        try {
+            $env:TESTINGPLATFORM_TELEMETRY_OPTOUT = '1'
+            & $testArtifactPath @testArguments
+            if ($LASTEXITCODE -ne 0) {
+                throw "Las pruebas de caracterizacion fallaron con codigo $LASTEXITCODE."
+            }
+        }
+        finally {
+            if ($null -eq $previousTelemetryPreference) {
+                Remove-Item Env:TESTINGPLATFORM_TELEMETRY_OPTOUT -ErrorAction SilentlyContinue
+            }
+            else {
+                $env:TESTINGPLATFORM_TELEMETRY_OPTOUT = $previousTelemetryPreference
+            }
+        }
+    }
 }

@@ -9,4 +9,24 @@ public static class AppConfig
 
     public static string GoogleMapsApiKey =>
         Environment.GetEnvironmentVariable(GoogleMapsApiKeyEnvironmentVariable);
+
+    public static string GetRequiredEnvironmentVariable(
+        string variableName,
+        Func<string, string> readVariable = null)
+    {
+        if (string.IsNullOrWhiteSpace(variableName))
+        {
+            throw new ArgumentException("El nombre de la variable de entorno es obligatorio.", nameof(variableName));
+        }
+
+        Func<string, string> reader = readVariable ?? Environment.GetEnvironmentVariable;
+        string value = reader(variableName);
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            throw new InvalidOperationException(
+                $"La variable de entorno '{variableName}' no está definida.");
+        }
+
+        return value;
+    }
 }

@@ -28,7 +28,7 @@ Para repetir un build con paquetes ya restaurados:
 
     .\build.ps1 -Configuration Release -Target Rebuild -SkipRestore
 
-El script siempre fija Platform=x64, valida que no aumenten las advertencias heredadas y muestra el SHA-256 del ejecutable producido.
+El script siempre fija Platform=x64, valida que no aumenten las advertencias heredadas, ejecuta al menos 22 pruebas de caracterización y muestra el SHA-256 del ejecutable producido.
 
 ## Baseline de advertencias
 

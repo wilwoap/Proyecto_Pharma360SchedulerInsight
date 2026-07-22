@@ -150,3 +150,8 @@ La cobertura numérica no es el objetivo inicial. Gates propuestos:
 - métricas antes/después para optimización;
 - resultado de rollback cuando aplique.
 
+## Cobertura inicial ejecutada en PR-02
+
+El arnés net48 x64 ejecuta 22 casos aislados. Cubre configuración, mapeo de jobs, Cron, UID, transporte SMTP simulado, timeout de acceso simulado, HTML heredado, rutas y activos de reporte. Los cinco .rpt están protegidos por hash y no se cargan.
+
+Pendientes deliberados: contrato contra SQL Server desechable, SMTP sink de integración, generación de PDFs reales y comparación visual. Requieren infraestructura/fixtures autorizados y se incorporan en PR-08, PR-11, PR-12 y antes de aislar Crystal en PR-13.

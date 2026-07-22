@@ -5,6 +5,8 @@ VisualStudioVersion = 17.5.33516.290
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SchedulerP360Insight", "SchedulerP360Insight\SchedulerP360Insight.csproj", "{0474B48F-1393-4CF9-9F16-AAC64991B703}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SchedulerP360Insight.CharacterizationTests", "SchedulerP360Insight.CharacterizationTests\SchedulerP360Insight.CharacterizationTests.csproj", "{3F106AF6-3B59-40C7-A6D2-65078DD0E8B3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -15,6 +17,10 @@ Global
 		{0474B48F-1393-4CF9-9F16-AAC64991B703}.Debug|x64.Build.0 = Debug|x64
 		{0474B48F-1393-4CF9-9F16-AAC64991B703}.Release|x64.ActiveCfg = Release|x64
 		{0474B48F-1393-4CF9-9F16-AAC64991B703}.Release|x64.Build.0 = Release|x64
+		{3F106AF6-3B59-40C7-A6D2-65078DD0E8B3}.Debug|x64.ActiveCfg = Debug|x64
+		{3F106AF6-3B59-40C7-A6D2-65078DD0E8B3}.Debug|x64.Build.0 = Debug|x64
+		{3F106AF6-3B59-40C7-A6D2-65078DD0E8B3}.Release|x64.ActiveCfg = Release|x64
+		{3F106AF6-3B59-40C7-A6D2-65078DD0E8B3}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

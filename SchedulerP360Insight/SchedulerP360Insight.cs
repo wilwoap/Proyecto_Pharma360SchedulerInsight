@@ -3,6 +3,7 @@ using Quartz;
 using Quartz.Impl;
 using SchedulerP360Insight;
 using SchedulerP360Insight.Modulos;
+using SchedulerP360Insight.Scheduling;
 using System;
 using System.Configuration;
 using System.Data.SqlClient;
@@ -24,6 +25,7 @@ namespace ReportGenerator
             string accion = string.Empty;
             string currentUsername = string.Empty;
             ModuleCapaAccesoDatos oModuleCapaAccesoDatos = new ModuleCapaAccesoDatos();
+            ReportJobFactory reportJobFactory = new ReportJobFactory();
 
             try
             {
@@ -52,87 +54,32 @@ namespace ReportGenerator
                         {
                             while (await reader.ReadAsync())
                             {
-                                int reportId = (int)Convert.ToInt64(reader.GetValue(reader.GetOrdinal("report_id")));
-                                string reportUID = reader.GetString(reader.GetOrdinal("report_uid"));
-                                string reportName = reader.GetString(reader.GetOrdinal("report_name"));
-                                string reportInsight = reader.GetString(reader.GetOrdinal("report_insight"));
-                                string reportFileName = reader.GetString(reader.GetOrdinal("report_filename"));
-                                string reportType = reader.GetString(reader.GetOrdinal("report_type"));
-                                string reportPathSource = reader.GetString(reader.GetOrdinal("report_path_source"));
-                                string reportPathOutput = reader.GetString(reader.GetOrdinal("report_path_output"));
-                                string reportSchedule = reader.GetString(reader.GetOrdinal("report_schedule"));
-                                string reportSubjectText = reader.GetString(reader.GetOrdinal("report_subject_text"));
-                                string reportBodyResourceKey = reader.GetString(reader.GetOrdinal("report_body_resource_key"));
-                                bool reportSendMail = reader.GetBoolean(reader.GetOrdinal("report_send_mail"));
-                                bool reportSendMailCopySupervisor = reader.GetBoolean(reader.GetOrdinal("report_send_mail_copy_supervisor"));
+                                ReportScheduleDefinition report = new ReportScheduleDefinition
+                                {
+                                    ReportId = (int)Convert.ToInt64(reader.GetValue(reader.GetOrdinal("report_id"))),
+                                    ReportUID = reader.GetString(reader.GetOrdinal("report_uid")),
+                                    ReportName = reader.GetString(reader.GetOrdinal("report_name")),
+                                    ReportInsight = reader.GetString(reader.GetOrdinal("report_insight")),
+                                    ReportFileName = reader.GetString(reader.GetOrdinal("report_filename")),
+                                    ReportType = reader.GetString(reader.GetOrdinal("report_type")),
+                                    ReportPathSource = reader.GetString(reader.GetOrdinal("report_path_source")),
+                                    ReportPathOutput = reader.GetString(reader.GetOrdinal("report_path_output")),
+                                    ReportSchedule = reader.GetString(reader.GetOrdinal("report_schedule")),
+                                    ReportSubjectText = reader.GetString(reader.GetOrdinal("report_subject_text")),
+                                    ReportBodyResourceKey = reader.GetString(reader.GetOrdinal("report_body_resource_key")),
+                                    ReportSendMail = reader.GetBoolean(reader.GetOrdinal("report_send_mail")),
+                                    ReportSendMailCopySupervisor = reader.GetBoolean(reader.GetOrdinal("report_send_mail_copy_supervisor"))
+                                };
 
-                                oModuleCapaAccesoDatos.RegistraLogConeccionyAccion(currentUsername, "Antes de ejecutar JobBuilder.Create para reportName: " + reportName);
-                                IJobDetail job;
-                                if (reportType == "crystal reports")
-                                {
-                                    job = JobBuilder.Create<P360CrystalReportsReportJob>()
-                                        .WithIdentity(reportName, "Group1")
-                                        .UsingJobData("reportId", reportId)
-                                        .UsingJobData("reportUID", reportUID)
-                                        .UsingJobData("reportName", reportName)
-                                        .UsingJobData("reportInsight", reportInsight)
-                                        .UsingJobData("reportFileName", reportFileName)
-                                        .UsingJobData("reportPathSource", reportPathSource)
-                                        .UsingJobData("reportPathOutput", reportPathOutput)
-                                        .UsingJobData("reportSubjectText", reportSubjectText)
-                                        .UsingJobData("reportBodyResourceKey", reportBodyResourceKey)
-                                        .UsingJobData("reportSendMail", reportSendMail)
-                                        .UsingJobData("reportSendMailCopySupervisor", reportSendMailCopySupervisor)
-                                        .Build();
-                                }
-                                else if (reportType == "devexpress reports")
-                                {
-                                    job = JobBuilder.Create<P360DevExpressReportsReportJob>()
-                                        .WithIdentity(reportName, "Group1")
-                                        .UsingJobData("reportId", reportId)
-                                        .UsingJobData("reportUID", reportUID)
-                                        .UsingJobData("reportName", reportName)
-                                        .UsingJobData("reportInsight", reportInsight)
-                                        .UsingJobData("reportFileName", reportFileName)
-                                        .UsingJobData("reportPathSource", reportPathSource)
-                                        .UsingJobData("reportPathOutput", reportPathOutput)
-                                        .UsingJobData("reportSubjectText", reportSubjectText)
-                                        .UsingJobData("reportBodyResourceKey", reportBodyResourceKey)
-                                        .UsingJobData("reportSendMail", reportSendMail)
-                                        .UsingJobData("reportSendMailCopySupervisor", reportSendMailCopySupervisor)
-                                        .Build();
-                                }
-                                else if (reportType == "html")
-                                {
-                                    job = JobBuilder.Create<P360HtmlReportsReportJob>()
-                                        .WithIdentity(reportName, "Group1")
-                                        .UsingJobData("reportId", reportId)
-                                        .UsingJobData("reportUID", reportUID)
-                                        .UsingJobData("reportName", reportName)
-                                        .UsingJobData("reportInsight", reportInsight)
-                                        .UsingJobData("reportFileName", reportFileName)
-                                        .UsingJobData("reportPathSource", reportPathSource)
-                                        .UsingJobData("reportPathOutput", reportPathOutput)
-                                        .UsingJobData("reportSubjectText", reportSubjectText)
-                                        .UsingJobData("reportBodyResourceKey", reportBodyResourceKey)
-                                        .UsingJobData("reportSendMail", reportSendMail)
-                                        .UsingJobData("reportSendMailCopySupervisor", reportSendMailCopySupervisor)
-                                        .Build();
-                                }
-                                else
-                                {
-                                    throw new ArgumentException($"El valor de reportType '{reportType}' no es válido.");
-                                }
+                                oModuleCapaAccesoDatos.RegistraLogConeccionyAccion(currentUsername, "Antes de ejecutar JobBuilder.Create para reportName: " + report.ReportName);
+                                IJobDetail job = reportJobFactory.CreateJob(report);
 
-                                accion = "Antes de disparar trigger para reportName: " + reportName + ", con reportSchedule: " + reportSchedule;
+                                accion = "Antes de disparar trigger para reportName: " + report.ReportName + ", con reportSchedule: " + report.ReportSchedule;
                                 oModuleCapaAccesoDatos.RegistraLogConeccionyAccion(currentUsername, accion);
 
-                                ITrigger trigger = TriggerBuilder.Create()
-                                    .WithIdentity(reportName + "Trigger", "Group1")
-                                    .WithCronSchedule(reportSchedule)
-                                    .Build();
+                                ITrigger trigger = reportJobFactory.CreateTrigger(report);
 
-                                accion = "Después de disparar trigger para reportName: " + reportName + ", con reportSchedule: " + reportSchedule;
+                                accion = "Después de disparar trigger para reportName: " + report.ReportName + ", con reportSchedule: " + report.ReportSchedule;
                                 oModuleCapaAccesoDatos.RegistraLogConeccionyAccion(currentUsername, accion);
                                 await scheduler.ScheduleJob(job, trigger);
 
@@ -182,16 +129,8 @@ namespace ReportGenerator
         /// <returns>Cadena de conexión</returns>
         public static string GetConnectionStringFromMachineEnvironment()
         {
-            string envConnectionString =
-                Environment.GetEnvironmentVariable(AppConfig.ConnectionStringEnvironmentVariable);
-
-            if (string.IsNullOrWhiteSpace(envConnectionString))
-            {
-                throw new InvalidOperationException(
-                    $"La variable de entorno '{AppConfig.ConnectionStringEnvironmentVariable}' no está definida.");
-            }
-
-            return envConnectionString;
+            return AppConfig.GetRequiredEnvironmentVariable(
+                AppConfig.ConnectionStringEnvironmentVariable);
         }
     }
 }

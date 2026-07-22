@@ -16,6 +16,7 @@ using DevExpress.XtraReports.UI;
 using ExportOptions = CrystalDecisions.Shared.ExportOptions;
 using DevExpress.XtraReports.Serialization;
 using SchedulerP360Insight.UtilitariosyClases;
+using SchedulerP360Insight.Services;
 using System.Globalization;
 using System.Text;
 using System.Linq;
@@ -23,13 +24,31 @@ using System.Diagnostics.Contracts;
 
 namespace SchedulerP360Insight
 {
-    internal class Utilitarios
+    public class Utilitarios
     {
         readonly ModuleCapaAccesoDatos oModuleCapaAccesoDatos = new ModuleCapaAccesoDatos();
         readonly string currentUsername = Environment.UserName;
-        private readonly LaboratoryConstants labConstants = new LaboratoryConstants();
+        private readonly LaboratoryConstants labConstants;
+        private readonly IEmailTransport emailTransport;
+        private readonly INotificationDeliveryStore notificationDeliveryStore;
         string accion = string.Empty;
         public static bool NotificaAdministrador { get; set; } = false;
+
+        public Utilitarios()
+            : this(new LaboratoryConstants(), null, null)
+        {
+        }
+
+        public Utilitarios(
+            LaboratoryConstants labConstants,
+            IEmailTransport emailTransport,
+            INotificationDeliveryStore notificationDeliveryStore)
+        {
+            this.labConstants = labConstants ?? throw new ArgumentNullException(nameof(labConstants));
+            this.emailTransport = emailTransport ?? new SmtpEmailTransport(labConstants);
+            this.notificationDeliveryStore = notificationDeliveryStore ??
+                new SqlNotificationDeliveryStore(oModuleCapaAccesoDatos, currentUsername);
+        }
         /// <summary>
         /// Configura la conexión de base de datos para todas las tablas en un documento de reporte, registrando las acciones y errores.
         /// </summary>
@@ -889,7 +908,7 @@ namespace SchedulerP360Insight
                         accion = $"Report: '{attachmentPath}' Cid=('{colaNotificacionId}') --> Sent to: {p360notificacion.EmailColab}";
                     }
                     // Envía a contactos adicionales asociados con el reporte y el evento especifico evento(si es que están configurados)
-                    List<DatosContactosNotificaciones> contactosNotificaciones = ModuleCapaAccesoDatos.GetDataContactosNotificacionesxReporteyEvento(p360notificacion.ReportId, p360notificacion.ReferenceEventId);
+                    List<DatosContactosNotificaciones> contactosNotificaciones = notificationDeliveryStore.GetAdditionalContacts(p360notificacion.ReportId, p360notificacion.ReferenceEventId);
                     if (contactosNotificaciones.Count > 0)
                     {
                         foreach (var contacto in from contacto in contactosNotificaciones
@@ -910,51 +929,46 @@ namespace SchedulerP360Insight
                     message.Body = ConstruirCuerpoEmailPlantillaHTML(p360notificacion, labConstants, emailBodyKey);
                     // add attachment
                     message.Attachments.Add(attachment);
-                    using (SmtpClient smtpClient = new SmtpClient(labConstants.Pharma360MailSMTP, labConstants.Pharma360MailPort))
-                    {
-                        smtpClient.Credentials = new NetworkCredential(labConstants.SenderEmail, labConstants.Pharma360MailPass);
-                        smtpClient.EnableSsl = labConstants.Pharma360MailSSL;
-                        await smtpClient.SendMailAsync(message);
-                    }
+                    await emailTransport.SendAsync(message);
                     Console.WriteLine(accion);
-                    oModuleCapaAccesoDatos.RegistraLogConeccionyAccion(currentUsername, accion);
+                    notificationDeliveryStore.Log(accion);
                 }
                 // Actualizacion de bandera de envio de notificacion
-                oModuleCapaAccesoDatos.actualizaEstadoColaNotificacionaEnviado(colaNotificacionId);
+                notificationDeliveryStore.MarkSent(colaNotificacionId);
             }
             catch (SmtpFailedRecipientException ex)
             {
                 // Error específico para un destinatario fallido
                 accion = $"Cid=['{colaNotificacionId}']. Error sending email to {ex.FailedRecipient}. Código de error:{ex.StatusCode}. Detalle error: {ex.Message}";
                 Console.WriteLine(accion);
-                oModuleCapaAccesoDatos.RegistraLogConeccionyAccion(currentUsername, accion);
+                notificationDeliveryStore.Log(accion);
             }
             catch (SmtpException ex)
             {
                 // Error general de SMTP
                 accion = $"Cid=['{colaNotificacionId}']. Código de error: {ex.StatusCode}. Detalle error: {ex.Message}";
                 Console.WriteLine(accion);
-                oModuleCapaAccesoDatos.RegistraLogConeccionyAccion(currentUsername, accion);
+                notificationDeliveryStore.Log(accion);
             }
             catch (ConfigurationErrorsException ex)
             {
                 // Error en la configuración de la aplicación
                 accion = $"Cid=('{colaNotificacionId}'). Error sending email: Configuration error: {ex.Message}";
                 Console.WriteLine(accion);
-                oModuleCapaAccesoDatos.RegistraLogConeccionyAccion(currentUsername, accion);
+                notificationDeliveryStore.Log(accion);
             }
             catch (FormatException ex)
             {
                 // Error de formato de datos
                 accion = $"Cid=('{colaNotificacionId}'). Error sending email: Format error: {ex.Message}";
                 Console.WriteLine(accion);
-                oModuleCapaAccesoDatos.RegistraLogConeccionyAccion(currentUsername, accion);
+                notificationDeliveryStore.Log(accion);
             }
             catch (Exception ex)
             {
                 accion = $"Cid=['{colaNotificacionId}']. Error sending email: {ex.Message}";
                 Console.WriteLine(accion);
-                oModuleCapaAccesoDatos.RegistraLogConeccionyAccion(currentUsername, accion);
+                notificationDeliveryStore.Log(accion);
             }
         }
 
@@ -1005,7 +1019,7 @@ namespace SchedulerP360Insight
                         accion = $"Report: '{p360notificacion.ReportName}' Cid=('{colaNotificacionId}') --> Sent to: {p360notificacion.EmailColab}";
                     }
                     // Envía a contactos adicionales asociados con el reporte y el evento especifico evento(si es que están configurados)
-                    List<DatosContactosNotificaciones> contactosNotificaciones = ModuleCapaAccesoDatos.GetDataContactosNotificacionesxReporteyEvento(p360notificacion.ReportId, p360notificacion.ReferenceEventId);
+                    List<DatosContactosNotificaciones> contactosNotificaciones = notificationDeliveryStore.GetAdditionalContacts(p360notificacion.ReportId, p360notificacion.ReferenceEventId);
                     if (contactosNotificaciones.Count > 0)
                     {
                         foreach (var contacto in from contacto in contactosNotificaciones
@@ -1033,17 +1047,12 @@ namespace SchedulerP360Insight
                         accion = accion + $". With extra-aditional Bcc copy to: {labConstants.AdminEmail}";
                     }
                     // add attachment
-                    using (SmtpClient smtpClient = new SmtpClient(labConstants.Pharma360MailSMTP, labConstants.Pharma360MailPort))
-                    {
-                        smtpClient.Credentials = new NetworkCredential(labConstants.SenderEmail, labConstants.Pharma360MailPass);
-                        smtpClient.EnableSsl = labConstants.Pharma360MailSSL;
-                        await smtpClient.SendMailAsync(message);
-                    }
+                    await emailTransport.SendAsync(message);
                     Console.WriteLine(accion);
-                    oModuleCapaAccesoDatos.RegistraLogConeccionyAccion(currentUsername, accion);
+                    notificationDeliveryStore.Log(accion);
                 }
                 // Actualizacion de bandera de envio de notificacion
-                oModuleCapaAccesoDatos.actualizaEstadoColaNotificacionaEnviado(colaNotificacionId);
+                notificationDeliveryStore.MarkSent(colaNotificacionId);
                 NotificaAdministrador = false;
             }
             catch (SmtpFailedRecipientException ex)
@@ -1051,20 +1060,20 @@ namespace SchedulerP360Insight
                 // Error específico para un destinatario fallido
                 accion = $"Cid=['{colaNotificacionId}']. Error sending email to {ex.FailedRecipient}. Código de error:{ex.StatusCode}. Detalle error: {ex.Message}";
                 Console.WriteLine(accion);
-                oModuleCapaAccesoDatos.RegistraLogConeccionyAccion(currentUsername, accion);
+                notificationDeliveryStore.Log(accion);
             }
             catch (SmtpException ex)
             {
                 // Error general de SMTP
                 accion = $"Cid=['{colaNotificacionId}']. Código de error: {ex.StatusCode}. Detalle error: {ex.Message}";
                 Console.WriteLine(accion);
-                oModuleCapaAccesoDatos.RegistraLogConeccionyAccion(currentUsername, accion);
+                notificationDeliveryStore.Log(accion);
             }
             catch (Exception ex)
             {
                 accion = $"Cid=['{colaNotificacionId}']. Error sending email: {ex.Message}";
                 Console.WriteLine(accion);
-                oModuleCapaAccesoDatos.RegistraLogConeccionyAccion(currentUsername, accion);
+                notificationDeliveryStore.Log(accion);
             }
         }
 

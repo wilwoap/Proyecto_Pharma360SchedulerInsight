@@ -281,6 +281,10 @@
     <Compile Include="Jobs\P360HtmlReportJob.cs" />
     <Compile Include="Jobs\P360DevExpressReportsReportJob.cs" />
     <Compile Include="Modulos\AppConfig.cs" />
+    <Compile Include="Scheduling\ReportJobFactory.cs" />
+    <Compile Include="Scheduling\ReportScheduleDefinition.cs" />
+    <Compile Include="Services\NotificationDeliveryAbstractions.cs" />
+    <Compile Include="Services\ReportPathPolicy.cs" />
     <Compile Include="P360Reports\DashboardPerformanceVisita.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

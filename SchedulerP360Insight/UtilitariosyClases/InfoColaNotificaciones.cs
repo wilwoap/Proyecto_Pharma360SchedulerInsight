@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SchedulerP360Insight
 {
-    class InfoColaNotificaciones
+    public class InfoColaNotificaciones
     {
         public int ColaNotificacionId { get; set; }
         public int ReportId { get; set; }
