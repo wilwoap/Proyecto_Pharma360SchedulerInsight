@@ -31,6 +31,13 @@ if ($UpdateLockFile -and ($SkipRestore -or $Target -eq 'Clean')) {
 function Resolve-MSBuild {
     $command = Get-Command msbuild.exe -ErrorAction SilentlyContinue
     if ($null -ne $command) {
+        $amd64Candidate = Join-Path (
+            Split-Path -Parent $command.Source
+        ) 'amd64\MSBuild.exe'
+        if (Test-Path -LiteralPath $amd64Candidate) {
+            return $amd64Candidate
+        }
+
         return $command.Source
     }
 
@@ -39,6 +46,13 @@ function Resolve-MSBuild {
     if (Test-Path -LiteralPath $vsWhere) {
         $candidate = & $vsWhere -latest -products * -requires Microsoft.Component.MSBuild -find 'MSBuild\**\Bin\MSBuild.exe' | Select-Object -First 1
         if ($candidate) {
+            $amd64Candidate = Join-Path (
+                Split-Path -Parent $candidate
+            ) 'amd64\MSBuild.exe'
+            if (Test-Path -LiteralPath $amd64Candidate) {
+                return $amd64Candidate
+            }
+
             return $candidate
         }
     }

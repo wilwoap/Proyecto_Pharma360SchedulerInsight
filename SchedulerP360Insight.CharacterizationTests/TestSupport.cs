@@ -12,22 +12,35 @@ namespace SchedulerP360Insight.CharacterizationTests
             string reportUid = "RVIS",
             string cron = "0 0/5 * * * ?")
         {
-            return new ReportScheduleDefinition
-            {
-                ReportId = 42,
-                ReportUID = reportUid,
-                ReportName = "Reporte sintético",
-                ReportInsight = "Fixture sin datos personales",
-                ReportFileName = "reporte-fixture",
-                ReportType = reportType,
-                ReportPathSource = @"C:\P360\Tests\Source",
-                ReportPathOutput = @"C:\P360\Tests\Output",
-                ReportSchedule = cron,
-                ReportSubjectText = "Reporte [REPORT_NAME]",
-                ReportBodyResourceKey = "HTMLBody_Plantilla_VM_01",
-                ReportSendMail = true,
-                ReportSendMailCopySupervisor = false
-            };
+            return CreateReportWithId(
+                42,
+                reportType,
+                reportUid,
+                cron,
+                "Reporte sintético");
+        }
+
+        public static ReportScheduleDefinition CreateReportWithId(
+            int reportId,
+            string reportType = "html",
+            string reportUid = "RVIS",
+            string cron = "0 0/5 * * * ?",
+            string reportName = "Reporte sintético")
+        {
+            return new ReportScheduleDefinition(
+                reportId,
+                reportUid,
+                reportName,
+                "Fixture sin datos personales",
+                "reporte-fixture",
+                reportType,
+                @"C:\P360\Tests\Source",
+                @"C:\P360\Tests\Output",
+                cron,
+                "Reporte [REPORT_NAME]",
+                "HTMLBody_Plantilla_VM_01",
+                true,
+                false);
         }
 
         public static TException Throws<TException>(Action action)

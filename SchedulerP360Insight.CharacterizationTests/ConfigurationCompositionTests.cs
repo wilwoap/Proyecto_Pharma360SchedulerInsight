@@ -37,6 +37,12 @@ namespace SchedulerP360Insight.CharacterizationTests
             Assert.AreEqual(ParameterProviderMode.Batch, options.ParameterProviderMode);
             Assert.AreEqual(mapsSecret, options.GoogleMapsApiKey);
             Assert.AreEqual(settings[SchedulerOptions.ReportsQuerySetting], options.ReportsQuery);
+            Assert.AreEqual(TimeZoneInfo.Local.Id, options.QuartzTimeZone.Id);
+            Assert.AreEqual(
+                QuartzMisfirePolicy.FireOnceNow,
+                options.QuartzMisfirePolicy);
+            Assert.IsTrue(options.QuartzDisallowConcurrentExecution);
+            Assert.AreEqual(10, options.QuartzMaxConcurrency);
             Assert.IsFalse(options.ToString().Contains(connectionSecret));
             Assert.IsFalse(options.ToString().Contains(mapsSecret));
             StringAssert.Contains(options.ToString(), "[REDACTED]");
@@ -54,6 +60,81 @@ namespace SchedulerP360Insight.CharacterizationTests
                 name => GetValue(CreateAppSettings(), name));
 
             Assert.AreEqual(ParameterProviderMode.Legacy, options.ParameterProviderMode);
+        }
+
+        [TestMethod]
+        public void Options_LoadsExplicitQuartzPolicy()
+        {
+            Dictionary<string, string> environment = CreateEnvironment();
+            environment[SchedulerOptions.QuartzTimeZoneEnvironmentVariable] =
+                TimeZoneInfo.Utc.Id;
+            environment[
+                SchedulerOptions.QuartzMisfirePolicyEnvironmentVariable] =
+                "do_nothing";
+            environment[
+                SchedulerOptions.QuartzDisallowConcurrentExecutionEnvironmentVariable] =
+                "false";
+            environment[
+                SchedulerOptions.QuartzMaxConcurrencyEnvironmentVariable] =
+                "4";
+
+            SchedulerOptions options = SchedulerOptions.Load(
+                name => GetValue(environment, name),
+                name => GetValue(CreateAppSettings(), name));
+
+            Assert.AreEqual(TimeZoneInfo.Utc.Id, options.QuartzTimeZone.Id);
+            Assert.AreEqual(
+                QuartzMisfirePolicy.DoNothing,
+                options.QuartzMisfirePolicy);
+            Assert.IsFalse(options.QuartzDisallowConcurrentExecution);
+            Assert.AreEqual(4, options.QuartzMaxConcurrency);
+        }
+
+        [TestMethod]
+        [DataRow(
+            SchedulerOptions.QuartzMisfirePolicyEnvironmentVariable,
+            "unsupported")]
+        [DataRow(
+            SchedulerOptions.QuartzDisallowConcurrentExecutionEnvironmentVariable,
+            "yes")]
+        [DataRow(
+            SchedulerOptions.QuartzMaxConcurrencyEnvironmentVariable,
+            "65")]
+        public void Options_RejectsInvalidQuartzPolicyWithoutEchoingItsValue(
+            string variableName,
+            string invalidValue)
+        {
+            Dictionary<string, string> environment = CreateEnvironment();
+            environment[variableName] = invalidValue;
+
+            InvalidOperationException error =
+                TestSupport.Throws<InvalidOperationException>(
+                    () => SchedulerOptions.Load(
+                        name => GetValue(environment, name),
+                        name => GetValue(CreateAppSettings(), name)));
+
+            StringAssert.Contains(error.Message, variableName);
+            Assert.IsFalse(error.Message.Contains(invalidValue));
+        }
+
+        [TestMethod]
+        public void Options_RejectsUnknownQuartzTimeZoneWithoutEchoingItsValue()
+        {
+            const string invalidTimeZone = "Synthetic/Unknown/Secret";
+            Dictionary<string, string> environment = CreateEnvironment();
+            environment[SchedulerOptions.QuartzTimeZoneEnvironmentVariable] =
+                invalidTimeZone;
+
+            InvalidOperationException error =
+                TestSupport.Throws<InvalidOperationException>(
+                    () => SchedulerOptions.Load(
+                        name => GetValue(environment, name),
+                        name => GetValue(CreateAppSettings(), name)));
+
+            StringAssert.Contains(
+                error.Message,
+                SchedulerOptions.QuartzTimeZoneEnvironmentVariable);
+            Assert.IsFalse(error.Message.Contains(invalidTimeZone));
         }
 
         [TestMethod]

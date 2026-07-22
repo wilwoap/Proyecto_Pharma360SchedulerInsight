@@ -11,6 +11,12 @@ namespace SchedulerP360Insight.Configuration
         Legacy
     }
 
+    public enum QuartzMisfirePolicy
+    {
+        FireOnceNow,
+        DoNothing
+    }
+
     public sealed class SchedulerOptions
     {
         public const string ConnectionStringEnvironmentVariable =
@@ -27,6 +33,14 @@ namespace SchedulerP360Insight.Configuration
             "P360_SQL_CONNECTION_TIMEOUT_SECONDS";
         public const string SqlCommandTimeoutSecondsEnvironmentVariable =
             "P360_SQL_COMMAND_TIMEOUT_SECONDS";
+        public const string QuartzTimeZoneEnvironmentVariable =
+            "P360_QUARTZ_TIME_ZONE";
+        public const string QuartzMisfirePolicyEnvironmentVariable =
+            "P360_QUARTZ_MISFIRE_POLICY";
+        public const string QuartzDisallowConcurrentExecutionEnvironmentVariable =
+            "P360_QUARTZ_DISALLOW_CONCURRENT_EXECUTION";
+        public const string QuartzMaxConcurrencyEnvironmentVariable =
+            "P360_QUARTZ_MAX_CONCURRENCY";
         public const string ReportsQuerySetting = "P360.Reports.Query";
         public const string NotificationQueueQuerySetting =
             "P360.InfoColaNotificaciones.Query";
@@ -40,7 +54,12 @@ namespace SchedulerP360Insight.Configuration
             TimeSpan? shutdownTimeout = null,
             string healthFilePath = null,
             TimeSpan? sqlConnectionTimeout = null,
-            TimeSpan? sqlCommandTimeout = null)
+            TimeSpan? sqlCommandTimeout = null,
+            TimeZoneInfo quartzTimeZone = null,
+            QuartzMisfirePolicy quartzMisfirePolicy =
+                QuartzMisfirePolicy.FireOnceNow,
+            bool quartzDisallowConcurrentExecution = true,
+            int quartzMaxConcurrency = 10)
         {
             ConnectionString = RequireValue(
                 connectionString,
@@ -75,6 +94,26 @@ namespace SchedulerP360Insight.Configuration
                 1,
                 300,
                 "comando SQL");
+            QuartzTimeZone = quartzTimeZone ?? TimeZoneInfo.Local;
+            if (!Enum.IsDefined(
+                typeof(QuartzMisfirePolicy),
+                quartzMisfirePolicy))
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(quartzMisfirePolicy));
+            }
+
+            QuartzMisfirePolicy = quartzMisfirePolicy;
+            QuartzDisallowConcurrentExecution =
+                quartzDisallowConcurrentExecution;
+            if (quartzMaxConcurrency < 1 || quartzMaxConcurrency > 64)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(quartzMaxConcurrency),
+                    "La concurrencia máxima de Quartz debe estar entre 1 y 64.");
+            }
+
+            QuartzMaxConcurrency = quartzMaxConcurrency;
         }
 
         public string ConnectionString { get; }
@@ -94,6 +133,14 @@ namespace SchedulerP360Insight.Configuration
         public TimeSpan SqlConnectionTimeout { get; }
 
         public TimeSpan SqlCommandTimeout { get; }
+
+        public TimeZoneInfo QuartzTimeZone { get; }
+
+        public QuartzMisfirePolicy QuartzMisfirePolicy { get; }
+
+        public bool QuartzDisallowConcurrentExecution { get; }
+
+        public int QuartzMaxConcurrency { get; }
 
         public static SchedulerOptions Load(
             Func<string, string> readEnvironmentVariable = null,
@@ -123,6 +170,21 @@ namespace SchedulerP360Insight.Configuration
                 defaultSeconds: 30,
                 minimumSeconds: 1,
                 maximumSeconds: 300);
+            TimeZoneInfo quartzTimeZone = ParseQuartzTimeZone(
+                environmentReader(QuartzTimeZoneEnvironmentVariable));
+            QuartzMisfirePolicy quartzMisfirePolicy = ParseQuartzMisfirePolicy(
+                environmentReader(QuartzMisfirePolicyEnvironmentVariable));
+            bool quartzDisallowConcurrentExecution = ParseBoolean(
+                environmentReader(
+                    QuartzDisallowConcurrentExecutionEnvironmentVariable),
+                QuartzDisallowConcurrentExecutionEnvironmentVariable,
+                defaultValue: true);
+            int quartzMaxConcurrency = ParseBoundedInteger(
+                environmentReader(QuartzMaxConcurrencyEnvironmentVariable),
+                QuartzMaxConcurrencyEnvironmentVariable,
+                defaultValue: 10,
+                minimum: 1,
+                maximum: 64);
 
             return new SchedulerOptions(
                 RequireSourceValue(
@@ -142,7 +204,11 @@ namespace SchedulerP360Insight.Configuration
                 shutdownTimeout,
                 environmentReader(HealthFilePathEnvironmentVariable),
                 sqlConnectionTimeout,
-                sqlCommandTimeout);
+                sqlCommandTimeout,
+                quartzTimeZone,
+                quartzMisfirePolicy,
+                quartzDisallowConcurrentExecution,
+                quartzMaxConcurrency);
         }
 
         public override string ToString()
@@ -165,6 +231,12 @@ namespace SchedulerP360Insight.Configuration
                 ", SqlCommandTimeoutSeconds=" +
                 SqlCommandTimeout.TotalSeconds.ToString(
                     CultureInfo.InvariantCulture) +
+                ", QuartzTimeZone=" + QuartzTimeZone.Id +
+                ", QuartzMisfirePolicy=" + QuartzMisfirePolicy +
+                ", QuartzDisallowConcurrentExecution=" +
+                QuartzDisallowConcurrentExecution +
+                ", QuartzMaxConcurrency=" +
+                QuartzMaxConcurrency.ToString(CultureInfo.InvariantCulture) +
                 " }";
         }
 
@@ -240,6 +312,104 @@ namespace SchedulerP360Insight.Configuration
             }
 
             return TimeSpan.FromSeconds(seconds);
+        }
+
+        private static TimeZoneInfo ParseQuartzTimeZone(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return TimeZoneInfo.Local;
+            }
+
+            try
+            {
+                return TimeZoneInfo.FindSystemTimeZoneById(value);
+            }
+            catch (Exception error)
+                when (error is TimeZoneNotFoundException ||
+                      error is InvalidTimeZoneException ||
+                      error is System.Security.SecurityException)
+            {
+                throw new InvalidOperationException(
+                    "La variable de entorno '" +
+                    QuartzTimeZoneEnvironmentVariable +
+                    "' no identifica una zona horaria válida del host.");
+            }
+        }
+
+        private static QuartzMisfirePolicy ParseQuartzMisfirePolicy(
+            string value)
+        {
+            if (string.IsNullOrWhiteSpace(value) ||
+                value.Equals(
+                    "fire_once_now",
+                    StringComparison.OrdinalIgnoreCase))
+            {
+                return QuartzMisfirePolicy.FireOnceNow;
+            }
+
+            if (value.Equals(
+                "do_nothing",
+                StringComparison.OrdinalIgnoreCase))
+            {
+                return QuartzMisfirePolicy.DoNothing;
+            }
+
+            throw new InvalidOperationException(
+                "La variable de entorno '" +
+                QuartzMisfirePolicyEnvironmentVariable +
+                "' sólo admite 'fire_once_now' o 'do_nothing'.");
+        }
+
+        private static bool ParseBoolean(
+            string value,
+            string variableName,
+            bool defaultValue)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return defaultValue;
+            }
+
+            bool parsed;
+            if (!bool.TryParse(value, out parsed))
+            {
+                throw new InvalidOperationException(
+                    "La variable de entorno '" + variableName +
+                    "' sólo admite 'true' o 'false'.");
+            }
+
+            return parsed;
+        }
+
+        private static int ParseBoundedInteger(
+            string value,
+            string variableName,
+            int defaultValue,
+            int minimum,
+            int maximum)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return defaultValue;
+            }
+
+            int parsed;
+            if (!int.TryParse(
+                value,
+                NumberStyles.None,
+                CultureInfo.InvariantCulture,
+                out parsed) ||
+                parsed < minimum ||
+                parsed > maximum)
+            {
+                throw new InvalidOperationException(
+                    "La variable de entorno '" + variableName +
+                    "' debe ser un entero entre " + minimum +
+                    " y " + maximum + ".");
+            }
+
+            return parsed;
         }
 
         private static TimeSpan ValidateTimeout(

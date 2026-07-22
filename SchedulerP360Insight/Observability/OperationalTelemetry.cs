@@ -649,6 +649,7 @@ namespace SchedulerP360Insight.Observability
                 TelemetryOperations.SchedulerRegistration,
                 TelemetryOperations.SchedulerStart,
                 TelemetryOperations.SchedulerShutdown,
+                TelemetryOperations.SchedulerMisfire,
                 TelemetryOperations.JobCrystal,
                 TelemetryOperations.JobDevExpress,
                 TelemetryOperations.JobHtml,
@@ -674,7 +675,12 @@ namespace SchedulerP360Insight.Observability
         private static readonly HashSet<string> KnownGauges =
             new HashSet<string>(StringComparer.Ordinal)
             {
-                "notification_batch_size"
+                "notification_batch_size",
+                "scheduler_definition_rows_rejected",
+                "scheduler_definitions_active",
+                "scheduler_definitions_rejected",
+                "scheduler_max_concurrency",
+                "scheduler_misfires_total"
             };
 
         private readonly object metricsLock = new object();

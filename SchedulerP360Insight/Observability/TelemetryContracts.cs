@@ -24,6 +24,7 @@ namespace SchedulerP360Insight.Observability
         public const string SchedulerRegistration = "scheduler.registration";
         public const string SchedulerStart = "scheduler.start";
         public const string SchedulerShutdown = "scheduler.shutdown";
+        public const string SchedulerMisfire = "scheduler.misfire";
         public const string JobCrystal = "job.crystal";
         public const string JobDevExpress = "job.devexpress";
         public const string JobHtml = "job.html";

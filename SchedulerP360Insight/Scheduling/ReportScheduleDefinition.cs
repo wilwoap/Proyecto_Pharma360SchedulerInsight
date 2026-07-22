@@ -2,18 +2,48 @@ namespace SchedulerP360Insight.Scheduling
 {
     public sealed class ReportScheduleDefinition
     {
-        public int ReportId { get; set; }
-        public string ReportUID { get; set; }
-        public string ReportName { get; set; }
-        public string ReportInsight { get; set; }
-        public string ReportFileName { get; set; }
-        public string ReportType { get; set; }
-        public string ReportPathSource { get; set; }
-        public string ReportPathOutput { get; set; }
-        public string ReportSchedule { get; set; }
-        public string ReportSubjectText { get; set; }
-        public string ReportBodyResourceKey { get; set; }
-        public bool ReportSendMail { get; set; }
-        public bool ReportSendMailCopySupervisor { get; set; }
+        public ReportScheduleDefinition(
+            int reportId,
+            string reportUid,
+            string reportName,
+            string reportInsight,
+            string reportFileName,
+            string reportType,
+            string reportPathSource,
+            string reportPathOutput,
+            string reportSchedule,
+            string reportSubjectText,
+            string reportBodyResourceKey,
+            bool reportSendMail,
+            bool reportSendMailCopySupervisor)
+        {
+            ReportId = reportId;
+            ReportUID = reportUid;
+            ReportName = reportName;
+            ReportInsight = reportInsight;
+            ReportFileName = reportFileName;
+            ReportType = reportType;
+            ReportPathSource = reportPathSource;
+            ReportPathOutput = reportPathOutput;
+            ReportSchedule = reportSchedule;
+            ReportSubjectText = reportSubjectText;
+            ReportBodyResourceKey = reportBodyResourceKey;
+            ReportSendMail = reportSendMail;
+            ReportSendMailCopySupervisor = reportSendMailCopySupervisor;
+        }
+
+        public int ReportId { get; }
+        public string ReportUID { get; }
+        public string ReportName { get; }
+        public string ReportInsight { get; }
+        public string ReportFileName { get; }
+        public string ReportType { get; }
+        public string ReportPathSource { get; }
+        public string ReportPathOutput { get; }
+        public string ReportSchedule { get; }
+        public string ReportSubjectText { get; }
+        public string ReportBodyResourceKey { get; }
+        public bool ReportSendMail { get; }
+        public bool ReportSendMailCopySupervisor { get; }
     }
 }

@@ -266,9 +266,13 @@
     <Compile Include="Scheduling\ComposedJobFactory.cs" />
     <Compile Include="Scheduling\ObservedJob.cs" />
     <Compile Include="Scheduling\QuartzLifecycleAdapters.cs" />
+    <Compile Include="Scheduling\QuartzOperationalTriggerListener.cs" />
+    <Compile Include="Scheduling\QuartzSchedulingPolicy.cs" />
+    <Compile Include="Scheduling\ReportJobExecutionPolicy.cs" />
     <Compile Include="Scheduling\ReportJobFactory.cs" />
     <Compile Include="Scheduling\ReportScheduleDefinition.cs" />
     <Compile Include="Scheduling\ReportScheduleSource.cs" />
+    <Compile Include="Scheduling\ReportScheduleValidation.cs" />
     <Compile Include="Services\NotificationDeliveryAbstractions.cs" />
     <Compile Include="Services\ReportPathPolicy.cs" />
     <Compile Include="P360Reports\DashboardPerformanceVisita.cs">

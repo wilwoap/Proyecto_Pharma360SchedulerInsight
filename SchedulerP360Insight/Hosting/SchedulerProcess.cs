@@ -1,5 +1,6 @@
 using Quartz;
 using Quartz.Impl;
+using Quartz.Impl.Matchers;
 using SchedulerP360Insight.Composition;
 using SchedulerP360Insight.Data;
 using SchedulerP360Insight.Scheduling;
@@ -92,9 +93,17 @@ namespace SchedulerP360Insight.Hosting
             {
                 WriteBanner(runtime);
 
-                ISchedulerFactory schedulerFactory = new StdSchedulerFactory();
+                ISchedulerFactory schedulerFactory = new StdSchedulerFactory(
+                    QuartzSchedulerSettings.CreateProperties(runtime.Options));
                 scheduler = await schedulerFactory.GetScheduler();
                 scheduler.JobFactory = runtime.JobFactory;
+                scheduler.ListenerManager.AddTriggerListener(
+                    new QuartzOperationalTriggerListener(runtime.Telemetry),
+                    GroupMatcher<TriggerKey>.GroupEquals(
+                        ReportJobFactory.SchedulerGroup));
+                runtime.Telemetry.ObserveGauge(
+                    "scheduler_max_concurrency",
+                    runtime.Options.QuartzMaxConcurrency);
 
                 IReportScheduleSource source =
                     new SqlReportScheduleSource(
@@ -104,8 +113,10 @@ namespace SchedulerP360Insight.Hosting
                     new QuartzReportScheduleRegistrar(
                         scheduler,
                         source,
-                        new ReportJobFactory(),
-                        events);
+                        new ReportJobFactory(
+                            QuartzSchedulingPolicy.From(runtime.Options)),
+                        events,
+                        runtime.Telemetry);
                 ISchedulerLifecycle lifecycle =
                     new QuartzSchedulerLifecycle(scheduler);
 

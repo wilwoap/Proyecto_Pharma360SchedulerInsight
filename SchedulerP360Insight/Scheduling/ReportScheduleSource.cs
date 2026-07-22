@@ -22,6 +22,23 @@ namespace SchedulerP360Insight.Scheduling
     {
         public const string OperationName = "report-schedules.load";
 
+        private static readonly string[] RequiredColumns =
+        {
+            "report_id",
+            "report_uid",
+            "report_name",
+            "report_insight",
+            "report_filename",
+            "report_type",
+            "report_path_source",
+            "report_path_output",
+            "report_schedule",
+            "report_subject_text",
+            "report_body_resource_key",
+            "report_send_mail",
+            "report_send_mail_copy_supervisor"
+        };
+
         private readonly SchedulerOptions options;
         private readonly SqlExecutionPolicy policy;
         private readonly IOperationalTelemetry telemetry;
@@ -54,6 +71,7 @@ namespace SchedulerP360Insight.Scheduling
                     cancellationToken.ThrowIfCancellationRequested();
                     List<ReportScheduleDefinition> reports =
                         new List<ReportScheduleDefinition>();
+                    int rejectedCount = 0;
 
                     using (SqlConnection connection = policy.CreateConnection())
                     using (SqlCommand command = policy.CreateCommand(
@@ -66,18 +84,43 @@ namespace SchedulerP360Insight.Scheduling
                             await command.ExecuteReaderAsync(cancellationToken)
                                 .ConfigureAwait(false))
                         {
+                            EnsureRequiredProjection(reader);
                             while (await reader.ReadAsync(cancellationToken)
                                 .ConfigureAwait(false))
                             {
-                                reports.Add(MapReport(reader));
+                                try
+                                {
+                                    reports.Add(MapReport(reader));
+                                }
+                                catch (Exception mappingError)
+                                    when (IsRowMappingError(mappingError))
+                                {
+                                    rejectedCount++;
+                                    telemetry.Write(
+                                        TelemetryLevels.Warning,
+                                        "scheduler.definition.rejected",
+                                        telemetry.ProcessCorrelationId,
+                                        new Dictionary<string, string>
+                                        {
+                                            ["failure_category"] =
+                                                "mapping_error"
+                                        },
+                                        mappingError);
+                                }
                             }
                         }
                     }
+
+                    telemetry.ObserveGauge(
+                        "scheduler_definition_rows_rejected",
+                        rejectedCount);
 
                     operation.Complete(
                         fields: new Dictionary<string, string>
                         {
                             ["definitions_count"] = reports.Count.ToString(
+                                CultureInfo.InvariantCulture),
+                            ["definitions_rejected"] = rejectedCount.ToString(
                                 CultureInfo.InvariantCulture)
                         });
                     return new ReadOnlyCollection<ReportScheduleDefinition>(
@@ -122,32 +165,52 @@ namespace SchedulerP360Insight.Scheduling
 
         internal static ReportScheduleDefinition MapReport(IDataRecord reader)
         {
-            return new ReportScheduleDefinition
-            {
-                ReportId = (int)Convert.ToInt64(
+            return new ReportScheduleDefinition(
+                (int)Convert.ToInt64(
                     reader.GetValue(reader.GetOrdinal("report_id"))),
-                ReportUID = reader.GetString(reader.GetOrdinal("report_uid")),
-                ReportName = reader.GetString(reader.GetOrdinal("report_name")),
-                ReportInsight = reader.GetString(
+                reader.GetString(reader.GetOrdinal("report_uid")),
+                reader.GetString(reader.GetOrdinal("report_name")),
+                reader.GetString(
                     reader.GetOrdinal("report_insight")),
-                ReportFileName = reader.GetString(
+                reader.GetString(
                     reader.GetOrdinal("report_filename")),
-                ReportType = reader.GetString(reader.GetOrdinal("report_type")),
-                ReportPathSource = reader.GetString(
+                reader.GetString(reader.GetOrdinal("report_type")),
+                reader.GetString(
                     reader.GetOrdinal("report_path_source")),
-                ReportPathOutput = reader.GetString(
+                reader.GetString(
                     reader.GetOrdinal("report_path_output")),
-                ReportSchedule = reader.GetString(
+                reader.GetString(
                     reader.GetOrdinal("report_schedule")),
-                ReportSubjectText = reader.GetString(
+                reader.GetString(
                     reader.GetOrdinal("report_subject_text")),
-                ReportBodyResourceKey = reader.GetString(
+                reader.GetString(
                     reader.GetOrdinal("report_body_resource_key")),
-                ReportSendMail = reader.GetBoolean(
+                reader.GetBoolean(
                     reader.GetOrdinal("report_send_mail")),
-                ReportSendMailCopySupervisor = reader.GetBoolean(
-                    reader.GetOrdinal("report_send_mail_copy_supervisor"))
-            };
+                reader.GetBoolean(
+                    reader.GetOrdinal("report_send_mail_copy_supervisor")));
+        }
+
+        internal static void EnsureRequiredProjection(IDataRecord reader)
+        {
+            if (reader == null)
+            {
+                throw new ArgumentNullException(nameof(reader));
+            }
+
+            foreach (string column in RequiredColumns)
+            {
+                reader.GetOrdinal(column);
+            }
+        }
+
+        private static bool IsRowMappingError(Exception error)
+        {
+            return error is InvalidCastException ||
+                error is FormatException ||
+                error is OverflowException ||
+                error is IndexOutOfRangeException ||
+                error is System.Data.SqlTypes.SqlNullValueException;
         }
     }
 }

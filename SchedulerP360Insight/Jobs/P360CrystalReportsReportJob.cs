@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using SchedulerP360Insight.Configuration;
 using SchedulerP360Insight.Modulos;
 using SchedulerP360Insight.Observability;
+using SchedulerP360Insight.Scheduling;
 
 namespace ReportGenerator
 {
@@ -78,8 +79,8 @@ namespace ReportGenerator
                     bool reportSendMail = dataMap.GetBoolean("reportSendMail");
                     bool reportSendMailCopySupervisor = dataMap.GetBoolean("reportSendMailCopySupervisor");
                     // obtain next job execution time
-                    DateTimeOffset? nextFireTime = context.Trigger.GetNextFireTimeUtc();
-                    DateTimeOffset nextFireTimeLocal = nextFireTime.Value.ToLocalTime();
+                    string nextFireTimeDescription =
+                        ReportJobExecutionPolicy.DescribeNextFireTime(context);
                     Console.WriteLine($"Inicio de job Crystal. report_uid='{reportUID}'.");
                     oModuleCapaAccesoDatos.RegistraLogConeccionyAccion(currentUsername, $"Inicio de job Crystal. report_uid='{reportUID}'.");
                     DateTime now = DateTime.Now;
@@ -87,7 +88,7 @@ namespace ReportGenerator
                     Console.WriteLine(accion);
                     oModuleCapaAccesoDatos.RegistraLogConeccionyAccion(currentUsername, accion);
                     Console.ForegroundColor = ConsoleColor.DarkBlue;
-                    accion = $"Job Crystal iniciado en '{now}'. Próxima ejecución: '{nextFireTimeLocal}'.";
+                    accion = $"Job Crystal iniciado en '{now}'. Próxima ejecución: '{nextFireTimeDescription}'.";
                     Console.WriteLine(accion);
                     Console.ResetColor();
                     oModuleCapaAccesoDatos.RegistraLogConeccionyAccion(currentUsername, accion);
@@ -207,7 +208,7 @@ namespace ReportGenerator
                         ex.GetType().Name;
                     oModuleCapaAccesoDatos.RegistraLogConeccionyAccion(currentUsername, accion);
                     Console.Error.WriteLine(accion);
-                    throw new JobExecutionException(ex);
+                    throw ReportJobExecutionPolicy.CreateFailure(ex);
                 }
             });
         }

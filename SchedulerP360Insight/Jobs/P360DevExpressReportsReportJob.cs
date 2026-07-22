@@ -8,6 +8,7 @@ using SchedulerP360Insight.Configuration;
 using SchedulerP360Insight.Modulos;
 using SchedulerP360Insight.Observability;
 using SchedulerP360Insight.P360Reports;
+using SchedulerP360Insight.Scheduling;
 
 namespace ReportGenerator
 {
@@ -78,8 +79,8 @@ namespace ReportGenerator
                     bool reportSendMailCopySupervisor = dataMap.GetBoolean("reportSendMailCopySupervisor");
 
                     // Obtener la próxima ejecución y loguear el inicio
-                    DateTimeOffset? nextFireTime = context.Trigger.GetNextFireTimeUtc();
-                    DateTimeOffset nextFireTimeLocal = nextFireTime.Value.ToLocalTime();
+                    string nextFireTimeDescription =
+                        ReportJobExecutionPolicy.DescribeNextFireTime(context);
                     Console.WriteLine($"Inicio de job DevExpress. report_uid='{reportUID}'.");
                     oModuleCapaAccesoDatos.RegistraLogConeccionyAccion(currentUsername, $"Inicio de job DevExpress. report_uid='{reportUID}'.");
 
@@ -89,7 +90,7 @@ namespace ReportGenerator
                     oModuleCapaAccesoDatos.RegistraLogConeccionyAccion(currentUsername, accion);
 
                     Console.ForegroundColor = ConsoleColor.DarkBlue;
-                    accion = $"Job DevExpress iniciado en '{now}'. Próxima ejecución: '{nextFireTimeLocal}'.";
+                    accion = $"Job DevExpress iniciado en '{now}'. Próxima ejecución: '{nextFireTimeDescription}'.";
                     Console.WriteLine(accion);
                     Console.ResetColor();
                     oModuleCapaAccesoDatos.RegistraLogConeccionyAccion(currentUsername, accion);
@@ -253,7 +254,7 @@ namespace ReportGenerator
                         ex.GetType().Name;
                     oModuleCapaAccesoDatos.RegistraLogConeccionyAccion(currentUsername, accion);
                     Console.Error.WriteLine(accion);
-                    throw new JobExecutionException(ex);
+                    throw ReportJobExecutionPolicy.CreateFailure(ex);
                 }
             });
         }
