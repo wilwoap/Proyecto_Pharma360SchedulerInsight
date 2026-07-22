@@ -11,7 +11,7 @@ Cada archivo define un incremento revisable. Los números expresan dependencia l
 | PR-04-DEPENDENCIAS.md | Validado |
 | PR-05-CONFIGURACION-Y-COMPOSICION.md | Validado |
 | PR-06-CICLO-DE-VIDA-DE-SERVICIO.md | Validado; adaptador de servicio pendiente de D-006 |
-| PR-07-OBSERVABILIDAD-Y-SALUD.md | Propuesto |
+| PR-07-OBSERVABILIDAD-Y-SALUD.md | Núcleo neutral validado; plataforma/alertas pendientes de D-010 |
 | PR-08-ACCESO-A-DATOS-RESILIENTE.md | Propuesto |
 | PR-09-QUARTZ-ENDURECIDO.md | Propuesto |
 | PR-10-COLA-IDEMPOTENTE.md | Bloqueado por D-003 |

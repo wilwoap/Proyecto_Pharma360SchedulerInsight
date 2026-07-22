@@ -19,6 +19,7 @@
 | D-013 | Soporte del OS de producción | Pendiente | Inventario de edición/build/ESU o migración |
 | D-014 | Refresh de parámetros del scheduler | Aceptada técnicamente 2026-07-22 | Snapshot inmutable al arrancar; refresh mediante reinicio controlado; PR-05 |
 | D-015 | Presupuesto técnico de apagado | Aceptada técnicamente 2026-07-22 | 30 segundos por defecto, configurable entre 1 y 900; fallback `Shutdown(false)` y código 4; PR-06 |
+| D-016 | Puente neutral de observabilidad | Aceptada técnicamente 2026-07-22 | JSON Lines, métricas acotadas y health JSON opcional; no cierra selección/retención/alertas de D-010/D-011; PR-07 |
 
 “Propuesta” no autoriza implementación si cambia comportamiento o infraestructura.
 

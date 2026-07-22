@@ -36,7 +36,7 @@ La ejecución normal restaura exclusivamente las versiones fijadas en los `packa
 
 `NuGet.Config` limpia las fuentes heredadas de la estación y permite sólo nuget.org. Los ensamblados licenciados de SAP Crystal Reports y DevExpress no se restauran mediante NuGet: deben existir en las rutas de instalación del proveedor indicadas en los prerrequisitos.
 
-El script siempre fija Platform=x64, valida que no aumenten las advertencias heredadas, ejecuta al menos 45 pruebas de caracterización y muestra el SHA-256 del ejecutable producido.
+El script siempre fija Platform=x64, valida que no aumenten las advertencias heredadas, ejecuta al menos 56 pruebas de caracterización y muestra el SHA-256 del ejecutable producido.
 
 ## Baseline de advertencias
 

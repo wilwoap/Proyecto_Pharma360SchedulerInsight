@@ -56,6 +56,8 @@ La parada se solicita con `Ctrl+C` o mediante la señal del host. El proceso esp
 
 ## Telemetría mínima
 
+PR-07 implementa eventos JSON permitidos, correlación, métricas en memoria y health opcional en `P360_HEALTH_FILE_PATH`. El contrato y el dashboard neutral están en `17_OBSERVABILIDAD_Y_SALUD.md`; D-010 todavía debe seleccionar y operar el colector corporativo.
+
 Logs:
 
 - arranque/parada/configuración válida;

@@ -1,6 +1,6 @@
 # Arnés de caracterización
 
-Estado: implementado en PR-02 y ampliado/validado localmente hasta PR-06 el 2026-07-22.
+Estado: implementado en PR-02 y ampliado/validado localmente hasta PR-07 el 2026-07-22.
 
 ## Decisión de framework
 
@@ -24,7 +24,7 @@ Para desarrollo con paquetes ya restaurados:
 
 SkipTests existe sólo para diagnóstico del build. No debe usarse como evidencia de un PR.
 
-El gate exige al menos 45 pruebas, un timeout global de 60 segundos y genera TRX bajo artifacts/test-results. Esa carpeta no se versiona.
+El gate exige al menos 56 pruebas, un timeout global de 60 segundos y genera TRX bajo artifacts/test-results. Esa carpeta no se versiona.
 
 ## Fronteras introducidas
 
@@ -35,6 +35,8 @@ El gate exige al menos 45 pruebas, un timeout global de 60 segundos y genera TRX
 - ReportPathPolicy define una ruta hija y rechaza traversal o nombres absolutos.
 - SchedulerApplication separa registro, inicio, espera y apagado mediante fronteras simulables.
 - ConsoleApplicationLifetime convierte señales en cancelación idempotente sin leer input.
+- OperationalTelemetry concentra eventos permitidos, métricas acotadas y salud sin proveedor externo.
+- TelemetryContext propaga correlación padre/hija a través de tareas asíncronas.
 - Los constructores predeterminados conservan los adaptadores SQL y SMTP actuales.
 
 La aplicación usa la fábrica de jobs y las fronteras de correo. La política de rutas se conectará al pipeline completo en PR-11, donde podrá aplicarse a todos los renderizadores con rollback conjunto.
@@ -62,6 +64,9 @@ La aplicación usa la fábrica de jobs y las fronteras de correo. La política d
 | Excepciones | BusinessP360Exception mapea mensajes sin escribir en SQL desde el constructor |
 | Ciclo de vida | Orden de inicio/parada, cancelación, timeout, fallback y códigos de salida sin dependencias externas |
 | Host no interactivo | Escaneo de producción sin ReadKey, ReadLine, MessageBox ni Environment.Exit |
+| Observabilidad | JSON permitido, redacción, correlación, métricas, fallo de audit y cardinalidad acotada |
+| Salud | Transiciones integradas, heartbeat, reemplazo atómico y ausencia de temporales |
+| SMTP | Fallo observado como delivery/notificación fallida sin confirmar la cola ni exponer destinatario/detalle |
 
 ## Deudas observadas, no corregidas en este PR
 
@@ -77,7 +82,7 @@ Estas observaciones son intencionales: PR-02 impide que cambien accidentalmente.
 
 Todas las identidades, correos, teléfonos, rutas y contenido de prueba son sintéticos. Los dominios usan example.test. El arnés no lee P360_CONNECTION_PRINCIPAL, no abre SQL y no envía correo. La prueba de Quartz usa exclusivamente RAMJobStore en proceso y no abre servicios externos.
 
-Los cinco .rpt sólo se leen como bytes para calcular SHA-256. No se cargan con Crystal, no se convierten y no se reescriben.
+Los cinco .rpt sólo se leen como bytes para calcular SHA-256. No se cargan con Crystal, no se convierten y no se reescriben. Los tres activos de texto DevExpress se normalizan a UTF-8/LF antes del hash para que un checkout CRLF o LF no produzca falsos positivos; los binarios Crystal continúan comparándose byte a byte.
 
 ## Actualización del golden master
 

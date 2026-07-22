@@ -12,12 +12,15 @@ El repositorio, el binario y su archivo .config no contienen credenciales. Los v
 | P360_GOOGLE_MAPS_API_KEY | No | Imagen estática del mapa en correos |
 | P360_PARAMETER_PROVIDER_MODE | No | `batch` por defecto; `legacy` sólo para rollback temporal |
 | P360_SHUTDOWN_TIMEOUT_SECONDS | No | Presupuesto de apagado de 1–900 segundos; 30 por defecto |
+| P360_HEALTH_FILE_PATH | No | Ruta absoluta `.json` para liveness/readiness; deshabilitado por defecto |
 
 Si no existe P360_GOOGLE_MAPS_API_KEY, el correo incluye únicamente un enlace a la ubicación. La aplicación nunca crea variables, imprime sus valores ni incorpora una conexión predeterminada.
 
 `P360_PARAMETER_PROVIDER_MODE` no es sensible. El valor normal es `batch`, incluso cuando la variable no existe. `legacy` conserva temporalmente la lectura histórica de parámetros, cacheada al arrancar; cualquier otro valor detiene el proceso antes de iniciar Quartz.
 
 `P360_SHUTDOWN_TIMEOUT_SECONDS` tampoco es sensible. Debe ser un entero decimal entre 1 y 900. El presupuesto incluye `Standby` y `Shutdown(true)`; al agotarse se solicita un apagado sin espera y el proceso devuelve código 4.
+
+`P360_HEALTH_FILE_PATH` no es sensible, pero su valor no se imprime. Si se configura, el directorio debe existir y la identidad del proceso debe poder crear/reemplazar el archivo. El snapshot se actualiza atómicamente cada 15 segundos y en cambios de estado. Si no existe la variable, sólo se desactiva el archivo; los eventos estructurados permanecen en stdout.
 
 ## Desarrollo local
 
@@ -27,6 +30,7 @@ Obtener los valores desde el almacén autorizado y configurarlos sólo para la s
     $env:P360_GOOGLE_MAPS_API_KEY = "<valor obtenido del almacén autorizado>"
     $env:P360_PARAMETER_PROVIDER_MODE = "batch"
     $env:P360_SHUTDOWN_TIMEOUT_SECONDS = "30"
+    $env:P360_HEALTH_FILE_PATH = "D:\Pharma360\Scheduler\state\health.json"
 
 No guardar esos comandos con valores reales en scripts, historial de terminal, perfiles, capturas o documentación.
 
