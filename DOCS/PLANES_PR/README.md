@@ -4,10 +4,10 @@ Cada archivo define un incremento revisable. Los números expresan dependencia l
 
 | Ficha | Estado inicial |
 |---|---|
-| GATE-00-SANEAMIENTO-PRECOMMIT.md | Obligatorio antes del primer commit |
-| PR-01-BUILD-REPRODUCIBLE-X64.md | Propuesto |
-| PR-02-PRUEBAS-DE-CARACTERIZACION.md | Propuesto |
-| PR-03-SDK-PACKAGEREFERENCE-NET48.md | Propuesto |
+| GATE-00-SANEAMIENTO-PRECOMMIT.md | Completado |
+| PR-01-BUILD-REPRODUCIBLE-X64.md | Validado |
+| PR-02-PRUEBAS-DE-CARACTERIZACION.md | Validado |
+| PR-03-SDK-PACKAGEREFERENCE-NET48.md | Validado |
 | PR-04-DEPENDENCIAS.md | Propuesto |
 | PR-05-CONFIGURACION-Y-COMPOSICION.md | Propuesto |
 | PR-06-CICLO-DE-VIDA-DE-SERVICIO.md | Propuesto |

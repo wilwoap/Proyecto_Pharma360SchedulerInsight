@@ -1,6 +1,6 @@
 # Modernización de Scheduler P360 Insight
 
-Estado del expediente: valoración, Gate 0 y PR-01 completados. PR-02 validado localmente el 2026-07-21.
+Estado del expediente: valoración, Gate 0 y PR-01 completados. PR-02 y PR-03 validados; PR-04 es el siguiente incremento.
 
 Este directorio es la fuente de verdad del programa de modernización. El objetivo es conservar el comportamiento funcional mientras se reduce, mediante cambios pequeños y reversibles, el riesgo de seguridad, operación y mantenimiento.
 
@@ -19,8 +19,9 @@ Este directorio es la fuente de verdad del programa de modernización. El objeti
 11. [10_CONFIGURACION_DE_ENTORNO.md](10_CONFIGURACION_DE_ENTORNO.md): variables requeridas y operación segura.
 12. [11_BUILD_Y_RUNNER.md](11_BUILD_Y_RUNNER.md): build canónico x64 y preparación del runner Windows.
 13. [12_ARNES_DE_CARACTERIZACION.md](12_ARNES_DE_CARACTERIZACION.md): pruebas aisladas, fixtures y deudas observadas.
-14. [GUIA_DE_TRABAJO_POR_PR.md](GUIA_DE_TRABAJO_POR_PR.md): instrucciones para desarrollar y revisar cada cambio.
-15. [PLANES_PR/README.md](PLANES_PR/README.md): índice de las fichas de implementación.
+14. [13_SDK_STYLE_Y_PACKAGEREFERENCE.md](13_SDK_STYLE_Y_PACKAGEREFERENCE.md): formato SDK, restauración bloqueada y compatibilidad del output.
+15. [GUIA_DE_TRABAJO_POR_PR.md](GUIA_DE_TRABAJO_POR_PR.md): instrucciones para desarrollar y revisar cada cambio.
+16. [PLANES_PR/README.md](PLANES_PR/README.md): índice de las fichas de implementación.
 
 ## Principios no negociables
 

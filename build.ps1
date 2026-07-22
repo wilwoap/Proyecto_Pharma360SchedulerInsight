@@ -8,6 +8,8 @@ param(
 
     [switch]$SkipRestore,
 
+    [switch]$UpdateLockFile,
+
     [switch]$SkipTests
 )
 
@@ -21,6 +23,10 @@ $testBaselinePath = Join-Path $repositoryRoot 'eng\test-baseline.json'
 $artifactPath = Join-Path $repositoryRoot "SchedulerP360Insight\bin\x64\$Configuration\SchedulerP360Insight.exe"
 $testArtifactPath = Join-Path $repositoryRoot "SchedulerP360Insight.CharacterizationTests\bin\x64\$Configuration\net48\SchedulerP360Insight.CharacterizationTests.exe"
 $testResultsPath = Join-Path $repositoryRoot 'artifacts\test-results'
+
+if ($UpdateLockFile -and ($SkipRestore -or $Target -eq 'Clean')) {
+    throw '-UpdateLockFile requiere una restauracion activa y un objetivo distinto de Clean.'
+}
 
 function Resolve-MSBuild {
     $command = Get-Command msbuild.exe -ErrorAction SilentlyContinue
@@ -76,9 +82,11 @@ function Assert-WarningBaseline {
     $baseline = Get-Content -LiteralPath $baselinePath -Raw | ConvertFrom-Json
     $records = foreach ($line in ($BuildOutput -split '[\r\n]+')) {
         if ($line -match '(?i)\bwarning\s+([A-Z]{2,}[0-9]+)\s*:') {
+            $normalizedIdentity =
+                ($line -replace '\s+\[[^\]]+\]\s*$', '').Trim()
             [PSCustomObject]@{
                 Code = $Matches[1].ToUpperInvariant()
-                Identity = $line.Trim()
+                Identity = $normalizedIdentity
             }
         }
     }
@@ -117,9 +125,19 @@ if (-not $SkipRestore -and $Target -ne 'Clean') {
         '/m',
         '/nologo',
         '/verbosity:minimal',
-        '/p:Platform=x64',
-        '/p:RestorePackagesConfig=true'
+        '/p:Platform=x64'
     )
+
+    if ($UpdateLockFile) {
+        $restoreArguments += @(
+            '/p:RestoreLockedMode=false',
+            '/p:ForceEvaluate=true'
+        )
+    }
+    else {
+        $restoreArguments += '/p:RestoreLockedMode=true'
+    }
+
     $restoreOutput = Invoke-MSBuildStep -Executable $msbuildPath -Arguments $restoreArguments -Capture
 }
 
@@ -130,8 +148,7 @@ $buildArguments = @(
     '/nologo',
     '/verbosity:minimal',
     "/p:Configuration=$Configuration",
-    '/p:Platform=x64',
-    '/p:RestorePackagesConfig=true'
+    '/p:Platform=x64'
 )
 $buildOutput = Invoke-MSBuildStep -Executable $msbuildPath -Arguments $buildArguments -Capture
 

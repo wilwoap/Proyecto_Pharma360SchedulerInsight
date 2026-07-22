@@ -1,6 +1,6 @@
 # Build reproducible y runner Windows x64
 
-Estado: implementado localmente en PR-01; pendiente validar el primer job en el runner autorizado.
+Estado: build implementado en PR-01 y restauración bloqueada validada localmente en PR-03; pendiente validar el primer job en el runner autorizado.
 
 ## Plataforma soportada
 
@@ -27,6 +27,12 @@ Desde la raíz del repositorio:
 Para repetir un build con paquetes ya restaurados:
 
     .\build.ps1 -Configuration Release -Target Rebuild -SkipRestore
+
+La ejecución normal restaura exclusivamente las versiones fijadas en los `packages.lock.json`. Cuando una actualización de dependencias esté autorizada, se regeneran los locks de forma explícita:
+
+    .\build.ps1 -Configuration Release -Target Rebuild -UpdateLockFile
+
+`NuGet.Config` limpia las fuentes heredadas de la estación y permite sólo nuget.org. Los ensamblados licenciados de SAP Crystal Reports y DevExpress no se restauran mediante NuGet: deben existir en las rutas de instalación del proveedor indicadas en los prerrequisitos.
 
 El script siempre fija Platform=x64, valida que no aumenten las advertencias heredadas, ejecuta al menos 22 pruebas de caracterización y muestra el SHA-256 del ejecutable producido.
 
@@ -55,3 +61,11 @@ El job usa permisos de solo lectura, verifica higiene del repositorio y ejecuta 
 El archivo esperado es SchedulerP360Insight/bin/x64/Release/SchedulerP360Insight.exe. Su hash se registra como evidencia de cada ejecución, pero no se exige igualdad binaria entre máquinas hasta confirmar que todas las herramientas propietarias emiten metadatos deterministas.
 
 Las carpetas bin, obj, packages y publish permanecen fuera de Git.
+
+## Comparación durante cambios de build
+
+Para comparar un build de referencia con uno candidato:
+
+    .\eng\compare-build-outputs.ps1 -BaselineDirectory <salida-base> -CandidateDirectory <salida-candidata>
+
+El control exige el mismo inventario, DLL idénticos, configuración XML equivalente y el mismo conjunto de dependencias en el manifiesto. El ejecutable y los artefactos ClickOnce no se comparan por hash porque incorporan metadatos dependientes de la ruta y de la ejecución.
