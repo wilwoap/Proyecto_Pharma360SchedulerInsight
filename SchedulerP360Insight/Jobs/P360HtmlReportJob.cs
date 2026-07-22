@@ -94,6 +94,7 @@ namespace ReportGenerator
                     IReadOnlyList<InfoColaNotificaciones> p360Notificaciones =
                         await utilitarios.GetInfoColaNotificacionesAsync(
                             reportId,
+                            reportSendMail,
                             context.CancellationToken);
                     TelemetryContext.ObserveNotificationBatch(
                         p360Notificaciones.Count);
@@ -128,6 +129,9 @@ namespace ReportGenerator
                                 }
                                 catch (Exception notificationError)
                                 {
+                                    await utilitarios.RecordNotificationFailureAsync(
+                                        p360Notificacion,
+                                        notificationError);
                                     notification.Fail(notificationError);
                                     throw;
                                 }

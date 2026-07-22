@@ -3,6 +3,7 @@ using SchedulerP360Insight.UtilitariosyClases;
 using System;
 using System.Collections.Generic;
 using System.Net.Mail;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SchedulerP360Insight.CharacterizationTests
@@ -14,6 +15,7 @@ namespace SchedulerP360Insight.CharacterizationTests
         public string LastSubject { get; private set; }
         public string LastBody { get; private set; }
         public string LastRecipient { get; private set; }
+        public string LastNotificationKey { get; private set; }
 
         public Task SendAsync(MailMessage message)
         {
@@ -23,6 +25,8 @@ namespace SchedulerP360Insight.CharacterizationTests
             LastRecipient = message.To.Count == 0
                 ? null
                 : message.To[0].Address;
+            LastNotificationKey =
+                message.Headers["X-P360-Notification-Key"];
 
             if (Failure != null)
             {
@@ -37,10 +41,18 @@ namespace SchedulerP360Insight.CharacterizationTests
         INotificationDeliveryStore
     {
         public bool ThrowTimeoutWhenReadingContacts { get; set; }
+        public bool PrepareDeliveryResult { get; set; } = true;
         public bool MarkSentResult { get; set; } = true;
+        public Exception LogFailure { get; set; }
+        public NotificationFailureDisposition FailureDisposition { get; set; } =
+            NotificationFailureDisposition.RetryScheduled;
         public List<DatosContactosNotificaciones> AdditionalContacts { get; } =
             new List<DatosContactosNotificaciones>();
+        public List<int> PreparedNotificationIds { get; } = new List<int>();
         public List<int> MarkedNotificationIds { get; } = new List<int>();
+        public List<int> FailedNotificationIds { get; } = new List<int>();
+        public List<Exception> RecordedFailures { get; } =
+            new List<Exception>();
         public List<string> LogEntries { get; } = new List<string>();
 
         public List<DatosContactosNotificaciones> GetAdditionalContacts(
@@ -55,14 +67,42 @@ namespace SchedulerP360Insight.CharacterizationTests
             return AdditionalContacts;
         }
 
-        public bool MarkSent(int notificationId)
+        public Task<bool> PrepareDeliveryAsync(
+            InfoColaNotificaciones notification,
+            CancellationToken cancellationToken)
         {
-            MarkedNotificationIds.Add(notificationId);
-            return MarkSentResult;
+            cancellationToken.ThrowIfCancellationRequested();
+            PreparedNotificationIds.Add(notification.ColaNotificacionId);
+            return Task.FromResult(PrepareDeliveryResult);
+        }
+
+        public Task<bool> MarkSentAsync(
+            InfoColaNotificaciones notification,
+            CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            MarkedNotificationIds.Add(notification.ColaNotificacionId);
+            return Task.FromResult(MarkSentResult);
+        }
+
+        public Task<NotificationFailureDisposition> RecordFailureAsync(
+            InfoColaNotificaciones notification,
+            Exception error,
+            CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            FailedNotificationIds.Add(notification.ColaNotificacionId);
+            RecordedFailures.Add(error);
+            return Task.FromResult(FailureDisposition);
         }
 
         public void Log(string message)
         {
+            if (LogFailure != null)
+            {
+                throw LogFailure;
+            }
+
             LogEntries.Add(message);
         }
     }

@@ -82,6 +82,26 @@ namespace SchedulerP360Insight.Observability
                 Math.Max(0, count));
         }
 
+        public static void Write(
+            string level,
+            string eventName,
+            IReadOnlyDictionary<string, string> fields = null,
+            Exception exception = null)
+        {
+            ContextFrame frame = CurrentFrame.Value;
+            if (frame == null)
+            {
+                return;
+            }
+
+            frame.Telemetry.Write(
+                level,
+                eventName,
+                frame.CorrelationId,
+                AddParent(fields, frame.ParentCorrelationId),
+                exception);
+        }
+
         private static IReadOnlyDictionary<string, string> AddParent(
             IReadOnlyDictionary<string, string> fields,
             string parentCorrelationId)

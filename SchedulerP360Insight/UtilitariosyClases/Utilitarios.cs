@@ -89,9 +89,13 @@ namespace SchedulerP360Insight
             oModuleCapaAccesoDatos = dataAccess ??
                 throw new ArgumentNullException(nameof(dataAccess));
             this.emailTransport = emailTransport ?? new SmtpEmailTransport(labConstants);
-            this.notificationDeliveryStore = notificationDeliveryStore ??
-                new SqlNotificationDeliveryStore(oModuleCapaAccesoDatos, currentUsername);
             this.notificationQueueRepository = notificationQueueRepository;
+            this.notificationDeliveryStore = notificationDeliveryStore ??
+                new SqlNotificationDeliveryStore(
+                    oModuleCapaAccesoDatos,
+                    currentUsername,
+                    GetSchedulerOptions,
+                    GetNotificationQueueRepository);
         }
         /// <summary>
         /// Configura la conexión de base de datos para todas las tablas en un documento de reporte, registrando las acciones y errores.
@@ -208,9 +212,43 @@ namespace SchedulerP360Insight
                 int reportId,
                 CancellationToken cancellationToken)
         {
+            return GetInfoColaNotificacionesAsync(
+                reportId,
+                deliveryEnabled: true,
+                cancellationToken);
+        }
+
+        public Task<IReadOnlyList<InfoColaNotificaciones>>
+            GetInfoColaNotificacionesAsync(
+                int reportId,
+                bool deliveryEnabled,
+                CancellationToken cancellationToken)
+        {
             INotificationQueueRepository repository =
                 GetNotificationQueueRepository();
-            return repository.LoadPendingAsync(reportId, cancellationToken);
+            SchedulerOptions options = GetSchedulerOptions();
+            bool durableReport =
+                options.IsDurableNotificationReport(reportId);
+            if (!deliveryEnabled &&
+                durableReport)
+            {
+                return Task.FromResult<IReadOnlyList<InfoColaNotificaciones>>(
+                    Array.Empty<InfoColaNotificaciones>());
+            }
+
+            return durableReport
+                ? repository.ClaimPendingAsync(
+                    reportId,
+                    NotificationQueueWorkerIdentity.Current,
+                    cancellationToken)
+                : repository.LoadPendingAsync(reportId, cancellationToken);
+        }
+
+        public Task RecordNotificationFailureAsync(
+            InfoColaNotificaciones notification,
+            Exception error)
+        {
+            return RecordFailureSafelyAsync(notification, error);
         }
 
         private INotificationQueueRepository GetNotificationQueueRepository()
@@ -907,24 +945,39 @@ namespace SchedulerP360Insight
         /// </remarks>
         public async Task SendReportbyEmailWithAttachmentAsync(string attachmentPath, string emailSubject, string emailBodyKey, InfoColaNotificaciones p360notificacion, Boolean reportSendMailCopySupervisor)
         {
+            if (p360notificacion == null)
+            {
+                throw new ArgumentNullException(nameof(p360notificacion));
+            }
             if (string.IsNullOrEmpty(attachmentPath))
             {
-                throw new ArgumentNullException(nameof(attachmentPath));
+                ArgumentNullException error =
+                    new ArgumentNullException(nameof(attachmentPath));
+                await RecordFailureSafelyAsync(p360notificacion, error);
+                throw error;
             }
             if (string.IsNullOrEmpty(p360notificacion.EmailColab))
             {
-                throw new ArgumentNullException(nameof(p360notificacion.EmailColab));
+                ArgumentNullException error =
+                    new ArgumentNullException(nameof(p360notificacion.EmailColab));
+                await RecordFailureSafelyAsync(p360notificacion, error);
+                throw error;
             }
             if (!IsValidEmail(p360notificacion.EmailColab))
             {
-                throw new ArgumentNullException(nameof(p360notificacion.EmailColab));
+                ArgumentException error = new ArgumentException(
+                    "El destinatario no tiene un formato valido.",
+                    nameof(p360notificacion.EmailColab));
+                await RecordFailureSafelyAsync(p360notificacion, error);
+                throw error;
             }
-            int colaNotificacionId = 0;
             StringBuilder destinatariosInfo = new StringBuilder();
             string emailSubjectEmail;
+            bool smtpAccepted = false;
+            bool deliveryConfirmed = false;
             try
             {
-                colaNotificacionId = p360notificacion.ColaNotificacionId;
+                await EnsureDeliveryLeaseAsync(p360notificacion);
                 emailSubjectEmail = emailSubject.Replace("[COLABORADOR_RECIBE]", p360notificacion.NameColab);
                 emailSubjectEmail = emailSubjectEmail.Replace("[REPORT_NAME]", p360notificacion.ReportName);
                 // Configure email settings and create message
@@ -961,58 +1014,77 @@ namespace SchedulerP360Insight
                     message.IsBodyHtml = true;
                     message.Subject = emailSubjectEmail;
                     message.Body = ConstruirCuerpoEmailPlantillaHTML(p360notificacion, labConstants, emailBodyKey);
+                    ApplyDeliveryIdentity(message, p360notificacion);
                     // add attachment
                     message.Attachments.Add(attachment);
                     await SendEmailObservedAsync(message);
+                    smtpAccepted = true;
                     accion = "Notificación con adjunto enviada por SMTP.";
                     Console.WriteLine(accion);
-                    notificationDeliveryStore.Log(accion);
                 }
                 // Actualizacion de bandera de envio de notificacion
-                ConfirmNotificationSent(colaNotificacionId);
+                await ConfirmNotificationSentAsync(p360notificacion);
+                deliveryConfirmed = true;
+                LogNotificationActionSafely(accion);
+            }
+            catch (NotificationLeaseLostException ex)
+            {
+                TelemetryContext.FailCurrentNotification(ex);
+                accion = "Notificacion omitida porque el lease ya no pertenece al worker.";
+                Console.Error.WriteLine(accion);
+                LogNotificationActionSafely(accion);
             }
             catch (SmtpFailedRecipientException ex)
             {
                 // Error específico para un destinatario fallido
                 TelemetryContext.FailCurrentNotification(ex);
+                await RecordFailureSafelyAsync(p360notificacion, ex);
                 accion = "Fallo SMTP de destinatario. Estado: " +
                     ex.StatusCode + ".";
                 Console.Error.WriteLine(accion);
-                notificationDeliveryStore.Log(accion);
+                LogNotificationActionSafely(accion);
             }
             catch (SmtpException ex)
             {
                 // Error general de SMTP
                 TelemetryContext.FailCurrentNotification(ex);
+                await RecordFailureSafelyAsync(p360notificacion, ex);
                 accion = "Fallo SMTP. Estado: " + ex.StatusCode + ".";
                 Console.Error.WriteLine(accion);
-                notificationDeliveryStore.Log(accion);
+                LogNotificationActionSafely(accion);
             }
             catch (ConfigurationErrorsException ex)
             {
                 // Error en la configuración de la aplicación
                 TelemetryContext.FailCurrentNotification(ex);
+                await RecordFailureSafelyAsync(p360notificacion, ex);
                 accion = "Fallo de configuración de correo. Categoría: " +
                     ex.GetType().Name;
                 Console.Error.WriteLine(accion);
-                notificationDeliveryStore.Log(accion);
+                LogNotificationActionSafely(accion);
             }
             catch (FormatException ex)
             {
                 // Error de formato de datos
                 TelemetryContext.FailCurrentNotification(ex);
+                await RecordFailureSafelyAsync(p360notificacion, ex);
                 accion = "Fallo de formato al preparar correo. Categoría: " +
                     ex.GetType().Name;
                 Console.Error.WriteLine(accion);
-                notificationDeliveryStore.Log(accion);
+                LogNotificationActionSafely(accion);
             }
             catch (Exception ex)
             {
                 TelemetryContext.FailCurrentNotification(ex);
+                if (smtpAccepted && !deliveryConfirmed)
+                {
+                    ObserveUncertainDelivery(p360notificacion, ex);
+                }
+                await RecordFailureSafelyAsync(p360notificacion, ex);
                 accion = "Fallo al preparar o enviar correo. Categoría: " +
                     ex.GetType().Name;
                 Console.Error.WriteLine(accion);
-                notificationDeliveryStore.Log(accion);
+                LogNotificationActionSafely(accion);
             }
         }
 
@@ -1033,20 +1105,32 @@ namespace SchedulerP360Insight
         /// </remarks>
         public async Task SendReportbyEmailWithOutAttachmentAsync(string emailSubject, string emailBodyKey, InfoColaNotificaciones p360notificacion, Boolean reportSendMailCopySupervisor)
         {
+            if (p360notificacion == null)
+            {
+                throw new ArgumentNullException(nameof(p360notificacion));
+            }
             if (string.IsNullOrEmpty(p360notificacion.EmailColab))
             {
-                throw new ArgumentNullException(nameof(p360notificacion.EmailColab));
+                ArgumentNullException error =
+                    new ArgumentNullException(nameof(p360notificacion.EmailColab));
+                await RecordFailureSafelyAsync(p360notificacion, error);
+                throw error;
             }
             if (!IsValidEmail(p360notificacion.EmailColab))
             {
-                throw new ArgumentNullException(nameof(p360notificacion.EmailColab));
+                ArgumentException error = new ArgumentException(
+                    "El destinatario no tiene un formato valido.",
+                    nameof(p360notificacion.EmailColab));
+                await RecordFailureSafelyAsync(p360notificacion, error);
+                throw error;
             }
-            int colaNotificacionId = 0;
             StringBuilder destinatariosInfo = new StringBuilder();
             string emailSubjectEmail;
+            bool smtpAccepted = false;
+            bool deliveryConfirmed = false;
             try
             {
-                colaNotificacionId = p360notificacion.ColaNotificacionId;
+                await EnsureDeliveryLeaseAsync(p360notificacion);
                 emailSubjectEmail = emailSubject.Replace("[COLABORADOR_RECIBE]", p360notificacion.NameColab);
                 emailSubjectEmail = emailSubjectEmail.Replace("[REPORT_NAME]", p360notificacion.ReportName);
                 // Configure email settings and create message
@@ -1082,6 +1166,7 @@ namespace SchedulerP360Insight
                     message.IsBodyHtml = true;
                     message.Subject = emailSubjectEmail;
                     message.Body = ConstruirCuerpoEmailPlantillaHTML(p360notificacion, labConstants, emailBodyKey);
+                    ApplyDeliveryIdentity(message, p360notificacion);
                     // Envia notificacion al administrador si es que es una visita y dicha visita es a 'Punto de contacto'
                     if (NotificaAdministrador)
                     {
@@ -1092,44 +1177,86 @@ namespace SchedulerP360Insight
                     }
                     // add attachment
                     await SendEmailObservedAsync(message);
+                    smtpAccepted = true;
                     accion = "Notificación enviada por SMTP.";
                     Console.WriteLine(accion);
-                    notificationDeliveryStore.Log(accion);
                 }
                 // Actualizacion de bandera de envio de notificacion
-                ConfirmNotificationSent(colaNotificacionId);
+                await ConfirmNotificationSentAsync(p360notificacion);
+                deliveryConfirmed = true;
+                LogNotificationActionSafely(accion);
                 NotificaAdministrador = false;
+            }
+            catch (NotificationLeaseLostException ex)
+            {
+                TelemetryContext.FailCurrentNotification(ex);
+                accion = "Notificacion omitida porque el lease ya no pertenece al worker.";
+                Console.Error.WriteLine(accion);
+                LogNotificationActionSafely(accion);
             }
             catch (SmtpFailedRecipientException ex)
             {
                 // Error específico para un destinatario fallido
                 TelemetryContext.FailCurrentNotification(ex);
+                await RecordFailureSafelyAsync(p360notificacion, ex);
                 accion = "Fallo SMTP de destinatario. Estado: " +
                     ex.StatusCode + ".";
                 Console.Error.WriteLine(accion);
-                notificationDeliveryStore.Log(accion);
+                LogNotificationActionSafely(accion);
             }
             catch (SmtpException ex)
             {
                 // Error general de SMTP
                 TelemetryContext.FailCurrentNotification(ex);
+                await RecordFailureSafelyAsync(p360notificacion, ex);
                 accion = "Fallo SMTP. Estado: " + ex.StatusCode + ".";
                 Console.Error.WriteLine(accion);
-                notificationDeliveryStore.Log(accion);
+                LogNotificationActionSafely(accion);
             }
             catch (Exception ex)
             {
                 TelemetryContext.FailCurrentNotification(ex);
+                if (smtpAccepted && !deliveryConfirmed)
+                {
+                    ObserveUncertainDelivery(p360notificacion, ex);
+                }
+                await RecordFailureSafelyAsync(p360notificacion, ex);
                 accion = "Fallo al preparar o enviar correo. Categoría: " +
                     ex.GetType().Name;
                 Console.Error.WriteLine(accion);
-                notificationDeliveryStore.Log(accion);
+                LogNotificationActionSafely(accion);
             }
         }
 
-        private void ConfirmNotificationSent(int notificationId)
+        private void LogNotificationActionSafely(string message)
         {
-            if (notificationDeliveryStore.MarkSent(notificationId))
+            try
+            {
+                notificationDeliveryStore.Log(message);
+            }
+            catch (Exception auditError)
+            {
+                TelemetryContext.Write(
+                    TelemetryLevels.Warning,
+                    "audit.write.failed",
+                    new Dictionary<string, string>
+                    {
+                        ["audit_sink"] = "sql",
+                        ["failure_category"] = auditError.GetType().Name
+                    },
+                    auditError);
+                Console.Error.WriteLine(
+                    "No se pudo escribir la auditoria SQL secundaria. " +
+                    "Categoria: " + auditError.GetType().Name + ".");
+            }
+        }
+
+        private async Task ConfirmNotificationSentAsync(
+            InfoColaNotificaciones notification)
+        {
+            if (await notificationDeliveryStore.MarkSentAsync(
+                notification,
+                CancellationToken.None))
             {
                 return;
             }
@@ -1140,6 +1267,163 @@ namespace SchedulerP360Insight
                 null,
                 new InvalidOperationException(
                     "La confirmacion no afecto ninguna fila."));
+        }
+
+        private async Task EnsureDeliveryLeaseAsync(
+            InfoColaNotificaciones notification)
+        {
+            bool owned = await notificationDeliveryStore.PrepareDeliveryAsync(
+                notification,
+                CancellationToken.None);
+            if (!owned)
+            {
+                throw new NotificationLeaseLostException();
+            }
+        }
+
+        private async Task RecordFailureSafelyAsync(
+            InfoColaNotificaciones notification,
+            Exception error)
+        {
+            if (notification == null || error == null)
+            {
+                return;
+            }
+
+            if (notification.NotificationKey.HasValue &&
+                !notification.LeaseToken.HasValue)
+            {
+                return;
+            }
+
+            try
+            {
+                NotificationFailureDisposition disposition =
+                    await notificationDeliveryStore.RecordFailureAsync(
+                        notification,
+                        error,
+                        CancellationToken.None);
+                NotificationFailureDecision decision =
+                    NotificationFailureClassifier.Classify(error);
+                Dictionary<string, string> fields =
+                    CreateNotificationStateFields(
+                        notification,
+                        decision.ErrorCode,
+                        DescribeDisposition(disposition));
+                if (disposition == NotificationFailureDisposition.RetryScheduled)
+                {
+                    TelemetryContext.Write(
+                        TelemetryLevels.Warning,
+                        "notification.retry.scheduled",
+                        fields);
+                    Console.Error.WriteLine(
+                        "Fallo de notificacion registrado para reintento.");
+                }
+                else if (disposition ==
+                    NotificationFailureDisposition.DeadLetter)
+                {
+                    TelemetryContext.Write(
+                        TelemetryLevels.Error,
+                        "notification.dead_lettered",
+                        fields);
+                    Console.Error.WriteLine(
+                        "Fallo permanente enviado a cola muerta.");
+                }
+                else if (disposition ==
+                    NotificationFailureDisposition.LeaseLost)
+                {
+                    TelemetryContext.Write(
+                        TelemetryLevels.Warning,
+                        "notification.lease_lost",
+                        fields);
+                }
+            }
+            catch (Exception persistenceError)
+            {
+                TelemetryContext.FailCurrentNotification(persistenceError);
+                TelemetryContext.Write(
+                    TelemetryLevels.Error,
+                    "notification.failure.persistence_failed",
+                    CreateNotificationStateFields(
+                        notification,
+                        "persistence.failed",
+                        "unknown"),
+                    persistenceError);
+                Console.Error.WriteLine(
+                    "No se pudo persistir el resultado fallido de la " +
+                    "notificacion. Categoria: " +
+                    persistenceError.GetType().Name + ".");
+            }
+        }
+
+        private static Dictionary<string, string>
+            CreateNotificationStateFields(
+                InfoColaNotificaciones notification,
+                string failureCode,
+                string disposition)
+        {
+            Dictionary<string, string> fields =
+                new Dictionary<string, string>
+                {
+                    ["attempt_count"] = notification.AttemptCount.ToString(
+                        CultureInfo.InvariantCulture),
+                    ["failure_code"] = failureCode,
+                    ["delivery_disposition"] = disposition
+                };
+            if (notification.NotificationKey.HasValue)
+            {
+                fields["notification_key"] =
+                    notification.NotificationKey.Value.ToString("D");
+            }
+
+            return fields;
+        }
+
+        private static string DescribeDisposition(
+            NotificationFailureDisposition disposition)
+        {
+            switch (disposition)
+            {
+                case NotificationFailureDisposition.RetryScheduled:
+                    return "retry_scheduled";
+                case NotificationFailureDisposition.DeadLetter:
+                    return "dead_letter";
+                case NotificationFailureDisposition.LeaseLost:
+                    return "lease_lost";
+                default:
+                    return "legacy";
+            }
+        }
+
+        private static void ObserveUncertainDelivery(
+            InfoColaNotificaciones notification,
+            Exception error)
+        {
+            TelemetryContext.Write(
+                TelemetryLevels.Error,
+                "notification.delivery.uncertain",
+                CreateNotificationStateFields(
+                    notification,
+                    "confirmation.failed_after_smtp",
+                    "uncertain"),
+                error);
+        }
+
+        private static void ApplyDeliveryIdentity(
+            MailMessage message,
+            InfoColaNotificaciones notification)
+        {
+            if (message == null)
+            {
+                throw new ArgumentNullException(nameof(message));
+            }
+
+            if (notification != null &&
+                notification.NotificationKey.HasValue)
+            {
+                message.Headers["X-P360-Notification-Key"] =
+                    notification.NotificationKey.Value.ToString("D");
+            }
         }
 
         private async Task SendEmailObservedAsync(MailMessage message)

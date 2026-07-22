@@ -1,6 +1,6 @@
 # Observabilidad y salud
 
-Estado: núcleo neutral validado localmente en PR-07 y ampliado hasta PR-09 el 2026-07-22. La conexión a una plataforma corporativa, retención, costes y alertas desplegadas siguen pendientes de D-010/D-011.
+Estado: núcleo neutral validado localmente en PR-07 y ampliado hasta PR-10 el 2026-07-22. La conexión a una plataforma corporativa, retención, costes y alertas desplegadas siguen pendientes de D-010/D-011.
 
 ## Resultado
 
@@ -29,6 +29,7 @@ Campos permitidos:
 
     active_jobs
     active_notifications
+    attempt_count
     audit_sink
     definitions_added
     definitions_count
@@ -37,7 +38,9 @@ Campos permitidos:
     definitions_unchanged
     definitions_updated
     duration_ms
+    delivery_disposition
     failure_category
+    failure_code
     failure_kind
     health_exporter
     job_type
@@ -45,11 +48,13 @@ Campos permitidos:
     misfire_count
     misfire_policy
     notification_count
+    notification_key
     operation
     outcome
     overlap_policy
     parent_correlation_id
     process_id
+    queue_action
     report_uid
     state
     sql_code
@@ -80,6 +85,11 @@ Cualquier clave no incluida se descarta. Los valores se limitan a 128 caracteres
 | `audit.write.failed` | el sink SQL secundario falló |
 | `operation.started` | inicio de una operación medida |
 | `operation.completed` | fin, resultado y duración de una operación |
+| `notification.retry.scheduled` | fallo durable liberado con próxima elegibilidad |
+| `notification.dead_lettered` | fallo permanente o máximo de intentos |
+| `notification.lease_lost` | el worker dejó de ser propietario y no debe enviar/confirmar |
+| `notification.delivery.uncertain` | SMTP aceptó pero SQL no pudo confirmar con certeza |
+| `notification.failure.persistence_failed` | no se pudo registrar el fallo; el lease queda para expiración/reclaim |
 
 ## Correlación
 
@@ -87,7 +97,7 @@ Cualquier clave no incluida se descarta. Los valores se limitan a 128 caracteres
 - Cada ejecución Quartz recibe un `correlationId` nuevo.
 - Cada notificación recibe un identificador hijo y conserva `parent_correlation_id` del job.
 - Render y SMTP usan la correlación de la notificación.
-- Un reintento futuro crea una nueva correlación de ejecución; la clave durable de idempotencia se definirá en PR-10 después de D-003.
+- Un reintento futuro crea una nueva correlación de ejecución y conserva `notification_key`, la clave UUID durable de PR-10.
 
 No se usa el correo, nombre, ID de colaborador ni ruta de archivo como correlación.
 
@@ -112,9 +122,9 @@ Operaciones permitidas:
 | `render.devexpress` | renderizado DevExpress y escritura del PDF |
 | `delivery.smtp` | llamada real al transporte SMTP |
 | `data.report-schedules` | consulta y mapeo de definiciones programadas |
-| `data.notification-queue` | consulta y mapeo de la cola pendiente |
+| `data.notification-queue` | lectura/claim, preflight, renew, complete y fail de la cola |
 
-Por operación y resultado (`success`, `failure`, `skipped`, `timeout`, `cancelled`) se exponen `count`, duración acumulada y duración máxima. La métrica gauge `notification_batch_size` representa el último lote observado por un job; no equivale al backlog global y no debe usarse todavía como SLO de cola.
+Por operación y resultado (`success`, `failure`, `skipped`, `timeout`, `cancelled`) se exponen `count`, duración acumulada y duración máxima. La métrica gauge `notification_batch_size` representa el último lote observado por un job; no equivale al backlog global y no debe usarse todavía como SLO de cola. `queue_action` distingue lectura, preflight, claim, renew, complete y fail sin introducir el ID de reporte como dimensión de métrica.
 
 PR-09 añade gauges acotados `scheduler_definition_rows_rejected`, `scheduler_definitions_rejected`, `scheduler_definitions_active`, `scheduler_max_concurrency` y `scheduler_misfires_total`. No incluyen ID/nombre dinámico. El backlog se demuestra en pruebas de límite, pero no se publica como gauge durable: con `RAMJobStore` no existe una medida persistente de antigüedad.
 
@@ -160,7 +170,7 @@ Alertas a materializar después de D-010:
 - proceso que no alcanza `ready` después de un despliegue;
 - aumento de `failure / total` respecto del baseline observado por operación;
 - crecimiento sostenido de memoria o handles respecto del baseline;
-- backlog sobre SLO, bloqueada hasta que PR-10 defina claim/lease y una medida durable de antigüedad.
+- backlog/edad sobre SLO; PR-10 ya define claim/lease, pero la consulta/exportación agregada y el umbral siguen pendientes de D-010/D-011.
 
 No se fijan umbrales numéricos, retención ni coste sin datos de producción y propietario operativo.
 
@@ -179,7 +189,7 @@ Rollback del exporter: quitar `P360_HEALTH_FILE_PATH` y reiniciar. Rollback comp
 
 ## Evidencia
 
-- 85/85 pruebas aisladas aprobadas;
+- 102/102 pruebas aisladas aprobadas;
 - redacción de secretos, destinatarios, cuerpos y detalles de excepción;
 - correlación y métricas de éxito/fallo/duración;
 - cardinalidad acotada frente a valores dinámicos;
@@ -188,5 +198,6 @@ Rollback del exporter: quitar `P360_HEALTH_FILE_PATH` y reiniciar. Rollback comp
 - archivo de salud reemplazado atómicamente sin temporales residuales;
 - salud integrada con arranque y apagado del scheduler;
 - políticas Quartz, reconciliación, misfires y concurrencia observables;
+- reintento/dead-letter/lease perdido y entrega incierta observables mediante clave durable sin destinatarios;
 - hash de texto de reportes normalizado entre LF/CRLF; `.rpt` continúa validándose byte a byte;
 - ningún archivo `.rpt`, `.Designer.cs` o `.resx` fue modificado.

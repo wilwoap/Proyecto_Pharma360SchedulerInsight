@@ -1,6 +1,6 @@
 # Arnés de caracterización
 
-Estado: implementado en PR-02 y ampliado/validado localmente hasta PR-09 el 2026-07-22.
+Estado: implementado en PR-02 y ampliado/validado localmente hasta PR-10 el 2026-07-22.
 
 ## Decisión de framework
 
@@ -24,7 +24,7 @@ Para desarrollo con paquetes ya restaurados:
 
 SkipTests existe sólo para diagnóstico del build. No debe usarse como evidencia de un PR.
 
-El gate exige al menos 85 pruebas, un timeout global de 60 segundos y genera TRX bajo artifacts/test-results. Esa carpeta no se versiona.
+El gate exige al menos 102 pruebas, un timeout global de 60 segundos y genera TRX bajo artifacts/test-results. Esa carpeta no se versiona.
 
 ## Fronteras introducidas
 
@@ -40,6 +40,9 @@ El gate exige al menos 85 pruebas, un timeout global de 60 segundos y genera TRX
 - ReportScheduleValidator y QuartzReportScheduleRegistrar separan validación, preparación y reconciliación.
 - QuartzSchedulingPolicy hace explícitos zona, misfire, solapamiento y límite global.
 - QuartzOperationalTriggerListener observa misfires sin poder interrumpir el scheduler.
+- INotificationQueueRepository separa lectura heredada de claim/renew/complete/fail durable.
+- NotificationFailureClassifier produce códigos acotados sin persistir mensajes o PII.
+- El modo durable se activa por `report_id` y verifica el esquema antes de Quartz.
 - Los constructores predeterminados conservan los adaptadores SQL y SMTP actuales.
 
 La aplicación usa la fábrica de jobs y las fronteras de correo. La política de rutas se conectará al pipeline completo en PR-11, donde podrá aplicarse a todos los renderizadores con rollback conjunto.
@@ -74,6 +77,8 @@ La aplicación usa la fábrica de jobs y las fronteras de correo. La política d
 | Observabilidad | JSON permitido, redacción, correlación, métricas, fallo de audit y cardinalidad acotada |
 | Salud | Transiciones integradas, heartbeat, reemplazo atómico y ausencia de temporales |
 | SMTP | Fallo observado como delivery/notificación fallida sin confirmar la cola ni exponer destinatario/detalle |
+| Cola durable | Configuración, proyección, comandos tipados, lease perdido, confirmación incierta y cabecera estable |
+| SQL de cola | LocalDB demuestra migración reejecutable, dos workers, reclaim, backoff, dead-letter y reproceso auditado |
 
 ## Deudas observadas, no corregidas en este PR
 
@@ -87,7 +92,12 @@ Estas observaciones son intencionales: PR-02 impide que cambien accidentalmente.
 
 ## Datos y aislamiento
 
-Todas las identidades, correos, teléfonos, rutas y contenido de prueba son sintéticos. Los dominios usan example.test. El arnés no lee P360_CONNECTION_PRINCIPAL, no abre SQL y no envía correo. La prueba de Quartz usa exclusivamente RAMJobStore en proceso y no abre servicios externos.
+Todas las identidades, correos, teléfonos, rutas y contenido de prueba son sintéticos. Los dominios usan example.test. El arnés MSTest no lee P360_CONNECTION_PRINCIPAL, no abre SQL y no envía correo. La prueba de Quartz usa exclusivamente RAMJobStore en proceso y no abre servicios externos.
+
+El contrato adicional `eng/Test-NotificationQueueContracts.ps1` sí abre una
+instancia LocalDB efímera y sintética `P360PR10_*`; nunca usa la conexión P360,
+no abre red/SMTP y elimina la instancia en `finally`. Se ejecuta después del
+build para validar el DDL y la concurrencia ADO.NET real.
 
 Los cinco .rpt sólo se leen como bytes para calcular SHA-256. No se cargan con Crystal, no se convierten y no se reescriben. Los tres activos de texto DevExpress se normalizan a UTF-8/LF antes del hash para que un checkout CRLF o LF no produzca falsos positivos; los binarios Crystal continúan comparándose byte a byte.
 

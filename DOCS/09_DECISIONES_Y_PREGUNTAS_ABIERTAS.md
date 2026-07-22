@@ -6,7 +6,7 @@
 |---|---|---|---|
 | D-001 | Estrategia de modernización | Aceptada por diseño inicial | Incremental, sin reescritura |
 | D-002 | Arquitectura de proceso durante etapa legado | Propuesta firme | Sólo x64 por dependencias AMD64 y soporte Crystal |
-| D-003 | Semántica de entrega de notificación | Pendiente | Al menos una vez, con idempotencia/reconciliación |
+| D-003 | Semántica de entrega de notificación | Aceptada 2026-07-22 | Al menos una vez; se prefiere duplicado detectable a pérdida silenciosa; clave estable, claim/lease y reconciliación; PR-10 |
 | D-004 | Runtime objetivo | Propuesta | .NET 10 LTS; revisar soporte al iniciar PR-14 |
 | D-005 | Destino de Crystal | Aceptada 2026-07-21 | Preservar los .rpt sin cambios y aislarlos en un worker net48 x64; conversión fuera del programa |
 | D-006 | Empaquetado y hosting | Pendiente | Windows Service; mecanismo corporativo/MSI por decidir |
@@ -48,7 +48,14 @@
 - ¿Qué direcciones/dominio intercepta el SMTP de prueba?
 - ¿Cuáles son las reglas de negocio críticas por reporte?
 
-## Preguntas antes de PR-07/PR-10
+## Decisión aplicada en PR-10 y preguntas de despliegue
+
+D-003 adopta entrega al menos una vez: un duplicado trazable es preferible a
+descartar silenciosamente una notificación. La aplicación usa clave estable,
+claim/lease, reintento acotado y dead-letter; no afirma `exactly once` entre SQL
+y SMTP. Los valores técnicos son configurables. La retención, el SLO y el
+equipo que atiende dead-letter continúan bajo D-010/D-011 y son gate de
+producción, no de la implementación local.
 
 - ¿Cuántas notificaciones por hora/día y cuál es el pico?
 - ¿Qué retraso es aceptable?

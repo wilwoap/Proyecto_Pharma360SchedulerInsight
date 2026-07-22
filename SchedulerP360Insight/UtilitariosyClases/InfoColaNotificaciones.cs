@@ -22,6 +22,12 @@ namespace SchedulerP360Insight
         public int CodSup { get; set; }
         public string NameSup{ get; set; }
         public string EmailSup { get; set; }
+        public Guid? NotificationKey { get; set; }
+        public string DeliveryStatus { get; set; }
+        public string LeaseOwner { get; set; }
+        public Guid? LeaseToken { get; set; }
+        public DateTime? LeaseUntilUtc { get; set; }
+        public int AttemptCount { get; set; }
     }
 }
 

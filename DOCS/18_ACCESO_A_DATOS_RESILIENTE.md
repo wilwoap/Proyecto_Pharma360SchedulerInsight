@@ -6,7 +6,7 @@ Estado: validado localmente en PR-08 el 2026-07-22. No cambia esquema, consultas
 
 Las cargas de definiciones Quartz, parámetros de arranque y cola de notificaciones dejaron de depender de comandos con espera indefinida. La conexión y cada comando tienen un presupuesto finito, la cola usa `@ReportId` tipado, Quartz propaga cancelación hasta ADO.NET y los fallos SQL conservan causa, categoría y código sin exponer mensajes, consultas o credenciales.
 
-No se agregó un ORM, una política global de retry ni una dependencia externa. Las escrituras conservan una sola tentativa para evitar duplicar colas, auditoría o confirmaciones mientras D-003 siga pendiente.
+No se agregó un ORM, una política global de retry ni una dependencia externa. PR-08 conserva una sola tentativa para escrituras generales. PR-10 añade recuperación únicamente dentro del protocolo durable de cola, protegido por clave, claim/lease y transición condicionada.
 
 ## Base técnica
 
@@ -58,7 +58,7 @@ Las consultas Dapper heredadas también reciben conexión finita y `commandTimeo
 | `Permanent` | sintaxis/columna/objeto/permisos/login/constraints conocidos: 102, 207, 208, 229, 547, 2601, 2627, 18456 |
 | `Unknown` | cualquier código no autorizado explícitamente |
 
-Un fallo transitorio no significa “reintentar”. PR-08 ejecuta cero reintentos de consultas o escrituras en código y conserva la configuración de recuperación de conexión que ya venga en `ConnectRetryCount`; el proveedor no reejecuta la consulta fallida. Antes de agregar retry de operación se debe demostrar que la lectura es idempotente, limitar intentos/demora y comprobar que no se multiplica con la recuperación del proveedor. Las escrituras quedan excluidas hasta resolver D-003.
+Un fallo transitorio no significa “reintentar”. PR-08 ejecuta cero reintentos de consultas o escrituras generales en código y conserva la configuración de recuperación de conexión que ya venga en `ConnectRetryCount`; el proveedor no reejecuta la consulta fallida. Antes de agregar retry de otra operación se debe demostrar idempotencia, limitar intentos/demora y comprobar que no se multiplica con la recuperación del proveedor. La excepción explícita desde PR-10 es la máquina de estados de notificación durable aceptada en D-003.
 
 ## Observabilidad
 
@@ -109,7 +109,7 @@ No hay rollback de esquema. El método síncrono público de cola se conserva co
 ## Límites deliberados
 
 - No se reintenta ninguna operación.
-- No se cambió claim/lease, idempotencia, confirmación ni dead-letter; corresponde a PR-10 y D-003.
+- En PR-08 no se cambió claim/lease, idempotencia, confirmación ni dead-letter; PR-10 los implementa después bajo D-003.
 - No se modificó SQL de negocio ni el esquema.
 - No se tocó ningún `.rpt`, `.Designer.cs` o `.resx`.
 - El ejecutable completo sigue siendo Windows x64/net48 por Crystal/DevExpress; este cambio no convierte el host legado en ejecutable Linux.

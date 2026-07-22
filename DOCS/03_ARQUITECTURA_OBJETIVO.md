@@ -73,7 +73,7 @@ Ante fallo:
     lease expirado
       -> recuperación segura sin dos propietarios activos
 
-El sistema no puede obtener atomicidad distribuida entre SMTP y SQL. La mitigación realista es entrega al menos una vez con idempotencia/identificador, estado duradero y reconciliación. El comportamiento exacto necesita la decisión D-003.
+El sistema no puede obtener atomicidad distribuida entre SMTP y SQL. D-003 acepta entrega al menos una vez con identificador estable, estado duradero y reconciliación; PR-10 implementa ese contrato y declara explícitamente la duplicación residual.
 
 ## Estrategia de transición
 

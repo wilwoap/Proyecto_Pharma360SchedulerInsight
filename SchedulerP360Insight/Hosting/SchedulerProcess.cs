@@ -2,6 +2,7 @@ using Quartz;
 using Quartz.Impl;
 using Quartz.Impl.Matchers;
 using SchedulerP360Insight.Composition;
+using SchedulerP360Insight.Configuration;
 using SchedulerP360Insight.Data;
 using SchedulerP360Insight.Scheduling;
 using System;
@@ -92,6 +93,13 @@ namespace SchedulerP360Insight.Hosting
             try
             {
                 WriteBanner(runtime);
+
+                if (runtime.Options.NotificationQueueMode ==
+                    NotificationQueueMode.Durable)
+                {
+                    await new SqlNotificationQueueRepository(runtime.Options)
+                        .VerifyDurableSchemaAsync(CancellationToken.None);
+                }
 
                 ISchedulerFactory schedulerFactory = new StdSchedulerFactory(
                     QuartzSchedulerSettings.CreateProperties(runtime.Options));

@@ -1,7 +1,10 @@
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Configuration;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 
 namespace SchedulerP360Insight.Configuration
 {
@@ -15,6 +18,12 @@ namespace SchedulerP360Insight.Configuration
     {
         FireOnceNow,
         DoNothing
+    }
+
+    public enum NotificationQueueMode
+    {
+        Legacy,
+        Durable
     }
 
     public sealed class SchedulerOptions
@@ -41,6 +50,20 @@ namespace SchedulerP360Insight.Configuration
             "P360_QUARTZ_DISALLOW_CONCURRENT_EXECUTION";
         public const string QuartzMaxConcurrencyEnvironmentVariable =
             "P360_QUARTZ_MAX_CONCURRENCY";
+        public const string NotificationQueueModeEnvironmentVariable =
+            "P360_NOTIFICATION_QUEUE_MODE";
+        public const string NotificationClaimBatchSizeEnvironmentVariable =
+            "P360_NOTIFICATION_CLAIM_BATCH_SIZE";
+        public const string NotificationLeaseSecondsEnvironmentVariable =
+            "P360_NOTIFICATION_LEASE_SECONDS";
+        public const string NotificationMaxAttemptsEnvironmentVariable =
+            "P360_NOTIFICATION_MAX_ATTEMPTS";
+        public const string NotificationRetryBaseSecondsEnvironmentVariable =
+            "P360_NOTIFICATION_RETRY_BASE_SECONDS";
+        public const string NotificationRetryMaxSecondsEnvironmentVariable =
+            "P360_NOTIFICATION_RETRY_MAX_SECONDS";
+        public const string NotificationDurableReportIdsEnvironmentVariable =
+            "P360_NOTIFICATION_DURABLE_REPORT_IDS";
         public const string ReportsQuerySetting = "P360.Reports.Query";
         public const string NotificationQueueQuerySetting =
             "P360.InfoColaNotificaciones.Query";
@@ -59,7 +82,15 @@ namespace SchedulerP360Insight.Configuration
             QuartzMisfirePolicy quartzMisfirePolicy =
                 QuartzMisfirePolicy.FireOnceNow,
             bool quartzDisallowConcurrentExecution = true,
-            int quartzMaxConcurrency = 10)
+            int quartzMaxConcurrency = 10,
+            NotificationQueueMode notificationQueueMode =
+                NotificationQueueMode.Legacy,
+            int notificationClaimBatchSize = 25,
+            TimeSpan? notificationLeaseDuration = null,
+            int notificationMaxAttempts = 8,
+            TimeSpan? notificationRetryBaseDelay = null,
+            TimeSpan? notificationRetryMaxDelay = null,
+            IEnumerable<int> notificationDurableReportIds = null)
         {
             ConnectionString = RequireValue(
                 connectionString,
@@ -114,6 +145,67 @@ namespace SchedulerP360Insight.Configuration
             }
 
             QuartzMaxConcurrency = quartzMaxConcurrency;
+            if (!Enum.IsDefined(
+                typeof(NotificationQueueMode),
+                notificationQueueMode))
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(notificationQueueMode));
+            }
+
+            NotificationQueueMode = notificationQueueMode;
+            NotificationClaimBatchSize = ValidateBoundedInteger(
+                notificationClaimBatchSize,
+                nameof(notificationClaimBatchSize),
+                1,
+                500,
+                "El lote de claim debe estar entre 1 y 500.");
+            NotificationLeaseDuration = ValidateTimeout(
+                notificationLeaseDuration ?? TimeSpan.FromMinutes(10),
+                nameof(notificationLeaseDuration),
+                30,
+                3600,
+                "lease de notificacion");
+            NotificationMaxAttempts = ValidateBoundedInteger(
+                notificationMaxAttempts,
+                nameof(notificationMaxAttempts),
+                1,
+                100,
+                "Los intentos de notificacion deben estar entre 1 y 100.");
+            NotificationRetryBaseDelay = ValidateTimeout(
+                notificationRetryBaseDelay ?? TimeSpan.FromMinutes(1),
+                nameof(notificationRetryBaseDelay),
+                1,
+                3600,
+                "reintento base de notificacion");
+            NotificationRetryMaxDelay = ValidateTimeout(
+                notificationRetryMaxDelay ?? TimeSpan.FromHours(1),
+                nameof(notificationRetryMaxDelay),
+                1,
+                86400,
+                "reintento maximo de notificacion");
+            if (NotificationRetryMaxDelay < NotificationRetryBaseDelay)
+            {
+                throw new ArgumentException(
+                    "El reintento maximo no puede ser menor que el reintento base.",
+                    nameof(notificationRetryMaxDelay));
+            }
+
+            int[] durableReportIds = (notificationDurableReportIds ??
+                    Enumerable.Empty<int>())
+                .Distinct()
+                .OrderBy(id => id)
+                .ToArray();
+            if (durableReportIds.Length > 1000 ||
+                durableReportIds.Any(id => id <= 0))
+            {
+                throw new ArgumentException(
+                    "La lista de reportes durable admite hasta 1000 IDs positivos.",
+                    nameof(notificationDurableReportIds));
+            }
+
+            NotificationDurableReportIds =
+                new ReadOnlyCollection<int>(durableReportIds);
         }
 
         public string ConnectionString { get; }
@@ -141,6 +233,27 @@ namespace SchedulerP360Insight.Configuration
         public bool QuartzDisallowConcurrentExecution { get; }
 
         public int QuartzMaxConcurrency { get; }
+
+        public NotificationQueueMode NotificationQueueMode { get; }
+
+        public int NotificationClaimBatchSize { get; }
+
+        public TimeSpan NotificationLeaseDuration { get; }
+
+        public int NotificationMaxAttempts { get; }
+
+        public TimeSpan NotificationRetryBaseDelay { get; }
+
+        public TimeSpan NotificationRetryMaxDelay { get; }
+
+        public IReadOnlyCollection<int> NotificationDurableReportIds { get; }
+
+        public bool IsDurableNotificationReport(int reportId)
+        {
+            return NotificationQueueMode == NotificationQueueMode.Durable &&
+                (NotificationDurableReportIds.Count == 0 ||
+                 NotificationDurableReportIds.Contains(reportId));
+        }
 
         public static SchedulerOptions Load(
             Func<string, string> readEnvironmentVariable = null,
@@ -185,6 +298,57 @@ namespace SchedulerP360Insight.Configuration
                 defaultValue: 10,
                 minimum: 1,
                 maximum: 64);
+            NotificationQueueMode notificationQueueMode =
+                ParseNotificationQueueMode(
+                    environmentReader(
+                        NotificationQueueModeEnvironmentVariable));
+            int notificationClaimBatchSize = ParseBoundedInteger(
+                environmentReader(
+                    NotificationClaimBatchSizeEnvironmentVariable),
+                NotificationClaimBatchSizeEnvironmentVariable,
+                defaultValue: 25,
+                minimum: 1,
+                maximum: 500);
+            TimeSpan notificationLeaseDuration = ParseBoundedTimeout(
+                environmentReader(
+                    NotificationLeaseSecondsEnvironmentVariable),
+                NotificationLeaseSecondsEnvironmentVariable,
+                defaultSeconds: 600,
+                minimumSeconds: 30,
+                maximumSeconds: 3600);
+            int notificationMaxAttempts = ParseBoundedInteger(
+                environmentReader(
+                    NotificationMaxAttemptsEnvironmentVariable),
+                NotificationMaxAttemptsEnvironmentVariable,
+                defaultValue: 8,
+                minimum: 1,
+                maximum: 100);
+            TimeSpan notificationRetryBaseDelay = ParseBoundedTimeout(
+                environmentReader(
+                    NotificationRetryBaseSecondsEnvironmentVariable),
+                NotificationRetryBaseSecondsEnvironmentVariable,
+                defaultSeconds: 60,
+                minimumSeconds: 1,
+                maximumSeconds: 3600);
+            TimeSpan notificationRetryMaxDelay = ParseBoundedTimeout(
+                environmentReader(
+                    NotificationRetryMaxSecondsEnvironmentVariable),
+                NotificationRetryMaxSecondsEnvironmentVariable,
+                defaultSeconds: 3600,
+                minimumSeconds: 1,
+                maximumSeconds: 86400);
+            if (notificationRetryMaxDelay < notificationRetryBaseDelay)
+            {
+                throw new InvalidOperationException(
+                    "La variable de entorno '" +
+                    NotificationRetryMaxSecondsEnvironmentVariable +
+                    "' no puede ser menor que '" +
+                    NotificationRetryBaseSecondsEnvironmentVariable + "'.");
+            }
+            IReadOnlyCollection<int> notificationDurableReportIds =
+                ParseReportIds(
+                    environmentReader(
+                        NotificationDurableReportIdsEnvironmentVariable));
 
             return new SchedulerOptions(
                 RequireSourceValue(
@@ -208,7 +372,14 @@ namespace SchedulerP360Insight.Configuration
                 quartzTimeZone,
                 quartzMisfirePolicy,
                 quartzDisallowConcurrentExecution,
-                quartzMaxConcurrency);
+                quartzMaxConcurrency,
+                notificationQueueMode,
+                notificationClaimBatchSize,
+                notificationLeaseDuration,
+                notificationMaxAttempts,
+                notificationRetryBaseDelay,
+                notificationRetryMaxDelay,
+                notificationDurableReportIds);
         }
 
         public override string ToString()
@@ -237,6 +408,25 @@ namespace SchedulerP360Insight.Configuration
                 QuartzDisallowConcurrentExecution +
                 ", QuartzMaxConcurrency=" +
                 QuartzMaxConcurrency.ToString(CultureInfo.InvariantCulture) +
+                ", NotificationQueueMode=" + NotificationQueueMode +
+                ", NotificationClaimBatchSize=" +
+                NotificationClaimBatchSize.ToString(
+                    CultureInfo.InvariantCulture) +
+                ", NotificationLeaseSeconds=" +
+                NotificationLeaseDuration.TotalSeconds.ToString(
+                    CultureInfo.InvariantCulture) +
+                ", NotificationMaxAttempts=" +
+                NotificationMaxAttempts.ToString(
+                    CultureInfo.InvariantCulture) +
+                ", NotificationRetryBaseSeconds=" +
+                NotificationRetryBaseDelay.TotalSeconds.ToString(
+                    CultureInfo.InvariantCulture) +
+                ", NotificationRetryMaxSeconds=" +
+                NotificationRetryMaxDelay.TotalSeconds.ToString(
+                    CultureInfo.InvariantCulture) +
+                ", NotificationDurableReportIdsCount=" +
+                NotificationDurableReportIds.Count.ToString(
+                    CultureInfo.InvariantCulture) +
                 " }";
         }
 
@@ -361,6 +551,65 @@ namespace SchedulerP360Insight.Configuration
                 "' sólo admite 'fire_once_now' o 'do_nothing'.");
         }
 
+        private static NotificationQueueMode ParseNotificationQueueMode(
+            string value)
+        {
+            if (string.IsNullOrWhiteSpace(value) ||
+                value.Equals("legacy", StringComparison.OrdinalIgnoreCase))
+            {
+                return NotificationQueueMode.Legacy;
+            }
+
+            if (value.Equals("durable", StringComparison.OrdinalIgnoreCase))
+            {
+                return NotificationQueueMode.Durable;
+            }
+
+            throw new InvalidOperationException(
+                "La variable de entorno '" +
+                NotificationQueueModeEnvironmentVariable +
+                "' solo admite 'legacy' o 'durable'.");
+        }
+
+        private static IReadOnlyCollection<int> ParseReportIds(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return new ReadOnlyCollection<int>(Array.Empty<int>());
+            }
+
+            string[] parts = value.Split(',');
+            if (parts.Length > 1000)
+            {
+                throw new InvalidOperationException(
+                    "La variable de entorno '" +
+                    NotificationDurableReportIdsEnvironmentVariable +
+                    "' admite hasta 1000 IDs.");
+            }
+
+            SortedSet<int> reportIds = new SortedSet<int>();
+            foreach (string part in parts)
+            {
+                int reportId;
+                if (!int.TryParse(
+                    part.Trim(),
+                    NumberStyles.None,
+                    CultureInfo.InvariantCulture,
+                    out reportId) ||
+                    reportId <= 0)
+                {
+                    throw new InvalidOperationException(
+                        "La variable de entorno '" +
+                        NotificationDurableReportIdsEnvironmentVariable +
+                        "' solo admite IDs positivos separados por coma.");
+                }
+
+                reportIds.Add(reportId);
+            }
+
+            return new ReadOnlyCollection<int>(reportIds.ToList());
+        }
+
         private static bool ParseBoolean(
             string value,
             string variableName,
@@ -410,6 +659,21 @@ namespace SchedulerP360Insight.Configuration
             }
 
             return parsed;
+        }
+
+        private static int ValidateBoundedInteger(
+            int value,
+            string parameterName,
+            int minimum,
+            int maximum,
+            string message)
+        {
+            if (value < minimum || value > maximum)
+            {
+                throw new ArgumentOutOfRangeException(parameterName, message);
+            }
+
+            return value;
         }
 
         private static TimeSpan ValidateTimeout(

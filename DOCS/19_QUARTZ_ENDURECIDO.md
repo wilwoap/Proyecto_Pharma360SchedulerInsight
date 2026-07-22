@@ -140,4 +140,4 @@ Rollback parcial de solapamiento: fijar `P360_QUARTZ_DISALLOW_CONCURRENT_EXECUTI
 - Dos procesos independientes podrían ejecutar el mismo reporte; el canary y la etapa net48 admiten una sola instancia.
 - No hay calendarios de feriados porque no existe una regla aprobada.
 - Los cambios SQL requieren reinicio.
-- La idempotencia de correo/cola continúa en D-003 y PR-10.
+- La idempotencia de correo/cola se implementa posteriormente en D-003/PR-10; PR-09 no reintenta trabajo por sí solo.

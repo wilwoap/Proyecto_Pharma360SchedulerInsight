@@ -274,6 +274,7 @@
     <Compile Include="Scheduling\ReportScheduleSource.cs" />
     <Compile Include="Scheduling\ReportScheduleValidation.cs" />
     <Compile Include="Services\NotificationDeliveryAbstractions.cs" />
+    <Compile Include="Services\NotificationDeliveryPolicy.cs" />
     <Compile Include="Services\ReportPathPolicy.cs" />
     <Compile Include="P360Reports\DashboardPerformanceVisita.cs">
       <AutoGen>True</AutoGen>
