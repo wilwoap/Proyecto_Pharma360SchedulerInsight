@@ -1,0 +1,28 @@
+* text=auto
+
+*.sln      text eol=crlf
+*.csproj   text eol=crlf
+*.cs       text eol=crlf
+*.config   text eol=crlf
+*.settings text eol=crlf
+*.resx     text eol=crlf
+*.xsd      text eol=crlf
+*.xsc      text eol=crlf
+*.xss      text eol=crlf
+*.ps1      text eol=crlf
+
+*.md       text eol=lf
+*.json     text eol=lf
+*.yml      text eol=lf
+*.yaml     text eol=lf
+
+*.rpt      binary
+*.pfx      binary
+*.p12      binary
+*.dll      binary
+*.exe      binary
+*.png      binary
+*.jpg      binary
+*.jpeg     binary
+*.gif      binary
+*.ico      binary

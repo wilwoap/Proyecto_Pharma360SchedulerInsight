@@ -1,0 +1,27 @@
+name: build
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  release-x64:
+    name: Release x64
+    runs-on: [self-hosted, Windows, X64, p360-build]
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Verify repository hygiene
+        shell: powershell
+        run: .\eng\verify-repository.ps1
+
+      - name: Restore and rebuild
+        shell: powershell
+        run: .\build.ps1 -Configuration Release -Target Rebuild

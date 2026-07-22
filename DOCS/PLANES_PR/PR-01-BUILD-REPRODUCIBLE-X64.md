@@ -1,6 +1,6 @@
 # PR-01 — Build reproducible y plataforma x64
 
-Estado: propuesto. Dependencia: Gate 0.
+Estado: validado localmente el 2026-07-21; workflow preparado y pendiente del primer runner autorizado.
 
 ## Propósito
 
@@ -54,3 +54,14 @@ Poder restaurar y compilar el mismo ejecutable Release x64 desde una estación/r
 
 Mantener el csproj/solución anterior en Git. Revertir scripts/config de build sin modificar binario desplegado. No reactivar AnyCPU como release hasta resolver dependencias AMD64.
 
+## Evidencia de ejecución
+
+- MSBuild 18.8.2.30814 sobre Windows x64.
+- Restore y Rebuild Release x64 completados con cero errores.
+- Ejecutable verificado como PE32Plus AMD64.
+- SHA-256 repetido en dos rebuilds consecutivos: 7D0E4D625B1C316D55C6AF9419A3F9ECE666C6F4D4899ADAB6068A9FC948C0BB.
+- Baseline: 17 advertencias C#, dos familias MSB3277 y una NU1902; ningún aumento permitido.
+- Verificación de 127 archivos versionados sin artefactos prohibidos ni secretos de alta confianza.
+- Los archivos Crystal .rpt no fueron modificados.
+
+La evidencia del runner de GitHub se añadirá cuando exista una máquina con las etiquetas y licencias descritas en 11_BUILD_Y_RUNNER.md.

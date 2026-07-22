@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "capturedOn": "2026-07-21",
+  "configuration": "Release|x64",
+  "allowedWarningCodes": [
+    "CS0162",
+    "CS0168",
+    "CS0169",
+    "CS0219",
+    "CS0414",
+    "MSB3277",
+    "NU1902"
+  ],
+  "warningMaximums": {
+    "CS0162": 2,
+    "CS0168": 11,
+    "CS0169": 2,
+    "CS0219": 1,
+    "CS0414": 1,
+    "NU1902": 1
+  },
+  "knownReferenceConflicts": [
+    "Microsoft.Extensions.Configuration.Abstractions",
+    "System.Memory"
+  ],
+  "policy": "PR-01 congela la deuda observada. Ningun codigo nuevo ni aumento de advertencias esta permitido. Los MSB3277 y NU1902 se resolveran al modernizar dependencias en PR-04."
+}

@@ -1,6 +1,6 @@
 # Modernización de Scheduler P360 Insight
 
-Estado del expediente: valoración inicial completada el 2026-07-21. La implementación todavía no ha comenzado.
+Estado del expediente: valoración inicial y Gate 0 completados. PR-01 validado localmente el 2026-07-21.
 
 Este directorio es la fuente de verdad del programa de modernización. El objetivo es conservar el comportamiento funcional mientras se reduce, mediante cambios pequeños y reversibles, el riesgo de seguridad, operación y mantenimiento.
 
@@ -17,8 +17,9 @@ Este directorio es la fuente de verdad del programa de modernización. El objeti
 9. [08_OPERACION_DESPLIEGUE_Y_ROLLBACK.md](08_OPERACION_DESPLIEGUE_Y_ROLLBACK.md): ejecución, observabilidad y reversión.
 10. [09_DECISIONES_Y_PREGUNTAS_ABIERTAS.md](09_DECISIONES_Y_PREGUNTAS_ABIERTAS.md): decisiones que requieren contexto del negocio u operación.
 11. [10_CONFIGURACION_DE_ENTORNO.md](10_CONFIGURACION_DE_ENTORNO.md): variables requeridas y operación segura.
-12. [GUIA_DE_TRABAJO_POR_PR.md](GUIA_DE_TRABAJO_POR_PR.md): instrucciones para desarrollar y revisar cada cambio.
-13. [PLANES_PR/README.md](PLANES_PR/README.md): índice de las fichas de implementación.
+12. [11_BUILD_Y_RUNNER.md](11_BUILD_Y_RUNNER.md): build canónico x64 y preparación del runner Windows.
+13. [GUIA_DE_TRABAJO_POR_PR.md](GUIA_DE_TRABAJO_POR_PR.md): instrucciones para desarrollar y revisar cada cambio.
+14. [PLANES_PR/README.md](PLANES_PR/README.md): índice de las fichas de implementación.
 
 ## Principios no negociables
 
