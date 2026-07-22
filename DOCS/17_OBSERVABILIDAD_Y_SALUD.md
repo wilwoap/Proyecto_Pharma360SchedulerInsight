@@ -33,6 +33,7 @@ Campos permitidos:
     definitions_count
     duration_ms
     failure_category
+    failure_kind
     health_exporter
     job_type
     metric
@@ -43,6 +44,7 @@ Campos permitidos:
     process_id
     report_uid
     state
+    sql_code
     value
 
 Cualquier clave no incluida se descarta. Los valores se limitan a 128 caracteres y se eliminan caracteres de control. No se aceptan destinatarios, nombres, cuerpos/asuntos de correo, rutas, cadenas de conexión, claves, tokens, mensajes de excepción ni stack traces.
@@ -93,8 +95,10 @@ Operaciones permitidas:
 | `render.crystal` | exportación Crystal a PDF |
 | `render.devexpress` | renderizado DevExpress y escritura del PDF |
 | `delivery.smtp` | llamada real al transporte SMTP |
+| `data.report-schedules` | consulta y mapeo de definiciones programadas |
+| `data.notification-queue` | consulta y mapeo de la cola pendiente |
 
-Por operación y resultado (`success`, `failure`, `skipped`, `timeout`) se exponen `count`, duración acumulada y duración máxima. La métrica gauge `notification_batch_size` representa el último lote observado por un job; no equivale al backlog global y no debe usarse todavía como SLO de cola.
+Por operación y resultado (`success`, `failure`, `skipped`, `timeout`, `cancelled`) se exponen `count`, duración acumulada y duración máxima. La métrica gauge `notification_batch_size` representa el último lote observado por un job; no equivale al backlog global y no debe usarse todavía como SLO de cola.
 
 El snapshot también incluye `workingSetBytes`, `handleCount`, jobs activos, notificaciones activas y definiciones registradas. Ningún identificador dinámico forma parte de la clave de una métrica.
 

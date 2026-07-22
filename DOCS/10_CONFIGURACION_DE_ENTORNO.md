@@ -13,6 +13,8 @@ El repositorio, el binario y su archivo .config no contienen credenciales. Los v
 | P360_PARAMETER_PROVIDER_MODE | No | `batch` por defecto; `legacy` sólo para rollback temporal |
 | P360_SHUTDOWN_TIMEOUT_SECONDS | No | Presupuesto de apagado de 1–900 segundos; 30 por defecto |
 | P360_HEALTH_FILE_PATH | No | Ruta absoluta `.json` para liveness/readiness; deshabilitado por defecto |
+| P360_SQL_CONNECTION_TIMEOUT_SECONDS | No | Apertura SQL de 1–120 segundos; 15 por defecto |
+| P360_SQL_COMMAND_TIMEOUT_SECONDS | No | Comandos SQL de 1–300 segundos; 30 por defecto |
 
 Si no existe P360_GOOGLE_MAPS_API_KEY, el correo incluye únicamente un enlace a la ubicación. La aplicación nunca crea variables, imprime sus valores ni incorpora una conexión predeterminada.
 
@@ -21,6 +23,8 @@ Si no existe P360_GOOGLE_MAPS_API_KEY, el correo incluye únicamente un enlace a
 `P360_SHUTDOWN_TIMEOUT_SECONDS` tampoco es sensible. Debe ser un entero decimal entre 1 y 900. El presupuesto incluye `Standby` y `Shutdown(true)`; al agotarse se solicita un apagado sin espera y el proceso devuelve código 4.
 
 `P360_HEALTH_FILE_PATH` no es sensible, pero su valor no se imprime. Si se configura, el directorio debe existir y la identidad del proceso debe poder crear/reemplazar el archivo. El snapshot se actualiza atómicamente cada 15 segundos y en cambios de estado. Si no existe la variable, sólo se desactiva el archivo; los eventos estructurados permanecen en stdout.
+
+Los dos timeouts SQL son enteros en segundos y nunca admiten cero: en `System.Data.SqlClient`, cero significaría una espera indefinida. El valor de conexión reemplaza cualquier `Connect Timeout` recibido dentro de la cadena, sin imprimirla. El comando particular que conserva un baseline histórico de 300 segundos es la búsqueda de pedido por CUD; las demás rutas usan el presupuesto configurado. Cambiar estos valores exige reiniciar el proceso.
 
 ## Desarrollo local
 
@@ -31,6 +35,8 @@ Obtener los valores desde el almacén autorizado y configurarlos sólo para la s
     $env:P360_PARAMETER_PROVIDER_MODE = "batch"
     $env:P360_SHUTDOWN_TIMEOUT_SECONDS = "30"
     $env:P360_HEALTH_FILE_PATH = "D:\Pharma360\Scheduler\state\health.json"
+    $env:P360_SQL_CONNECTION_TIMEOUT_SECONDS = "15"
+    $env:P360_SQL_COMMAND_TIMEOUT_SECONDS = "30"
 
 No guardar esos comandos con valores reales en scripts, historial de terminal, perfiles, capturas o documentación.
 

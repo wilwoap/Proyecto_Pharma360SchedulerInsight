@@ -8,6 +8,7 @@ Este directorio contiene controles ejecutables del repositorio:
 - compare-build-outputs.ps1 compara el inventario, los DLL, la configuración y el manifiesto entre dos builds.
 - generate-sbom.ps1 genera y valida un SBOM SPDX 2.2 del output con Microsoft SBOM Tool 4.1.5.
 - verify-dependencies.ps1 bloquea vulnerabilidades no exceptuadas, hallazgos altos/críticos y paquetes obsoletos.
+- Test-SqlContracts.ps1 valida mapeo, timeout, cancelación y pooling contra una instancia LocalDB sintética y efímera; nunca usa la conexión P360.
 - dependency-exceptions.json contiene excepciones temporales exactas, justificadas y con vencimiento obligatorio.
 
 El punto de entrada del build es build.ps1 en la raíz. La restauración normal exige los `packages.lock.json`; `-UpdateLockFile` es la operación explícita para actualizarlos. Los controles no leen ni imprimen valores de variables de entorno sensibles.

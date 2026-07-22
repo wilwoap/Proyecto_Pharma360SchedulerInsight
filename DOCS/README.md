@@ -1,6 +1,6 @@
 # Modernización de Scheduler P360 Insight
 
-Estado del expediente: valoración y Gate 0 completados. PR-01 a PR-06 validados; núcleo neutral de PR-07 validado y PR-08 es el siguiente incremento. La integración de observabilidad corporativa continúa pendiente de D-010.
+Estado del expediente: valoración y Gate 0 completados. PR-01 a PR-08 validados localmente; PR-09 es el siguiente incremento. La integración de observabilidad corporativa continúa pendiente de D-010 y el contrato con una base P360 no productiva se mantiene como gate de despliegue.
 
 Este directorio es la fuente de verdad del programa de modernización. El objetivo es conservar el comportamiento funcional mientras se reduce, mediante cambios pequeños y reversibles, el riesgo de seguridad, operación y mantenimiento.
 
@@ -24,8 +24,9 @@ Este directorio es la fuente de verdad del programa de modernización. El objeti
 16. [15_CONFIGURACION_Y_COMPOSICION.md](15_CONFIGURACION_Y_COMPOSICION.md): opciones inmutables, snapshot, composición de jobs y rollback.
 17. [16_CICLO_DE_VIDA_NO_INTERACTIVO.md](16_CICLO_DE_VIDA_NO_INTERACTIVO.md): señales, apagado acotado, códigos de salida y runbook.
 18. [17_OBSERVABILIDAD_Y_SALUD.md](17_OBSERVABILIDAD_Y_SALUD.md): eventos JSON, correlación, métricas, health y dashboard neutral.
-19. [GUIA_DE_TRABAJO_POR_PR.md](GUIA_DE_TRABAJO_POR_PR.md): instrucciones para desarrollar y revisar cada cambio.
-20. [PLANES_PR/README.md](PLANES_PR/README.md): índice de las fichas de implementación.
+19. [18_ACCESO_A_DATOS_RESILIENTE.md](18_ACCESO_A_DATOS_RESILIENTE.md): timeouts, cancelación, contratos SQL y clasificación de fallos.
+20. [GUIA_DE_TRABAJO_POR_PR.md](GUIA_DE_TRABAJO_POR_PR.md): instrucciones para desarrollar y revisar cada cambio.
+21. [PLANES_PR/README.md](PLANES_PR/README.md): índice de las fichas de implementación.
 
 ## Principios no negociables
 

@@ -1,10 +1,21 @@
 # PR-08 — Acceso a datos resiliente
 
-Estado: propuesto. Dependencias: PR-05 y PR-07.
+Estado: validado localmente el 2026-07-22. Dependencias: PR-05 y PR-07 satisfechas. Contrato P360 no productivo pendiente como gate de despliegue.
 
 ## Propósito
 
 Hacer explícitos contratos, límites y fallos de SQL sin cambiar todavía el esquema.
+
+## Resultado implementado
+
+- `SqlExecutionPolicy` fuerza conexión 1-120 s y comando 1-300 s; defaults 15/30.
+- Repositorios explícitos para scheduled reports y notification queue.
+- Carga async/cancelable desde Quartz hasta `System.Data.SqlClient`.
+- `@ReportId int` y parámetros heredados migrados sin `AddWithValue`.
+- `DataAccessException` conserva causa y clasifica cancelación, timeout, transitorio, permanente o desconocido.
+- Cero reintentos de consultas/escrituras en código: las escrituras siguen teniendo una sola tentativa.
+- Métricas `data.report-schedules` y `data.notification-queue`, sin datos sensibles.
+- Adaptador síncrono de cola conservado para compatibilidad, delegando al repositorio async.
 
 ## Alcance
 
@@ -37,12 +48,13 @@ Hacer explícitos contratos, límites y fallos de SQL sin cambiar todavía el es
 
 ## Pruebas
 
-- Contrato contra SQL compatible.
-- Timeout y cancelación.
-- Login/permiso/objeto ausente.
-- Error de logging durante error principal.
-- Resultados vacíos válidos frente a fallo.
-- Pooling y liberación bajo repetición.
+- 68/68 pruebas aisladas net48 x64.
+- Contrato ADO real contra una instancia LocalDB efímera y sintética.
+- Timeout y cancelación reales mediante `WAITFOR`.
+- Objeto ausente 208 clasificado permanente; login/permiso cubiertos por clasificación, sin credenciales reales.
+- Resultado vacío válido frente a excepción tipada.
+- 25 ciclos con `Max Pool Size=5` para demostrar pooling/liberación.
+- Fallo de logging continúa independiente del error principal por el contrato de PR-07.
 
 ## Criterios de aceptación
 
@@ -55,5 +67,8 @@ Hacer explícitos contratos, límites y fallos de SQL sin cambiar todavía el es
 
 ## Rollback
 
-Adaptadores nuevos detrás de interfaz y selección temporal. Revertir una operación individual al adaptador legado; no revertir correcciones de seguridad ni credenciales.
+Detener la candidata, restaurar el binario anterior y retirar las dos variables de timeout si fuera necesario. No existe rollback de esquema. El adaptador síncrono público permanece, pero no se mantiene una segunda implementación SQL que pueda divergir.
 
+## Evidencia detallada
+
+Ver [18_ACCESO_A_DATOS_RESILIENTE.md](../18_ACCESO_A_DATOS_RESILIENTE.md). Ningún `.rpt`, `.Designer.cs` o `.resx` fue modificado.
